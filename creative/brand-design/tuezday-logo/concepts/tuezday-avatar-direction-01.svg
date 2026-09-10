@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <rect width="1024" height="1024" rx="220" fill="#f0202b"/>
+  <g font-family="Georgia,'Times New Roman',serif" font-weight="700" font-size="760" text-anchor="middle">
+    <text x="499" y="783" fill="#254edb">t</text>
+    <text x="525" y="757" fill="#11100f">t</text>
+    <text x="512" y="770" fill="#f3efe7">t</text>
+  </g>
+  <circle cx="805" cy="716" r="50" fill="#11100f"/>
+</svg>

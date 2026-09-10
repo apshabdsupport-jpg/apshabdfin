@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>APSHABD — City With Receipts</title>
+<style>
+@font-face{font-family:Tanker;src:url('../../../../assets/fonts/Tanker_Complete/Fonts/WEB/fonts/Tanker-Regular.woff2') format('woff2')}
+@font-face{font-family:Boxing;src:url('../../../../assets/fonts/Boxing_Complete/Fonts/WEB/fonts/Boxing-Regular.woff2') format('woff2')}
+@font-face{font-family:Trench;src:url('../../../../assets/fonts/trench-slab/TrenchSlab-Regular.woff2') format('woff2')}
+:root{--ink:#10120f;--cream:#eee4cf;--paper:#f5eddd;--red:#d93626;--rust:#b94e2f;--blue:#173a58;--green:#173f34;--yellow:#d9a516;--pink:#c94673}
+*{box-sizing:border-box}
+html,body{margin:0;background:#222}
+body{display:flex;flex-direction:column;align-items:center;gap:40px;padding:40px}
+.slide{position:relative;width:1080px;height:1350px;overflow:hidden;background:var(--paper);color:var(--ink);font-family:Trench}
+.slide:after{content:"";position:absolute;inset:0;pointer-events:none;opacity:.22;mix-blend-mode:multiply;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.92' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.32'/%3E%3C/svg%3E")}
+.wordmark{position:absolute;z-index:20;width:175px;height:auto;filter:brightness(.11) sepia(.2)}
+.wordmark.light{filter:none}
+.kicker{font:28px Boxing;letter-spacing:2px;text-transform:uppercase}
+.headline{font-family:Tanker;letter-spacing:.5px;text-transform:uppercase;line-height:.88}
+.micro{font:22px Boxing;letter-spacing:1.4px;text-transform:uppercase}
+.index{position:absolute;z-index:20;font:26px Boxing;letter-spacing:2px}
+.rule{height:8px;background:var(--red)}
+.asset{position:absolute;overflow:hidden;background:#ddd;box-shadow:0 18px 45px rgba(0,0,0,.35)}
+.asset img{width:100%;height:100%;object-fit:cover}
+.asset .label{position:absolute;left:0;bottom:0;right:0;background:var(--ink);color:var(--cream);font:20px Boxing;letter-spacing:1px;padding:12px 14px;text-transform:uppercase}
+.tape{position:absolute;background:#d7c695;height:32px;width:150px;opacity:.8;transform:rotate(-5deg);z-index:9}
+.stamp{display:inline-block;border:4px solid currentColor;padding:8px 12px;font:22px Boxing;letter-spacing:1.5px;text-transform:uppercase}
+
+/* Slide 1 */
+#slide-1{background:var(--ink);color:var(--cream)}
+#slide-1 .index{right:48px;top:40px;color:var(--yellow)}
+#slide-1 .case{position:absolute;left:48px;top:42px;color:var(--cream)}
+#slide-1 .hero{position:absolute;z-index:15;left:46px;top:135px;width:940px;font-size:142px}
+#slide-1 .hero .paper{display:inline;box-decoration-break:clone;-webkit-box-decoration-break:clone;background:var(--cream);color:var(--ink);padding:0 18px 8px;box-shadow:16px 0 0 var(--cream),-3px 0 0 var(--cream)}
+#slide-1 .hero .fuck{color:var(--red)}
+#slide-1 .sub{position:absolute;z-index:16;left:56px;top:780px;background:var(--yellow);color:var(--ink);padding:14px 20px;transform:rotate(-1.2deg)}
+#slide-1 .tiles{position:absolute;inset:720px 0 0 0}
+#slide-1 .a1{left:-45px;top:65px;width:285px;height:480px;transform:rotate(-8deg)}
+#slide-1 .a2{left:180px;top:110px;width:260px;height:470px;transform:rotate(5deg)}
+#slide-1 .a3{left:410px;top:70px;width:270px;height:490px;transform:rotate(-4deg)}
+#slide-1 .a4{left:650px;top:105px;width:260px;height:470px;transform:rotate(6deg)}
+#slide-1 .a5{left:875px;top:55px;width:250px;height:495px;transform:rotate(-6deg)}
+#slide-1 .tiles img{object-position:72% 50%}
+#slide-1 .wordmark{right:55px;bottom:38px}
+#slide-1 .slash{position:absolute;z-index:14;right:-70px;top:575px;width:410px;height:55px;background:var(--red);transform:rotate(-18deg)}
+
+/* Slide 2 */
+#slide-2{background:var(--cream)}
+#slide-2 .index{right:46px;top:36px;color:var(--red)}
+#slide-2 .head{position:absolute;z-index:15;left:48px;top:52px;width:900px;font-size:112px}
+#slide-2 .head span{color:var(--red)}
+#slide-2 .smallline{position:absolute;z-index:15;left:52px;top:342px;background:var(--ink);color:var(--cream);padding:13px 18px}
+#slide-2 .evidence-grid{position:absolute;left:46px;right:46px;top:430px;bottom:95px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+#slide-2 .card{position:relative;overflow:hidden;background:#fff;border:5px solid var(--ink);box-shadow:10px 12px 0 rgba(16,18,15,.16)}
+#slide-2 .card img{width:100%;height:100%;object-fit:cover;object-position:68% 50%}
+#slide-2 .card .tag{position:absolute;left:15px;bottom:15px;max-width:88%;font:30px Tanker;letter-spacing:1px;color:#fff;background:var(--ink);padding:10px 14px;text-transform:uppercase}
+#slide-2 .card:nth-child(2){transform:rotate(1.2deg)}
+#slide-2 .card:nth-child(3){transform:rotate(-1deg)}
+#slide-2 .card:nth-child(4){transform:rotate(.8deg)}
+#slide-2 .wordmark{right:50px;bottom:27px}
+
+/* Slide 3 */
+#slide-3{background:var(--blue);color:var(--cream)}
+#slide-3 .index{right:46px;top:36px;color:var(--yellow)}
+#slide-3 .head{position:absolute;z-index:15;left:48px;top:58px;width:950px;font-size:112px}
+#slide-3 .head .orange{color:#f08043}
+#slide-3 .sub{position:absolute;z-index:15;left:52px;top:365px;color:var(--blue);background:var(--cream);padding:12px 17px}
+#slide-3 .records{position:absolute;left:43px;right:43px;top:450px;height:755px;display:grid;grid-template-columns:repeat(4,1fr);gap:17px}
+#slide-3 .record{position:relative;overflow:hidden;background:#fff;border:4px solid var(--cream);box-shadow:11px 14px 0 rgba(0,0,0,.2)}
+#slide-3 .record:nth-child(odd){transform:rotate(-1.5deg)}
+#slide-3 .record:nth-child(even){transform:rotate(1.5deg)}
+#slide-3 .record img{width:100%;height:100%;object-fit:cover;object-position:72% 52%}
+#slide-3 .record .tag{position:absolute;left:-1px;right:-1px;bottom:-1px;min-height:115px;background:var(--cream);color:var(--ink);padding:16px 12px;font:28px Tanker;letter-spacing:1px;text-transform:uppercase;border-top:5px solid var(--red)}
+#slide-3 .wordmark{left:52px;bottom:36px}
+#slide-3 .archive{position:absolute;right:45px;bottom:38px;color:var(--yellow)}
+
+/* Slide 4 */
+#slide-4{background:var(--paper)}
+#slide-4 .index{right:46px;top:36px;color:var(--red)}
+#slide-4 .longname{position:absolute;top:0;left:-16px;color:#ded0b6;font:150px Tanker;line-height:.73;writing-mode:vertical-rl;transform:rotate(180deg);height:1350px;opacity:.58}
+#slide-4 .head{position:absolute;z-index:14;left:78px;top:88px;width:900px;font-size:100px}
+#slide-4 .head .red{color:var(--red)}
+#slide-4 .support{position:absolute;z-index:15;left:83px;top:452px;width:590px;font:25px Boxing;line-height:1.12;text-transform:uppercase;border-left:12px solid var(--red);padding-left:18px}
+#slide-4 .postal{position:absolute;z-index:15;right:55px;top:475px;transform:rotate(3deg);color:var(--blue)}
+#slide-4 .scraps{position:absolute;left:80px;right:65px;top:645px;height:555px}
+#slide-4 .s1{left:0;top:30px;width:370px;height:530px;transform:rotate(-4deg)}
+#slide-4 .s2{left:300px;top:90px;width:315px;height:465px;transform:rotate(5deg)}
+#slide-4 .s3{left:565px;top:12px;width:315px;height:525px;transform:rotate(-2deg)}
+#slide-4 .scraps img{object-position:70% 50%}
+#slide-4 .wordmark{right:52px;bottom:34px}
+
+/* Slide 5 */
+#slide-5{background:var(--cream)}
+#slide-5 .index{right:46px;top:105px;color:var(--red)}
+#slide-5 .topbar{position:absolute;left:0;top:0;width:31px;height:1350px;background:var(--red)}
+#slide-5 .formhead{position:absolute;left:70px;top:55px;width:940px;display:flex;justify-content:space-between;border-bottom:4px solid var(--ink);padding-bottom:15px}
+#slide-5 .cta{position:absolute;z-index:10;left:70px;top:170px;width:900px;font-size:180px;color:var(--red)}
+#slide-5 .ask{position:absolute;left:78px;top:555px;width:860px;font:43px Boxing;line-height:1.08;text-transform:uppercase}
+#slide-5 .examples{position:absolute;left:78px;top:720px;width:900px;display:grid;grid-template-columns:repeat(2,1fr);gap:13px 24px}
+#slide-5 .examples div{font:28px Boxing;letter-spacing:1px;border-bottom:3px solid var(--ink);padding:9px 3px;text-transform:uppercase}
+#slide-5 .field{position:absolute;left:72px;right:70px;top:935px;height:120px;border:5px solid var(--ink);background:#fffdf5;padding:26px;font:40px Boxing;color:#777;text-transform:uppercase}
+#slide-5 .button{position:absolute;left:70px;right:70px;top:1090px;background:var(--red);color:var(--cream);font:58px Tanker;letter-spacing:1px;text-align:center;padding:27px 20px 24px;text-transform:uppercase;transform:rotate(-.7deg);box-shadow:12px 12px 0 var(--ink)}
+#slide-5 .footer{position:absolute;left:76px;bottom:38px}
+#slide-5 .wordmark{right:54px;bottom:30px}
+</style>
+</head>
+<body>
+
+<section class="slide" id="slide-1">
+  <div class="case kicker">APSHABD MUNICIPAL ARCHIVE / FILE 001</div>
+  <div class="index">01 / 05</div>
+  <div class="hero headline"><span class="paper">A CITY WITHOUT<br>RECEIPTS IS JUST<br>A <span class="fuck">FUCKING</span> FONT.</span></div>
+  <div class="sub micro">WE BROUGHT THE PAPER TRAIL.</div>
+  <div class="slash"></div>
+  <div class="tiles">
+    <div class="asset a1"><img src="../../city-designs/apshabd-50-city-front-back-v1/35-madurai-flower-market-0430.png"></div>
+    <div class="asset a2"><img src="../../city-designs/apshabd-50-city-front-back-v1/16-shillong-taxi-001.png"></div>
+    <div class="asset a3"><img src="../../city-designs/apshabd-50-city-front-back-v1/28-patna-flood-mark.png"></div>
+    <div class="asset a4"><img src="../../city-designs/apshabd-50-city-front-back-v1/23-amritsar-service-count.png"></div>
+    <div class="asset a5"><img src="../../city-designs/apshabd-50-city-front-back-v1/40-mangaluru-tile-no-575.png"></div>
+  </div>
+  <img class="wordmark light" src="../../../../assets/brand/apshabd-wordmark-cream.png">
+</section>
+
+<section class="slide" id="slide-2">
+  <div class="index">02 / 05</div>
+  <div class="head headline">THE CITY ALREADY DID<br>THE <span>FUCKING</span> ART DIRECTION.</div>
+  <div class="smallline micro">WE JUST LOOKED PAST THE LANDMARKS.</div>
+  <div class="evidence-grid">
+    <div class="card"><img src="../../city-designs/apshabd-50-city-front-back-v1/35-madurai-flower-market-0430.png"><div class="tag">04:30 FLOWER MARKET.</div></div>
+    <div class="card"><img src="../../city-designs/apshabd-50-city-front-back-v1/16-shillong-taxi-001.png"><div class="tag">TAXI 001.</div></div>
+    <div class="card"><img src="../../city-designs/apshabd-50-city-front-back-v1/17-indore-night-shift-sarafa.png"><div class="tag">NIGHT SHIFT: SARAFA.</div></div>
+    <div class="card"><img src="../../city-designs/apshabd-50-city-front-back-v1/28-patna-flood-mark.png"><div class="tag">FLOOD MARK.</div></div>
+  </div>
+  <img class="wordmark" src="../../../../assets/brand/apshabd-wordmark-cream.png">
+</section>
+
+<section class="slide" id="slide-3">
+  <div class="index">03 / 05</div>
+  <div class="head headline">WE DIDN'T INVENT <span class="orange">SHIT.</span><br>WE KEPT THE EVIDENCE.</div>
+  <div class="sub micro">THE BACK PRINT IS THE ARCHIVE.</div>
+  <div class="records">
+    <div class="record"><img src="../../city-designs/apshabd-50-city-front-back-v1/10-kochi-jetty-manifest.png"><div class="tag">JETTY<br>MANIFEST.</div></div>
+    <div class="record"><img src="../../city-designs/apshabd-50-city-front-back-v1/23-amritsar-service-count.png"><div class="tag">SERVICE<br>COUNT.</div></div>
+    <div class="record"><img src="../../city-designs/apshabd-50-city-front-back-v1/40-mangaluru-tile-no-575.png"><div class="tag">TILE<br>NO. 575.</div></div>
+    <div class="record"><img src="../../city-designs/apshabd-50-city-front-back-v1/39-kozhikode-sm-street-ledger.png"><div class="tag">S.M. STREET<br>LEDGER.</div></div>
+  </div>
+  <img class="wordmark light" src="../../../../assets/brand/apshabd-wordmark-cream.png">
+  <div class="archive micro">ARCHIVE / NOT A MOODBOARD</div>
+</section>
+
+<section class="slide" id="slide-4">
+  <div class="longname">THIRUVANANTHAPURAM</div>
+  <div class="index">04 / 05</div>
+  <div class="head headline">THE NAME IS THE LEAST<br>INTERESTING <span class="red">FUCKING</span> PART.</div>
+  <div class="support">THE REAL SHIT IS IN THE TIMINGS, TOKENS, ROUTES, MARKS AND BAD HANDWRITING.</div>
+  <div class="postal stamp">NAME TOO LONG.<br>MEMORY LONGER.</div>
+  <div class="scraps">
+    <div class="asset s1"><img src="../../city-designs/apshabd-50-city-front-back-v1/38-thiruvananthapuram-name-too-long.png"></div>
+    <div class="asset s2"><img src="../../city-designs/apshabd-50-city-front-back-v1/12-varanasi-gali-frequency.png"></div>
+    <div class="asset s3"><img src="../../city-designs/apshabd-50-city-front-back-v1/33-visakhapatnam-port-signal.png"></div>
+  </div>
+  <img class="wordmark" src="../../../../assets/brand/apshabd-wordmark-cream.png">
+</section>
+
+<section class="slide" id="slide-5">
+  <div class="topbar"></div>
+  <div class="index">05 / 05</div>
+  <div class="formhead"><span class="kicker">APSHABD / PUBLIC RECORD REQUEST</span><span class="micro">FORM 40—FUCK</span></div>
+  <div class="cta headline">DROP THE<br>RECEIPT.</div>
+  <div class="ask">COMMENT ONE WEIRD DETAIL<br>ONLY A LOCAL WOULD KNOW.</div>
+  <div class="examples">
+    <div>A TOKEN.</div><div>A TIMING.</div>
+    <div>A ROUTE.</div><div>A BILL.</div>
+    <div>A WALL MARK.</div><div>A SHOP THAT REFUSES TO DIE.</div>
+  </div>
+  <div class="field">MY CITY KEEPS __________________</div>
+  <div class="button">WE'LL PRINT THE BEST FUCKING ONE. →</div>
+  <div class="footer micro">CITY / DETAIL / PROOF OR IT DIDN'T HAPPEN.</div>
+  <img class="wordmark" src="../../../../assets/brand/apshabd-wordmark-cream.png">
+</section>
+
+</body>
+</html>

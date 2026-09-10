@@ -1,0 +1,26 @@
+Use one edit per turn. Keep the same Omni conversation so each edit builds on the previous video.
+
+GEOGRAPHY
+Preserve the current timing and colour treatment. Make the final Mumbai outline match Image 02 more closely. Keep everything else the same.
+
+CAMERA
+Keep the geography and all styling unchanged. Make the camera acceleration smoother between 0.7 and 2.5 seconds. Keep everything else the same.
+
+FINAL HOLD
+Hold the final Mumbai composition completely still for the last 0.7 seconds. Keep everything else the same.
+
+REMOVE INVENTED DETAILS
+Remove fabricated roads, labels and extra boundary lines. Preserve only clean technical lines that do not imply false geography. Keep everything else the same.
+
+STYLE
+Replace green or cyan tones with APSHABD deep black, crimson red and warm cream from Images 03 and 04. Keep everything else the same.
+
+LESS GLOW
+Reduce the crimson glow intensity by 30 percent and retain crisp vector-like edges. Keep everything else the same.
+
+NO TEXT
+Remove every generated word, letter, number and logo from the video. Keep everything else the same.
+
+NO AUDIO
+Remove the audio track completely. Keep everything else the same.
+

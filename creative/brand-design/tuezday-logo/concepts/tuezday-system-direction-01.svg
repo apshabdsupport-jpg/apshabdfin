@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2000" viewBox="0 0 1600 2000">
+  <defs>
+    <filter id="grain" x="-10%" y="-10%" width="120%" height="120%">
+      <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="7" result="n"/>
+      <feColorMatrix in="n" type="saturate" values="0" result="g"/>
+      <feComponentTransfer in="g"><feFuncA type="table" tableValues="0 0.045"/></feComponentTransfer>
+    </filter>
+    <style>
+      .serif{font-family:Georgia,'Times New Roman',serif;font-weight:700}
+      .sans{font-family:Arial,Helvetica,sans-serif}
+      .label{font:700 18px Arial,Helvetica,sans-serif;letter-spacing:4px}
+      .note{font:400 18px Arial,Helvetica,sans-serif;letter-spacing:.4px}
+      .red{fill:#f0202b}.blue{fill:#254edb}.ink{fill:#11100f}.paper{fill:#f3efe7}
+    </style>
+  </defs>
+
+  <rect width="1600" height="2000" class="paper"/>
+  <rect width="1600" height="2000" fill="#000" filter="url(#grain)" opacity=".7"/>
+
+  <!-- Hero wordmark: intentional three-plate register -->
+  <g class="serif" font-size="218" text-anchor="middle">
+    <text x="796" y="345" class="red">tuezday</text>
+    <text x="808" y="356" class="blue">tuezday</text>
+    <text x="802" y="350" class="ink">tuezday</text>
+  </g>
+  <text x="1270" y="350" class="serif ink" font-size="86">.ai</text>
+  <text x="800" y="445" text-anchor="middle" class="label ink">PRIMARY WORDMARK / CONTROLLED MISREGISTRATION</text>
+
+  <!-- Split showcase -->
+  <rect x="0" y="550" width="800" height="570" class="red"/>
+  <rect x="800" y="550" width="800" height="570" class="ink"/>
+
+  <!-- avatar mark -->
+  <g class="serif" font-size="490" text-anchor="middle">
+    <text x="393" y="1018" fill="#254edb">t</text>
+    <text x="407" y="1002" fill="#11100f">t</text>
+    <text x="400" y="1010" class="paper">t</text>
+  </g>
+  <circle cx="623" cy="957" r="32" class="ink"/>
+  <text x="400" y="1082" text-anchor="middle" class="label paper">SOCIAL AVATAR / “t” + MEMORY DOT</text>
+
+  <!-- reversed wordmark -->
+  <g class="serif" font-size="120">
+    <text x="916" y="855" class="red">tuezday</text>
+    <text x="924" y="863" class="blue">tuezday</text>
+    <text x="920" y="859" class="paper">tuezday</text>
+    <text x="1384" y="859" class="serif paper" font-size="48">.ai</text>
+  </g>
+  <text x="1200" y="940" text-anchor="middle" class="label paper">REVERSED WORDMARK</text>
+
+  <!-- scale test -->
+  <text x="100" y="1235" class="label ink">RESPONSIVE SCALE</text>
+  <g class="serif">
+    <g font-size="128"><text x="95" y="1425" class="red">tuezday</text><text x="103" y="1433" class="blue">tuezday</text><text x="99" y="1429" class="ink">tuezday</text><text x="582" y="1429" class="ink" font-size="50">.ai</text></g>
+    <g font-size="78"><text x="720" y="1425" class="red">tuezday</text><text x="726" y="1431" class="blue">tuezday</text><text x="723" y="1428" class="ink">tuezday</text><text x="1018" y="1428" class="ink" font-size="31">.ai</text></g>
+    <g font-size="52"><text x="1125" y="1424" class="red">tuezday</text><text x="1129" y="1428" class="blue">tuezday</text><text x="1127" y="1426" class="ink">tuezday</text><text x="1324" y="1426" class="ink" font-size="21">.ai</text></g>
+  </g>
+  <line x1="675" y1="1328" x2="675" y2="1470" stroke="#f0202b" stroke-width="2"/>
+  <line x1="1080" y1="1328" x2="1080" y2="1470" stroke="#f0202b" stroke-width="2"/>
+  <text x="100" y="1490" class="note ink">Full expression</text>
+  <text x="720" y="1490" class="note ink">Standard UI</text>
+  <text x="1125" y="1490" class="note ink">Small lockup</text>
+
+  <!-- palette -->
+  <text x="100" y="1625" class="label ink">CORE PALETTE</text>
+  <rect x="100" y="1690" width="330" height="150" class="paper" stroke="#11100f" stroke-width="3"/>
+  <rect x="485" y="1690" width="330" height="150" class="red"/>
+  <rect x="870" y="1690" width="330" height="150" class="blue"/>
+  <rect x="1255" y="1690" width="245" height="150" class="ink"/>
+  <text x="100" y="1885" class="label ink">PAPER  #F3EFE7</text>
+  <text x="485" y="1885" class="label ink">SIGNAL RED  #F0202B</text>
+  <text x="870" y="1885" class="label ink">SYSTEM BLUE  #254EDB</text>
+  <text x="1255" y="1885" class="label ink">INK  #11100F</text>
+
+  <text x="1500" y="1960" text-anchor="end" class="note ink">TUEZDAY.AI — IDENTITY SYSTEM / DIRECTION 01</text>
+</svg>

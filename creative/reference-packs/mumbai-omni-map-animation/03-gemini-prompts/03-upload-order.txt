@@ -1,0 +1,16 @@
+UPLOAD IN THIS ORDER
+
+1. 01-india-start-frame-16x9.png
+2. 02-mumbai-geography-reference-16x9.png
+3. 03-apshabd-brand-reference.jpg
+4. 04-apshabd-mumbai-reference.jpg
+5. 05-reel-style-reference-INTERNAL-ONLY.jpg
+
+Then paste: 01-mumbai-generation-prompt.txt
+
+Recommended task: reference-to-video or image-to-video
+Aspect ratio: 16:9
+Requested duration: 4.5 seconds
+Shot count: one continuous shot
+Audio: none
+

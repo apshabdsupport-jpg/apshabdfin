@@ -1,0 +1,24 @@
+{
+  "pack": "mumbai-omni-map-animation",
+  "created": "2026-08-27",
+  "target_model": "Gemini Omni Flash",
+  "target_surface": "Google Flow or Gemini Apps",
+  "aspect_ratio": "16:9",
+  "requested_duration_seconds": 4.5,
+  "city": {
+    "name": "Mumbai",
+    "native_name": "मुंबई",
+    "code": "BOM / 02",
+    "latitude": 19.076,
+    "longitude": 72.8777
+  },
+  "upload_files": [
+    "04-ready-to-upload/01-india-start-frame-16x9.png",
+    "04-ready-to-upload/02-mumbai-geography-reference-16x9.png",
+    "04-ready-to-upload/03-apshabd-brand-reference.jpg",
+    "04-ready-to-upload/04-apshabd-mumbai-reference.jpg",
+    "04-ready-to-upload/05-reel-style-reference-INTERNAL-ONLY.jpg"
+  ],
+  "primary_prompt": "03-gemini-prompts/01-mumbai-generation-prompt.txt",
+  "rights_note": "The Reel thumbnail is internal reference only. Do not publish it or copy Netflix/G Visualz branding."
+}

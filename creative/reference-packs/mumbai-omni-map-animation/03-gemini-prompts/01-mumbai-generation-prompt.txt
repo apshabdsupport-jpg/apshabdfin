@@ -1,0 +1,16 @@
+Create a single continuous 4.5-second cinematic motion-graphics video in landscape 16:9.
+
+Use the uploaded files according to their numbered filenames:
+- Image 01 is the exact opening composition and India geography.
+- Image 02 is the strict geographic reference for the Mumbai destination.
+- Images 03 and 04 define the APSHABD brand palette, typography attitude and editorial finish.
+- Image 05 is motion-graphics inspiration only. Do not copy its words, layout, branding or exact pixels.
+
+[0.0–0.7s] Begin directly on Image 01. Hold the flat top-down India map stable for a brief moment. The grid is subtle and the Mumbai locator emits one restrained pulse.
+
+[0.7–3.5s] In one smooth unbroken camera move, rapidly accelerate toward Mumbai. The camera stays perpendicular to the flat map. The India outline expands beyond frame while thin crimson technical paths and contour-like lines reveal progressively. Movement is controlled, premium and cartographically coherent, with deep matte black, APSHABD red, warm cream highlights and very subtle film grain.
+
+[3.5–4.5s] Resolve into the exact Mumbai and Mumbai Suburban geometry shown in Image 02. Stabilise the camera. Finish with a small precise locator pulse at 19.0760° N, 72.8777° E and hold the final composition long enough to transition into a webpage.
+
+Single continuous shot. No scene cuts. No oblique globe. No satellite imagery. No three-dimensional buildings. No people. No vehicles. No fabricated coastlines or boundaries. No generated words, map labels, logos or Netflix branding. No audio. Preserve the supplied geographic shapes. The ending must be stable, uncluttered and suitable as a website transition.
+
