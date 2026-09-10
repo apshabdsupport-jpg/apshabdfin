@@ -1,0 +1,23 @@
+
+User-agent: *
+Allow: /
+Disallow: /assets/brand/legacy-logo-media/
+Disallow: /.htaccess
+Disallow: /security.txt
+Disallow: /*.env
+Disallow: /*.json
+Disallow: /*.log
+
+# Update the host here and in sitemap.xml if the site ships on a different
+# domain than apshabd.com.
+Sitemap: https://apshabd.com/sitemap.xml
+
+# Crawl delay for non-major bots
+User-agent: AhrefsBot
+Crawl-delay: 10
+
+User-agent: SemrushBot
+Crawl-delay: 10
+
+User-agent: MJ12bot
+Disallow: /

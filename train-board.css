@@ -1,0 +1,205 @@
+/* ===== MUMBAI · LOCAL TRAIN CARRIAGE INDICATOR =========================
+   The green dot-matrix panel that hangs from the ceiling of a Mumbai local,
+   between the fans and the luggage rack, calling the next station.
+
+   Three things separate it from the Chennai bus board on purpose, and all
+   three come from the reference and the hardware specs:
+   · it is GREEN. Indian Railways PIS panels ship in red, green and amber;
+     the carriage indicators are green, where the bus boards are amber.
+   · station names are TITLE CASE — "Marine Lines", not "MARINE LINES".
+     The bus destination board shouts; this one just tells you where you are.
+   · the standard panel is 128x16, a sixteen-row matrix against the bus
+     board's coarse grid, so the pitch here is finer (2px, not 3px) and the
+     glyphs hold their lowercase.
+
+   It also keeps the twin panels running opposite ways that this page already
+   had — two locals passing each other, one fast, one slow.
+
+   Loaded after city-brand.css: that file hides .marquee and kills every
+   animation site-wide, and this has to win. Mumbai only. */
+
+.train-board {
+  --led: #4cf35d;
+  --led-bloom: rgba(38, 224, 74, 0.5);
+  --board: #05070a;
+  --cell: 2px; /* 16-row matrix — finer than the bus board's 3px */
+}
+
+/* city-brand.css: `.marquee { display: none !important }`. Both are
+   important, so specificity decides — (0,2,0) beats (0,1,0). */
+.marquee.train-board {
+  display: block !important;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 0 clamp(14px, 3vw, 26px);
+  background: none;
+  font-family: inherit;
+  letter-spacing: normal;
+  /* A hung panel has a bezel; the stock marquee's feathered ends would
+     shred it. */
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+.marquee.train-board.m-up { margin-bottom: 10px; }
+
+/* The housing. Deeper and squarer than the bus board's — this thing is
+   bolted to a ceiling bracket, not set into a windscreen surround. */
+.train-board .tb-inner {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid rgba(76, 243, 93, 0.14);
+  border-radius: 4px;
+  background: var(--board);
+  box-shadow:
+    inset 0 0 0 4px #000,
+    inset 0 2px 20px rgba(0, 0, 0, 0.95),
+    0 12px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* Dormant LEDs, held just above black so the matrix is visible in the gaps. */
+.train-board .tb-mode,
+.train-board .tb-screen {
+  background-color: var(--board);
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgba(76, 243, 93, 0.07) 0 30%,
+    transparent 32%);
+  background-size: var(--cell) var(--cell);
+}
+
+/* ── Fast / slow module ───────────────────────────────────────────────
+   The real panels carry the service type alongside the destination, which
+   is the one thing every commuter on the platform actually reads first. */
+.train-board .tb-mode {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0 clamp(10px, 1.6vw, 18px);
+  border-right: 2px solid #000;
+  box-shadow: 1px 0 0 rgba(76, 243, 93, 0.12);
+  font-family: "Silkscreen", "DotGothic16", monospace;
+  font-weight: 700;
+  font-size: clamp(0.62rem, 1.25vw, 0.86rem);
+  line-height: 1;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--led);
+  text-shadow: 0 0 5px var(--led-bloom), 0 0 14px rgba(38, 200, 70, 0.32);
+}
+
+.train-board .tb-screen {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(8px, 1.3vw, 13px) 0;
+}
+
+/* ── The station list ─────────────────────────────────────────────────
+   Title case, deliberately: it is the whole reason this reads as a
+   carriage indicator rather than a destination board. */
+.train-board .marquee-track {
+  display: flex;
+  width: max-content;
+  font-family: "DotGothic16", "Silkscreen", monospace;
+  font-size: clamp(0.88rem, 1.75vw, 1.28rem);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+  line-height: 1.2;
+  text-transform: none;
+  white-space: nowrap;
+  color: var(--led);
+  text-shadow: 0 0 5px var(--led-bloom), 0 0 14px rgba(38, 200, 70, 0.3);
+  /* !important because city-brand.css kills all animation globally. Own
+     keyframes so this does not lean on mumbai.css surviving that reset. */
+  animation: tb-scroll 26s linear infinite !important;
+}
+
+/* Opposite direction for the lower panel — the passing local. */
+.train-board .marquee-track.rev {
+  animation: tb-scroll-rev 30s linear infinite !important;
+}
+
+.train-board .marquee-track > span {
+  padding-right: 1.6em;
+  white-space: nowrap;
+}
+
+.train-board .tb-sep {
+  color: rgba(76, 243, 93, 0.4);
+  text-shadow: none;
+  padding: 0 0.15em;
+}
+
+/* Both halves are identical, so -50% closes the loop invisibly. */
+@keyframes tb-scroll {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes tb-scroll-rev {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+/* ── The matrix ───────────────────────────────────────────────────────
+   The mesh that cuts glyphs and dormant dots alike into discrete cells.
+   This is what makes it an LED panel rather than green text on black. */
+.train-board .tb-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(2, 4, 6, 0.9) 0 1px, transparent 1px var(--cell)),
+    repeating-linear-gradient(180deg, rgba(2, 4, 6, 0.9) 0 1px, transparent 1px var(--cell));
+}
+
+/* Glass: a cool green wash off the top, and a vignette so the panel reads
+   as lit from within rather than printed. */
+.train-board .tb-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(76, 243, 93, 0.06), transparent 62%),
+    radial-gradient(140% 130% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Carriage power is not clean. Kept very small — a visible blink would be
+   a gimmick, an occasional dip is the tell. */
+@media (prefers-reduced-motion: no-preference) {
+  .train-board .tb-screen,
+  .train-board .tb-mode {
+    animation: tb-flicker 7s steps(1, end) infinite !important;
+  }
+}
+
+@keyframes tb-flicker {
+  0%, 97%, 100% { filter: brightness(1); }
+  98%           { filter: brightness(0.92); }
+  99%           { filter: brightness(1.03); }
+}
+
+/* Re-asserted, because the !important above now outranks mumbai.css's own
+   reduced-motion rule and it can no longer stop these on its own. */
+@media (prefers-reduced-motion: reduce) {
+  .train-board .marquee-track,
+  .train-board .marquee-track.rev,
+  .train-board .tb-screen,
+  .train-board .tb-mode { animation: none !important; }
+}
+
+@media (max-width: 720px) {
+  .train-board { --cell: 2px; }
+  .marquee.train-board { padding-inline: 12px; }
+  .train-board .marquee-track { letter-spacing: 0.03em; }
+}

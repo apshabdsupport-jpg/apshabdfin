@@ -1,0 +1,40 @@
+# Local-only creative source and reference material. The tracked design
+# libraries under /creative/ remain visible to Git; these paths are excluded
+# because they contain only local or legacy material.
+/creative/city-design-legacy/
+/creative/social/published-posts/
+/assets/reference-models/
+/assets/brand/legacy-logo-media/Create_a_crazy_ass_embroidery.mp4
+/assets/brand/legacy-logo-media/Create_a_premium_second_per.mp4
+
+# Social carousels, launch-video frames and wallpaper exports. Marketing
+# working files: nothing in any page or stylesheet references them, and they
+# are ~13 MB of PNG. Same reasoning as the block above.
+/creative/social/campaigns/
+/assets/launch-video/
+/assets/brand/apshabd-lockscreen-landscape-v1.png
+
+# Generated presentation deliverables and their inspection reports.
+/content/presentations/*.pptx
+/content/presentations/inspection-reports/
+
+# Local QA/build workspace. These folders are reproducible and not deployed.
+/.codex-build/
+/.codex-doc-qa/
+/.docx-review/
+/.tmp-brand-render/
+/.workspace/
+
+# Downloaded but unused in any page/stylesheet.
+/assets/fonts/Boxing_Complete/
+/assets/fonts/FontshareKit-2608002138/
+/assets/fonts/Tanker_Complete/
+
+# Raw photoshoot exports and mood boards for the colourway system — only the
+# .jpg front/back pairs that the pages actually reference are tracked.
+/assets/*/*/references/
+/assets/*/*/*.png
+
+# OS/editor noise
+.DS_Store
+Thumbs.db

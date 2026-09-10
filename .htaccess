@@ -1,0 +1,135 @@
+# Apache / cPanel .htaccess — Security hardening for PDS
+# =========================================================
+
+# ── DISABLE SERVER SIGNATURE ──────────────────────────────
+ServerSignature Off
+
+# ── CLICKJACKING PROTECTION ───────────────────────────────
+Header always set X-Frame-Options "DENY"
+
+# ── MIME-TYPE SNIFFING PROTECTION ─────────────────────────
+Header always set X-Content-Type-Options "nosniff"
+
+# ── XSS PROTECTION (legacy browsers) ─────────────────────
+Header always set X-XSS-Protection "1; mode=block"
+
+# ── REFERRER POLICY ───────────────────────────────────────
+Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
+# ── PERMISSIONS POLICY ────────────────────────────────────
+Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+
+# ── CONTENT SECURITY POLICY ───────────────────────────────
+# font-src needs 'self': Trench Slab is self-hosted from assets/fonts/, and
+# without it the brand face is blocked and every page silently falls back to
+# Arial Narrow.
+Header always set Content-Security-Policy "default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; script-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';"
+
+
+# ── STRICT TRANSPORT SECURITY (HSTS) ─────────────────────
+# Enable only if serving over HTTPS
+# Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+
+# ── CACHE CONTROL ─────────────────────────────────────────
+# HTML: no cache (always fresh)
+<FilesMatch "\.(html|htm)$">
+  Header set Cache-Control "no-cache, no-store, must-revalidate"
+  Header set Pragma "no-cache"
+  Header set Expires "0"
+</FilesMatch>
+
+# Static assets: cache 30 days
+<FilesMatch "\.(css|js|jpg|jpeg|png|gif|ico|mp4|webp|woff|woff2)$">
+  Header set Cache-Control "public, max-age=2592000, immutable"
+</FilesMatch>
+
+# ── DISABLE DIRECTORY LISTING ─────────────────────────────
+Options -Indexes
+
+# ── BLOCK SENSITIVE FILES ─────────────────────────────────
+<FilesMatch "(\.env|\.git|\.htpasswd|composer\.json|package\.json|package-lock\.json)$">
+  Require all denied
+</FilesMatch>
+
+# ── BLOCK BAD BOTS & SCANNERS ─────────────────────────────
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Block common scanner user-agents
+  RewriteCond %{HTTP_USER_AGENT} (sqlmap|nikto|nessus|masscan|zgrab|nuclei|dirbuster|gobuster|wfuzz|burp) [NC]
+  RewriteRule .* - [F,L]
+
+  # Block requests with suspicious query strings
+  RewriteCond %{QUERY_STRING} (union.*select|insert.*into|drop.*table|<script|javascript:|base64_decode) [NC]
+  RewriteRule .* - [F,L]
+
+  # Block path traversal attempts
+  RewriteCond %{REQUEST_URI} \.\./
+  RewriteRule .* - [F,L]
+</IfModule>
+
+# ── FORCE UTF-8 ────────────────────────────────────────────
+AddDefaultCharset UTF-8
+
+# ── SERVE WEBP WHERE THE BROWSER TAKES IT ─────────────────
+# Every JPEG and PNG the site references has a .webp sibling next to it,
+# generated at quality 82. Across the 81 images that is 11.4 MB of JPEG/PNG
+# against 6.7 MB of WebP — a 41% cut on an audience that is largely on mobile
+# data, for no change to a single <img> tag.
+#
+# Content negotiation rather than <picture> on purpose: the markup stays as it
+# is, and a browser that does not send Accept: image/webp (or a .webp that was
+# never generated) simply gets the original file. Delete the block and the
+# site carries on unchanged.
+#
+# Placed after the hotlink rule above so that check still sees the original
+# request. Vary: Accept is not optional — without it a shared cache can hand a
+# WebP body to a client that cannot decode it.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  # assets/icons/ is excluded and has no .webp siblings: iOS will not take a
+  # WebP as an apple-touch-icon, and the <link> tags declare type="image/png".
+  RewriteCond %{REQUEST_URI} !^/assets/icons/
+  # assets/social/ and the OG card are excluded for the same kind of reason:
+  # LinkedIn and WhatsApp send Accept: image/webp on their scraper requests but
+  # will not render a WebP share card. Those two paths stay JPEG whatever the
+  # Accept header says, so nobody can break link previews by dropping a .webp
+  # next to them later.
+  RewriteCond %{REQUEST_URI} !^/assets/social/
+  RewriteCond %{REQUEST_URI} !^/assets/brand/apshabd-og\.
+  # 1. the browser said it takes WebP
+  RewriteCond %{HTTP_ACCEPT} image/webp
+  # 2. the request is for a JPEG or PNG — %1 captures the path without it
+  RewriteCond %{REQUEST_FILENAME} ^(.+)\.(?:jpe?g|png)$ [NC]
+  # 3. and a sibling .webp actually exists
+  RewriteCond %1.webp -f
+  RewriteRule ^(.+)\.(?:jpe?g|png)$ $1.webp [NC,T=image/webp,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpe?g|png)$">
+    Header append Vary Accept
+  </FilesMatch>
+</IfModule>
+
+# ── PREVENT HOTLINKING OF VIDEOS/IMAGES ───────────────────
+# CAREFUL. This rule 403s any image or video whose Referer is not this site,
+# which means it fails closed on a domain it does not know about: serve the
+# same files from apshabd.com, or from a staging or preview host, and every
+# image on every page disappears while the HTML still loads fine. Add each
+# host the site is actually served from below before pointing DNS at it.
+#
+# %{HTTP_HOST} rather than a hardcoded name would be self-maintaining, but it
+# would also let any host that can reach this vhost hotlink freely, so the
+# list stays explicit.
+#
+# The empty-Referer condition is what keeps social preview scrapers working —
+# WhatsApp, LinkedIn and Slack fetch og:image with no Referer at all. Do not
+# remove it or every share card goes blank.
+<IfModule mod_rewrite.c>
+  RewriteCond %{HTTP_REFERER} !^$
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?pindropsilence\.com [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://(www\.)?apshabd\.com [NC]
+  RewriteCond %{HTTP_REFERER} !^https?://localhost(:[0-9]+)? [NC]
+  RewriteRule \.(mp4|jpg|jpeg|png|gif|webp|avif)$ - [F,NC]
+</IfModule>

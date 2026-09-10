@@ -1,0 +1,216 @@
+/* ═══════════════════════════════════════════════════════
+   PDS — DROP GRID
+   Garment plates that flip front↔back, with colourway
+   swatches. Shared across city pages; colours come from
+   each page's --acc / --bone / --ink.
+═══════════════════════════════════════════════════════ */
+
+.drop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+  gap: 30px;
+  perspective: 1600px;
+}
+
+.drop {
+  display: flex; flex-direction: column;
+  transform-style: preserve-3d;
+}
+
+/* ── PLATE ─────────────────────────────────────────────
+   Fixed 3:4 box matching the exported 900×1200 assets, so
+   the grid never reflows as images load. */
+/* The hover tilt is driven by JS on this element. Do NOT add a
+   transform transition here — JS writes it every frame, and a
+   transition would make the plate chase the pointer instead of
+   tracking it. */
+.drop-stage {
+  position: relative;
+  aspect-ratio: 3 / 4;
+  perspective: 1500px;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  transform-style: preserve-3d;
+  will-change: transform;
+  touch-action: manipulation;   /* no 300ms double-tap-zoom wait */
+}
+.drop-stage:focus-visible {
+  box-shadow: 0 0 0 2px var(--acc, #f5b301), 0 0 0 6px rgba(0,0,0,.4);
+}
+
+.drop-flip {
+  position: absolute; inset: 0;
+  transform-style: preserve-3d;
+  transition: transform .78s cubic-bezier(.2,.8,.2,1);
+  will-change: transform;
+}
+.drop.is-flipped .drop-flip { transform: rotateY(180deg); }
+
+.drop-face {
+  position: absolute; inset: 0;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #f4f2ee;
+  box-shadow: 0 18px 44px rgba(0,0,0,.42), 0 2px 0 rgba(255,255,255,.05) inset;
+}
+.drop-face--back { transform: rotateY(180deg); }
+
+.drop-face img {
+  display: block;
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: opacity .28s ease;
+}
+.drop-face img.is-swapping { opacity: 0; }
+
+/* FRONT / BACK chip */
+.drop-face-tag {
+  position: absolute; top: 12px; left: 12px;
+  font-family: var(--body, sans-serif);
+  font-size: .55rem; letter-spacing: .28em; font-weight: 700;
+  color: #1a1a1a;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(0,0,0,.14);
+  border-radius: 40px;
+  padding: 5px 11px;
+  backdrop-filter: blur(4px);
+}
+
+/* Flip prompt — always on, so touch users know the plate turns. */
+.drop-hint {
+  position: absolute; bottom: 14px; left: 50%;
+  display: inline-flex; align-items: center; gap: 7px;
+  font-size: .62rem; letter-spacing: .22em; font-weight: 700;
+  white-space: nowrap;
+  color: #0c0f18;
+  background: var(--acc, #f5b301);
+  border-radius: 40px;
+  padding: 9px 17px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.3);
+  pointer-events: none;
+  transform: translateX(-50%);
+  transition: box-shadow .3s;
+  animation: dropHintPulse 2.8s ease-in-out infinite;
+}
+.drop-hint::before {
+  content: '⟳';
+  font-size: .95rem; line-height: 0;
+  animation: dropHintSpin 2.8s ease-in-out infinite;
+}
+.drop-stage:hover .drop-hint,
+.drop-stage:focus-visible .drop-hint {
+  box-shadow: 0 10px 26px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.35);
+}
+@keyframes dropHintPulse {
+  0%, 72%, 100% { transform: translateX(-50%) scale(1); }
+  82%           { transform: translateX(-50%) scale(1.06); }
+}
+@keyframes dropHintSpin {
+  0%, 68%, 100% { transform: rotate(0); }
+  86%           { transform: rotate(180deg); }
+}
+
+/* ── INFO ──────────────────────────────────────────────── */
+.drop-info { padding: 18px 2px 0; }
+.drop-head {
+  display: flex; align-items: baseline; gap: 10px;
+  flex-wrap: wrap;
+}
+.drop-head h3 {
+  font-family: var(--display, sans-serif);
+  font-size: 1.35rem; letter-spacing: .06em;
+}
+.drop-head .rg { color: var(--acc); font-size: .95rem; }
+.drop-info > p {
+  margin-top: 7px;
+  font-size: .88rem; line-height: 1.6; opacity: .74;
+}
+
+/* ── COLOURWAYS ────────────────────────────────────────
+   Labelled and read out by name — a ring alone doesn't
+   survive a small phone screen. */
+.drop-ways-bar {
+  display: flex; align-items: center; gap: 10px;
+  flex-wrap: wrap;
+  margin-top: 18px;
+}
+.drop-ways-label {
+  font-size: .58rem; letter-spacing: .3em; font-weight: 700;
+  color: var(--acc);
+}
+.drop-ways-name {
+  font-size: .68rem; letter-spacing: .16em; font-weight: 700;
+  text-transform: uppercase;
+  padding: 5px 11px;
+  border-radius: 40px;
+  border: 1px solid rgba(255,255,255,.22);
+  background: rgba(255,255,255,.07);
+}
+.drop-ways {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-top: 12px;
+}
+/* 44px — the smallest reliable thumb target. */
+.way {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--sw, #888);
+  border: 2px solid rgba(255,255,255,.62);
+  box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.45);
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  opacity: .72;
+  touch-action: manipulation;   /* no 300ms double-tap-zoom wait */
+  -webkit-tap-highlight-color: transparent;
+  transition: transform .28s cubic-bezier(.2,.8,.2,1),
+              opacity .28s, box-shadow .28s, border-color .28s;
+}
+.way::after {
+  content: '';
+  position: absolute; inset: -7px;
+  border-radius: 50%;
+  border: 2px solid var(--acc);
+  opacity: 0;
+  transform: scale(.72);
+  transition: opacity .28s, transform .28s cubic-bezier(.2,.8,.2,1);
+}
+/* Hover only where hover is real. On touch, :hover sticks after
+   a tap — the swatch you poked stays lifted and fully opaque,
+   so two swatches read as selected at once. */
+@media (hover: hover) and (pointer: fine) {
+  .way:hover { opacity: 1; transform: translateY(-3px) scale(1.08); }
+}
+.way.is-on {
+  opacity: 1;
+  transform: scale(1.06);
+  border-color: #fff;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 6px 16px rgba(0,0,0,.5);
+}
+.way.is-on::after { opacity: 1; transform: scale(1); }
+.way:focus-visible { outline: none; opacity: 1; }
+.way:focus-visible::after { opacity: 1; transform: scale(1); }
+
+/* ── REDUCED MOTION ────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .drop { transform: none !important; }
+  .drop-flip { transition: none; }
+  .way { transition: none; }
+  .drop-hint {
+    transition: none;
+    animation: none;
+    transform: translateX(-50%);
+  }
+  .drop-hint::before { animation: none; }
+}
+
+/* ── MOBILE ────────────────────────────────────────────── */
+@media (max-width: 560px) {
+  .drop-grid { grid-template-columns: 1fr; gap: 26px; }
+  .drop-head h3 { font-size: 1.2rem; }
+  .way { width: 48px; height: 48px; }           /* easier tap target */
+  .drop-ways { gap: 18px; }
+}

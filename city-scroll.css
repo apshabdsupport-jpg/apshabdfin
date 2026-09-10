@@ -1,0 +1,91 @@
+/* ═══════════════════════════════════════════════════════
+   PDS — CITY SCROLL ANIMATION  (shared across all cities)
+   Sharp, minimalistic, scroll-linked
+═══════════════════════════════════════════════════════ */
+
+/* ── SCROLL PROGRESS BAR ─────────────────────────────── */
+/* Thin accent line that fills from left → right as user scrolls */
+#scroll-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 2px;
+  width: 0%;           /* driven by JS */
+  background: var(--acc, #f5b301);
+  z-index: 200;
+  transition: width .05s linear;
+  will-change: width;
+}
+
+/* ── SCROLL-CLIPPING BIG WORD ────────────────────────── */
+/* The huge bg-word clips from fully invisible → visible as user scrolls down */
+.bg-word {
+  /* clip path driven by scroll via CSS variable --clip-pct */
+  --clip-pct: 0%;
+  -webkit-clip-path: inset(0 calc(100% - var(--clip-pct)) 0 0);
+          clip-path: inset(0 calc(100% - var(--clip-pct)) 0 0);
+  transition: clip-path .04s linear;
+}
+
+/* The travelling horizontal scan line was removed — a glowing
+   rule sweeping across body copy made the page hard to read. */
+
+/* ── SECTION TRANSITIONS ─────────────────────────────── */
+/* Each section flips toward viewer and fades in */
+.section-anim {
+  opacity: 0;
+  transform: perspective(1000px) rotateX(4deg) translateY(48px) translateZ(-30px);
+  transform-origin: center bottom;
+  transition: opacity .9s cubic-bezier(.22,1,.36,1),
+              transform .9s cubic-bezier(.22,1,.36,1);
+}
+.section-anim.in {
+  opacity: 1;
+  transform: perspective(1000px) rotateX(0) translateY(0) translateZ(0);
+}
+
+/* ── CARD REVEAL (stagger) ───────────────────────────── */
+.card.reveal-card {
+  opacity: 0;
+  transform: perspective(800px) rotateX(5deg) translateY(30px) scale(.97);
+  transform-origin: center bottom;
+  transition: opacity .7s cubic-bezier(.22,1,.36,1),
+              transform .7s cubic-bezier(.22,1,.36,1);
+}
+.card.reveal-card.in {
+  opacity: 1;
+  transform: perspective(800px) rotateX(0) translateY(0) scale(1);
+}
+
+/* ── PARALLAX MARQUEE ────────────────────────────────── */
+/* Marquee speed driven by scroll via JS */
+.marquee-track[data-scroll-driven] {
+  /* overridden inline by JS */
+}
+
+/* ── CITY NAME STAMP (scroll-reveal clip) ────────────── */
+/* The section heading h2 clips reveal from bottom up */
+.clip-reveal {
+  overflow: hidden;
+  display: block;
+}
+.clip-reveal-inner {
+  display: block;
+  transform: translateY(100%);
+  transition: transform .85s cubic-bezier(.22,1,.36,1);
+}
+.clip-reveal.in .clip-reveal-inner {
+  transform: translateY(0);
+}
+
+/* ── WAIT / CTA SECTION ──────────────────────────────── */
+/* Dashed animated border */
+.wait.animated-border {
+  position: relative;
+}
+.wait.animated-border::before {
+  content: '';
+  position: absolute; inset: 6px;
+  border: 1px dashed rgba(255,255,255,.1);
+  pointer-events: none;
+  border-radius: 2px;
+}

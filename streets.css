@@ -1,0 +1,275 @@
+/* ═══════════════════════════════════════════════════════
+   PIN DROP SILENCE — SHOT ON LOCATION
+   Campaign photography as physical prints: bone borders,
+   ink captions, a slightly slapped-on tilt. Shared by the
+   Chennai and Mumbai pages; colour comes from each page's
+   own --acc.
+═══════════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════════
+   THE FACES — campaign hero portraits
+   These are posed, print-to-camera lookbook frames (unlike
+   the candid print wall below), so they get room: one big
+   portrait per row, alternating sides, with the neighbourhood
+   set large beside it.
+═══════════════════════════════════════════════════════ */
+
+.faces {
+  position:relative; z-index:2;
+  padding:104px 6vw 96px;
+  max-width:1300px; margin:0 auto;
+}
+
+.faces-head {
+  display:flex; align-items:baseline; justify-content:space-between;
+  gap:20px; flex-wrap:wrap;
+  padding-bottom:22px; margin-bottom:74px;
+  border-bottom:1px solid var(--glass-b, rgba(255,255,255,.12));
+}
+.faces-head h2 {
+  font-family:var(--display);
+  font-size:clamp(1.8rem, 4.5vw, 3.2rem); line-height:1;
+}
+.faces-head span {
+  font-size:.6rem; letter-spacing:.36em;
+  color:var(--acc);
+}
+
+.face {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  align-items:center;
+  gap:clamp(30px, 5vw, 76px);
+}
+.face + .face { margin-top:clamp(60px, 8vw, 116px); }
+/* Alternate which side the portrait sits on. nth-of-type, not
+   nth-child — .faces-head is the section's first child and would
+   otherwise flip the whole sequence. */
+.face:nth-of-type(even) .face-shot { order:2; }
+
+.face-shot {
+  position:relative;
+  overflow:hidden;
+  border-radius:4px;
+}
+.face-shot img {
+  display:block; width:100%; height:auto;
+  filter:saturate(.96) contrast(1.03);
+  transform:scale(1.02);
+  transition:transform 1.1s var(--ease-spring, cubic-bezier(.2,.8,.2,1));
+}
+.face:hover .face-shot img { transform:scale(1.06); }
+
+/* a thin accent rule that draws in along the frame's edge */
+.face-shot::after {
+  content:'';
+  position:absolute; left:0; right:0; bottom:0;
+  height:3px;
+  background:var(--acc);
+  transform:scaleX(.16); transform-origin:left;
+  transition:transform .9s var(--ease-spring, cubic-bezier(.2,.8,.2,1));
+}
+.face:hover .face-shot::after { transform:scaleX(1); }
+
+.face-copy { max-width:34ch; }
+.face-code {
+  display:inline-block;
+  font-size:.56rem; letter-spacing:.34em; font-weight:700;
+  color:var(--acc);
+  border:1px solid color-mix(in srgb, var(--acc) 40%, transparent);
+  padding:6px 12px; border-radius:2px;
+  margin-bottom:22px;
+}
+.face-name {
+  font-family:var(--display);
+  font-size:clamp(2.4rem, 6.5vw, 5rem);
+  line-height:.9;
+  margin-bottom:6px;
+}
+.face-script {
+  display:block;
+  font-size:clamp(1rem, 2.2vw, 1.5rem); font-weight:700;
+  color:var(--acc);
+  margin-bottom:22px;
+}
+.face-line {
+  font-size:1rem; line-height:1.85; font-weight:300;
+  color:color-mix(in srgb, var(--bone, #efeae0) 76%, transparent);
+}
+.face-role {
+  display:block; margin-top:20px;
+  font-size:.58rem; letter-spacing:.3em; font-weight:700;
+  color:color-mix(in srgb, var(--bone, #efeae0) 45%, transparent);
+}
+
+@media (max-width:820px) {
+  .faces { padding:70px 20px 64px; }
+  .faces-head { margin-bottom:44px; }
+  .face {
+    grid-template-columns:1fr;
+    gap:26px;
+  }
+  /* on one column the portrait always leads */
+  .face:nth-of-type(even) .face-shot { order:0; }
+  .face + .face { margin-top:64px; }
+  .face-copy { max-width:none; }
+  .face-line { font-size:.92rem; }
+}
+
+.streets {
+  position:relative; z-index:2;
+  padding:110px 6vw;
+  max-width:1300px; margin:0 auto;
+  border-top:1px solid var(--glass-b, rgba(255,255,255,.12));
+}
+
+.streets-head { margin-bottom:64px; max-width:640px; }
+.streets-label {
+  display:inline-block;
+  font-size:.6rem; letter-spacing:.4em; font-weight:700;
+  color:var(--acc);
+  border:1px solid color-mix(in srgb, var(--acc) 45%, transparent);
+  padding:8px 16px; border-radius:3px;
+  margin-bottom:20px;
+}
+.streets-head h2 {
+  font-family:var(--display);
+  font-size:clamp(2.2rem, 5.5vw, 4.4rem); line-height:.95;
+  margin-bottom:14px;
+}
+.streets-head p {
+  font-size:.95rem; line-height:1.8; font-weight:300;
+  color:color-mix(in srgb, var(--bone, #efeae0) 72%, transparent);
+}
+
+/* ── THE PRINTS ──────────────────────────────────────── */
+/* A print wall, not a grid: the shots are 9:16, 2:3 and 4:5, so
+   columns let each keep its true shape instead of being cropped to
+   a common rectangle. Uneven bottoms read as prints laid on a table. */
+.streets-grid {
+  columns:3;
+  column-gap:30px;
+}
+.street-print { break-inside:avoid; margin-bottom:34px; }
+
+.street-print {
+  --tilt:0deg;
+  margin:0;
+  transform:rotate(var(--tilt));
+  transition:transform .5s var(--ease-spring, cubic-bezier(.2,.8,.2,1)),
+             filter .5s;
+  filter:drop-shadow(0 14px 28px rgba(0,0,0,.5));
+}
+/* editorial rhythm: each print sits at its own slight angle */
+.street-print:nth-child(3n+1) { --tilt:-1.4deg; }
+.street-print:nth-child(3n+2) { --tilt:1.1deg; }
+.street-print:nth-child(3n)   { --tilt:-.7deg; }
+
+.street-print:hover {
+  transform:rotate(0deg) translateY(-8px);
+  filter:drop-shadow(0 24px 44px rgba(0,0,0,.6))
+         drop-shadow(0 0 26px color-mix(in srgb, var(--acc) 22%, transparent));
+  z-index:2;
+}
+
+/* the physical print: bone border, image, ink caption */
+.street-frame {
+  background:var(--bone, #efeae0);
+  padding:10px 10px 0;
+  border-radius:3px;
+}
+.street-frame img {
+  display:block; width:100%; height:auto;
+  filter:saturate(.94) contrast(1.02);
+}
+
+.street-cap {
+  display:flex; align-items:baseline; gap:10px;
+  background:var(--bone, #efeae0);
+  border-radius:0 0 3px 3px;
+  padding:12px 12px 14px;
+  color:#161310;
+}
+.street-loc {
+  font-family:var(--display);
+  font-size:.88rem; letter-spacing:.12em;
+  color:#161310;
+  white-space:nowrap;
+}
+.street-loc .rg {
+  font-family:inherit;
+  font-size:.8em; font-weight:700;
+  color:color-mix(in srgb, var(--acc) 78%, #161310);
+  margin-left:6px;
+}
+.street-role {
+  margin-left:auto;
+  font-family:var(--body);
+  font-size:.56rem; letter-spacing:.26em; font-weight:700;
+  color:#161310; opacity:.5;
+  white-space:nowrap;
+}
+
+/* Mumbai's triptych: three frames of the same 2:3 stock, so these
+   can sit as a true row — centre one raised. */
+.streets-grid.trio {
+  columns:auto;
+  display:grid; grid-template-columns:repeat(3, 1fr);
+  gap:30px; align-items:start;
+}
+.streets-grid.trio .street-print { margin-bottom:0; }
+.streets-grid.trio .street-print:nth-child(2) {
+  transform:rotate(var(--tilt)) translateY(-26px);
+}
+.streets-grid.trio .street-print:nth-child(2):hover {
+  transform:rotate(0deg) translateY(-34px);
+}
+
+/* ── FOOT LINE ───────────────────────────────────────── */
+.streets-foot {
+  margin-top:84px;
+  text-align:center;
+  font-size:.62rem; letter-spacing:.34em; color:var(--acc);
+  opacity:.75;
+}
+
+/* ── MOBILE: SWIPEABLE STRIP ─────────────────────────── */
+@media (max-width:820px) {
+  .streets { padding:70px 0 76px; }
+  .streets-head { padding:0 20px; margin-bottom:40px; }
+
+  /* phones get a swipeable strip of prints, one at a time */
+  .streets-grid,
+  .streets-grid.trio {
+    columns:auto;
+    display:flex;
+    grid-template-columns:none;
+    overflow-x:auto;
+    scroll-snap-type:x mandatory;
+    -webkit-overflow-scrolling:touch;
+    gap:18px;
+    padding:14px 9vw 30px;
+    scrollbar-width:none;
+  }
+  .streets-grid::-webkit-scrollbar { display:none; }
+
+  .street-print,
+  .streets-grid.trio .street-print:nth-child(2) {
+    flex:0 0 76vw;
+    scroll-snap-align:center;
+    margin-bottom:0;
+    transform:rotate(var(--tilt));
+  }
+
+  .streets-foot { margin-top:26px; padding:0 20px; }
+}
+
+@media (max-width:480px) {
+  .street-loc { font-size:.8rem; }
+  .street-role { font-size:.52rem; letter-spacing:.2em; }
+}
+
+/* ── REDUCED MOTION ──────────────────────────────────── */
+@media (prefers-reduced-motion:reduce) {
+  .street-print, .street-print:hover { transition:none; }
+}

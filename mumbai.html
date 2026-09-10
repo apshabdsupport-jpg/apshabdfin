@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APSHABD — MUMBAI · शांतता</title>
+  <meta name="theme-color" content="#0a1226" />
+  <meta name="description" content="APSHABD Mumbai - Local trains at dawn, the sea at dusk, and the silence between two stops." />
+  <link rel="canonical" href="https://apshabd.com/mumbai.html" />
+
+  <!-- Icons. One square mark, every surface: browser tab, iOS home screen,
+       Android install prompt. See assets/icons/. -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+
+  <!-- Share card. Without these a link pasted into WhatsApp, Instagram DMs or
+       LinkedIn renders as a bare grey rectangle. Absolute URLs are required:
+       most scrapers do not resolve relative ones. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="APSHABD" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:url" content="https://apshabd.com/mumbai.html" />
+  <meta property="og:title" content="APSHABD - Mumbai / BOM 02" />
+  <meta property="og:description" content="APSHABD Mumbai - Local trains at dawn, the sea at dusk, and the silence between two stops." />
+  <meta property="og:image" content="https://apshabd.com/assets/social/og-mumbai.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="The APSHABD Bandra tee at a Mumbai fruit stall, over the word MUMBAI" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="APSHABD - Mumbai / BOM 02" />
+  <meta name="twitter:description" content="APSHABD Mumbai - Local trains at dawn, the sea at dusk, and the silence between two stops." />
+  <meta name="twitter:image" content="https://apshabd.com/assets/social/og-mumbai.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <!-- DotGothic16 is a dot-matrix face and Silkscreen a bitmap one: together
+       they carry the green carriage indicators below the masthead. -->
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;700&family=DotGothic16&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href=".//mumbai.css?v=3" />
+  <link rel="stylesheet" href=".//drop.css?v=4" />
+  <link rel="stylesheet" href=".//streets.css?v=5" />
+  <link rel="stylesheet" href=".//city-brand.css?v=10" />
+  <!-- Last: city-brand.css hides .marquee and kills animation, and the
+       carriage indicators have to win. -->
+  <link rel="stylesheet" href=".//train-board.css?v=1" />
+  <link rel="stylesheet" href=".//brutal.css?v=4" />
+  <link rel="stylesheet" href=".//cart.css?v=1" />
+</head>
+<body>
+  <div class="rails" aria-hidden="true"></div>
+  <div class="bg-word" aria-hidden="true">शांतता</div>
+  <div class="grain" aria-hidden="true"></div>
+  <a class="skip-link" href="#drop">Skip to the drop</a>
+
+
+  <nav class="nav glass">
+    <a href="index.html" class="back">← APSHABD HOME</a>
+    <span class="logo-tile"><img src="assets/brand/apshabd-wordmark-cream.png" alt="APSHABD" /></span>
+    <span class="nav-city">MUMBAI · 02</span>
+  </nav>
+
+  <header class="hero" style="transform-style:preserve-3d;perspective:1200px;">
+    <p class="eyebrow reveal">MAXIMUM CITY · कधीही न झोपणारं शहर</p>
+    <h1 class="hero-title">
+      <span class="reveal depth-layer" data-depth="0.8">MUM</span>
+      <span class="reveal outline depth-layer" data-depth="1.2">BAI</span>
+    </h1>
+    <p class="hero-sub reveal">Seven islands, zero pauses. The only silence here<br />is the second before the local doors open.</p>
+    <a href="#drop" class="cta reveal">CATCH THE DROP ↓</a>
+  </header>
+
+  <!-- Twin carriage indicators running opposite ways — two locals passing,
+       one fast, one slow. Both halves of each track are identical: the
+       keyframes travel 50%, so the loop only closes if they match. -->
+  <div class="marquee train-board m-up" aria-hidden="true">
+    <div class="tb-inner">
+      <span class="tb-mode">Fast</span>
+      <div class="tb-screen">
+        <div class="marquee-track">
+          <span>Bandra <b class="tb-sep">•</b> Andheri <b class="tb-sep">•</b> Colaba <b class="tb-sep">•</b> Dadar <b class="tb-sep">•</b> Juhu <b class="tb-sep">•</b> Lower Parel <b class="tb-sep">•</b> Versova <b class="tb-sep">•</b> Powai <b class="tb-sep">•</b> Thane <b class="tb-sep">•</b> </span>
+          <span>Bandra <b class="tb-sep">•</b> Andheri <b class="tb-sep">•</b> Colaba <b class="tb-sep">•</b> Dadar <b class="tb-sep">•</b> Juhu <b class="tb-sep">•</b> Lower Parel <b class="tb-sep">•</b> Versova <b class="tb-sep">•</b> Powai <b class="tb-sep">•</b> Thane <b class="tb-sep">•</b> </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="marquee train-board m-down" aria-hidden="true">
+    <div class="tb-inner">
+      <span class="tb-mode">Slow</span>
+      <div class="tb-screen">
+        <div class="marquee-track rev">
+          <span>Churchgate <b class="tb-sep">•</b> Marine Lines <b class="tb-sep">•</b> Borivali <b class="tb-sep">•</b> Ghatkopar <b class="tb-sep">•</b> Khar <b class="tb-sep">•</b> Matunga <b class="tb-sep">•</b> Chembur <b class="tb-sep">•</b> Fort <b class="tb-sep">•</b> Worli <b class="tb-sep">•</b> </span>
+          <span>Churchgate <b class="tb-sep">•</b> Marine Lines <b class="tb-sep">•</b> Borivali <b class="tb-sep">•</b> Ghatkopar <b class="tb-sep">•</b> Khar <b class="tb-sep">•</b> Matunga <b class="tb-sep">•</b> Chembur <b class="tb-sep">•</b> Fort <b class="tb-sep">•</b> Worli <b class="tb-sep">•</b> </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE FACES ── -->
+  <section class="faces" id="faces">
+    <div class="faces-head reveal">
+      <h2>THE FACES OF DROP 001</h2>
+      <span>CAMPAIGN 001 · MUMBAI</span>
+    </div>
+
+    <article class="face reveal">
+      <div class="face-shot">
+        <img src=".//assets/campaign/web/mumbai-bandra-fruit-stall.jpg"
+             alt="Man drinking fresh juice outside a fruit stall in the Bandra tee"
+             loading="lazy" width="1122" height="1402" />
+      </div>
+      <div class="face-copy">
+        <span class="face-code">MUMBAI DROP 001</span>
+        <h3 class="face-name">BANDRA</h3>
+        <span class="face-script rg">वांद्रे</span>
+        <p class="face-line">A fresh mosambi at the stall by the station. Cap on, shades
+          down, nowhere urgent to be — which in this city is the real flex.</p>
+        <span class="face-role">THE REGULAR</span>
+      </div>
+    </article>
+
+    <article class="face reveal">
+      <div class="face-shot">
+        <img src=".//assets/campaign/web/mumbai-dadar-skateboard.jpg"
+             alt="Sadhu balancing on a skateboard under an archway in the Dadar tee"
+             loading="lazy" width="1122" height="1402" />
+      </div>
+      <div class="face-copy">
+        <span class="face-code">MUMBAI DROP 001</span>
+        <h3 class="face-name">DADAR</h3>
+        <span class="face-script rg">दादर</span>
+        <p class="face-line">Balance is balance, whichever century you learned it in.
+          The board is new. The stance is not.</p>
+        <span class="face-role">THE BALANCE</span>
+      </div>
+    </article>
+
+    <article class="face reveal">
+      <div class="face-shot">
+        <img src=".//assets/campaign/web/mumbai-colaba-balloons.jpg"
+             alt="Balloon seller against a blue shutter wearing the Colaba tee"
+             loading="lazy" width="1003" height="1568" />
+      </div>
+      <div class="face-copy">
+        <span class="face-code">MUMBAI DROP 001</span>
+        <h3 class="face-name">COLABA</h3>
+        <span class="face-script rg">कुलाबा</span>
+        <p class="face-line">Heart-shaped and helium-light, against a shutter that's been
+          that exact blue since long before the causeway got expensive.</p>
+        <span class="face-role">THE BALLOON SELLER</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="section" id="drop" tabindex="-1">
+    <div class="section-head reveal">
+      <span class="stamp">MUMBAI DROP 001</span>
+      <h2>ISLAND CITY UNIFORM</h2>
+      <p>Five neighbourhoods, five stories. Tap a tee to turn it over.</p>
+    </div>
+
+    <div class="drop-grid" data-city="mumbai">
+
+      <!-- 01 · BANDRA -->
+      <article class="drop reveal" data-loc="bandra">
+        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
+             aria-label="Bandra tee — activate to see the back" data-cursor="FLIP">
+          <div class="drop-flip">
+            <div class="drop-face drop-face--front">
+              <img src=".//assets/mumbai/bandra/faded-navy-front.jpg" alt="Bandra tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">FRONT</span>
+            </div>
+            <div class="drop-face drop-face--back">
+              <img src=".//assets/mumbai/bandra/faded-navy-back.jpg" alt="Bandra tee, back" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">BACK</span>
+            </div>
+          </div>
+          <span class="drop-hint">TAP TO FLIP</span>
+        </div>
+        <div class="drop-info">
+          <div class="drop-head">
+            <h3>BANDRA</h3>
+            <span class="rg">वांद्रे</span>
+          </div>
+          <p>Station arches, a momo sign with an attitude, and the last train home.</p>
+          <div class="drop-ways" role="group" aria-label="Bandra colourways">
+            <button type="button" class="way" data-cw="white"              style="--sw:#f4f2ee" aria-label="White"></button>
+            <button type="button" class="way" data-cw="charcoal-grey"      style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
+            <button type="button" class="way is-on" data-cw="faded-navy"   style="--sw:#2f3b52" aria-label="Faded navy"></button>
+            <button type="button" class="way" data-cw="vintage-cream"      style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+            <button type="button" class="way" data-cw="washed-black"       style="--sw:#2b2b2d" aria-label="Washed black"></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 02 · COLABA -->
+      <article class="drop reveal" data-loc="colaba">
+        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
+             aria-label="Colaba tee — activate to see the back" data-cursor="FLIP">
+          <div class="drop-flip">
+            <div class="drop-face drop-face--front">
+              <img src=".//assets/mumbai/colaba/muted-teal-front.jpg" alt="Colaba tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">FRONT</span>
+            </div>
+            <div class="drop-face drop-face--back">
+              <img src=".//assets/mumbai/colaba/muted-teal-back.jpg" alt="Colaba tee, back" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">BACK</span>
+            </div>
+          </div>
+          <span class="drop-hint">TAP TO FLIP</span>
+        </div>
+        <div class="drop-info">
+          <div class="drop-head">
+            <h3>COLABA</h3>
+            <span class="rg">कुलाबा</span>
+          </div>
+          <p>Leopold's, Mondegar, Metro House — and jhumkas hanging off the causeway.</p>
+          <div class="drop-ways" role="group" aria-label="Colaba colourways">
+            <button type="button" class="way" data-cw="white"             style="--sw:#f4f2ee" aria-label="White"></button>
+            <button type="button" class="way" data-cw="charcoal-grey"     style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
+            <button type="button" class="way" data-cw="faded-navy"        style="--sw:#2f3b52" aria-label="Faded navy"></button>
+            <button type="button" class="way is-on" data-cw="muted-teal"  style="--sw:#3d6b6a" aria-label="Muted teal"></button>
+            <button type="button" class="way" data-cw="vintage-cream"     style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+          </div>
+        </div>
+      </article>
+
+      <!-- 03 · DADAR -->
+      <article class="drop reveal" data-loc="dadar">
+        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
+             aria-label="Dadar tee — activate to see the back" data-cursor="FLIP">
+          <div class="drop-flip">
+            <div class="drop-face drop-face--front">
+              <img src=".//assets/mumbai/dadar/deep-maroon-front.jpg" alt="Dadar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">FRONT</span>
+            </div>
+            <div class="drop-face drop-face--back">
+              <img src=".//assets/mumbai/dadar/deep-maroon-back.jpg" alt="Dadar tee, back" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">BACK</span>
+            </div>
+          </div>
+          <span class="drop-hint">TAP TO FLIP</span>
+        </div>
+        <div class="drop-info">
+          <div class="drop-head">
+            <h3>DADAR</h3>
+            <span class="rg">दादर</span>
+          </div>
+          <p>Shivaji Park, Siddhivinayak, and the flower market before sunrise.</p>
+          <div class="drop-ways" role="group" aria-label="Dadar colourways">
+            <button type="button" class="way" data-cw="white"              style="--sw:#f4f2ee" aria-label="White"></button>
+            <button type="button" class="way is-on" data-cw="deep-maroon"  style="--sw:#5c2029" aria-label="Deep maroon"></button>
+            <button type="button" class="way" data-cw="forest-green"       style="--sw:#2c4433" aria-label="Forest green"></button>
+            <button type="button" class="way" data-cw="jet-black"          style="--sw:#1c1c1e" aria-label="Jet black"></button>
+            <button type="button" class="way" data-cw="vintage-cream"      style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wait glass reveal">
+      <span class="stamp">LAUNCHING SOON</span>
+      <h2>शांतता. THEN THE DROP.</h2>
+      <p>The city that never sleeps will wake up to this.</p>
+      <a href="index.html#cities" class="cta">BACK TO THE MAP</a>
+    </div>
+  </section>
+
+  <!-- ── SHOT ON LOCATION ── -->
+  <section class="streets" id="streets">
+    <div class="streets-head reveal">
+      <span class="streets-label">CAMPAIGN 001 · SHOT ON LOCATION</span>
+      <h2>BOMBAY,<br />DOCUMENTED.</h2>
+      <p>From the 8:14 local to the last cut of the evening — the city wore it
+         before anyone else could. Everyone in these frames is wearing their own area.</p>
+    </div>
+
+    <div class="streets-grid trio">
+      <figure class="street-print reveal">
+        <div class="street-frame">
+          <img src=".//assets/campaign/web/06-mumbai-andheri-dadar-colaba-train.jpg"
+               alt="Three commuters at a local train door wearing APSHABD Andheri, Dadar and Colaba tees"
+               loading="lazy" width="1023" height="1537" />
+        </div>
+        <figcaption class="street-cap">
+          <span class="street-loc">ANDHERI × DADAR × COLABA</span>
+          <span class="street-role">THE 8:14 LOCAL</span>
+        </figcaption>
+      </figure>
+
+      <figure class="street-print reveal">
+        <div class="street-frame">
+          <img src=".//assets/campaign/web/07-mumbai-bandra-thane-barber.jpg"
+               alt="Barber shop scene in Bandra with APSHABD neighbourhood tees"
+               loading="lazy" width="1023" height="1537" />
+        </div>
+        <figcaption class="street-cap">
+          <span class="street-loc">BANDRA<i class="rg">वांद्रे</i></span>
+          <span class="street-role">THE BARBER</span>
+        </figcaption>
+      </figure>
+
+      <figure class="street-print reveal">
+        <div class="street-frame">
+          <img src=".//assets/campaign/web/02-mumbai-thane-fisherman.jpg"
+               alt="Fisherman by the Thane creek wearing the APSHABD Thane tee"
+               loading="lazy" width="1024" height="1535" />
+        </div>
+        <figcaption class="street-cap">
+          <span class="street-loc">THANE<i class="rg">ठाणे</i></span>
+          <span class="street-role">THE FISHERMAN</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <p class="streets-foot reveal">WORN BY THE CITY FIRST · MUMBAI</p>
+  </section>
+
+  <!-- ── TYPEWRITER PROMPT ── -->
+  <section class="typewriter-section" data-words="location|जगह">
+    <p class="typewriter-text">
+      Which <span class="tw-quote">'</span><span class="tw-word-wrap"><span class="tw-word" lang="hi">जगह</span></span><span class="tw-quote">'</span> would you like for us to add in your city wardrobe, do let us know.
+    </p>
+    <div class="typewriter-cta">
+      <a href="drop-a-pin.html" class="tw-cta" data-cursor="DROP"><span>DROP A PIN →</span></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <a class="city-footer-brand" href="index.html" aria-label="APSHABD home"><img src="assets/brand/apshabd-wordmark-night.png" alt="" /></a>
+    <p>APSHABD — MUMBAI · <span class="rg">शांत रहा</span></p>
+  </footer>
+
+
+  <script src=".//cart.js?v=1"></script>
+  <script src=".//mumbai.js"></script>
+  <script src=".//drop.js?v=5"></script>
+</body>
+</html>

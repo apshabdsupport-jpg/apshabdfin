@@ -1,0 +1,510 @@
+/* Destination half of the cross-document view transition opted into by
+   styles.css. Loaded by all seven city pages, so this covers each of them.
+   Must match the outgoing page's opt-in or the transition will not fire. */
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation: vt-out 200ms cubic-bezier(0.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: vt-in 340ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+}
+
+@font-face {
+  font-family: "Trench Slab";
+  src: url("assets/fonts/trench-slab/TrenchSlab-Regular.woff2") format("woff2"),
+       url("assets/fonts/trench-slab/TrenchSlab-Regular.woff") format("woff");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+:root {
+  --ap-night: #000f08;
+  --ap-cream: #f3e6d0;
+  --ap-heritage: #c4ac90;
+  --ap-red: #fb3640;
+  --ink: var(--ap-night);
+  --bone: var(--ap-heritage);
+  --body: "Trench Slab", "Space Grotesk", sans-serif;
+  --glass: rgba(0, 15, 8, 0.7);
+  --glass-b: rgba(243, 230, 208, 0.22);
+  --acc: var(--ap-red);
+  --acc2: var(--ap-heritage);
+  --copper: var(--ap-red);
+  --stone: var(--ap-night);
+  --violet: var(--ap-heritage);
+}
+
+html { scroll-behavior: auto; }
+
+*,
+*::before,
+*::after {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--ap-night);
+  color: var(--ap-heritage);
+  font-family: var(--body);
+}
+
+/* The city collection now uses one quiet, editorial brand system.
+   Local character comes from the photography, copy and native script. */
+.grain,
+.bg-word,
+.rails,
+.cybergrid,
+.truss,
+.jali,
+.marquee,
+.cursor,
+.cursor-dot,
+.scroll-progress,
+.holo-layer,
+.holo-card::before,
+.holo-card::after { display: none !important; }
+
+.reveal,
+.tw-hidden,
+.tw-visible {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+}
+
+.hero-title,
+.hero-kicker,
+.hero-copy,
+.hero .eyebrow,
+.hero .stamp,
+.card,
+.product,
+.drop,
+.story-panel {
+  filter: none !important;
+  text-shadow: none !important;
+  box-shadow: none !important;
+}
+
+.hero-title,
+.hero h1,
+.display { color: var(--ap-cream) !important; }
+
+.eyebrow,
+.stamp,
+.rg,
+.accent,
+.card .num,
+.drop-num { color: var(--ap-red) !important; }
+
+.card,
+.product,
+.story-panel,
+.drop-stage {
+  background: var(--ap-night) !important;
+  border-color: rgba(243, 230, 208, 0.24) !important;
+}
+
+.nav.glass {
+  top: 0;
+  left: 0;
+  right: 0;
+  min-height: 70px;
+  padding: 0 clamp(18px, 3vw, 46px);
+  border: 0;
+  border-bottom: 1px solid rgba(243, 230, 208, 0.2);
+  border-radius: 0;
+  background: rgba(0, 15, 8, 0.92);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+.back {
+  color: var(--ap-cream);
+  font-weight: 400;
+  letter-spacing: 0.14em;
+}
+
+.back:hover,
+.back:focus-visible {
+  color: var(--ap-red);
+  letter-spacing: 0.18em;
+}
+
+.logo-tile,
+.logo-tile:hover,
+.logo-tile:focus-visible {
+  position: absolute;
+  left: 50%;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  transform: translateX(-50%);
+}
+
+.logo-tile:hover,
+.logo-tile:focus-visible { transform: translateX(-50%); }
+
+.logo-tile img {
+  width: clamp(116px, 10vw, 150px);
+  height: auto;
+}
+
+.nav-city {
+  color: var(--ap-heritage);
+  letter-spacing: 0.2em;
+}
+
+.hero { padding-top: 118px; }
+
+.glass {
+  background-color: rgba(0, 15, 8, 0.62);
+  border-color: rgba(243, 230, 208, 0.2);
+}
+
+.cta,
+.tw-cta {
+  border-color: var(--ap-red);
+  border-radius: 0;
+}
+
+.typewriter-section {
+  padding: clamp(76px, 8vw, 120px) clamp(20px, 5vw, 72px);
+  border-top: 1px solid rgba(243, 230, 208, 0.2);
+  background: var(--ap-night);
+}
+
+.typewriter-text {
+  max-width: 920px;
+  margin: 0;
+  color: var(--ap-heritage);
+  font-family: var(--body);
+  font-size: clamp(1.1rem, 2.2vw, 1.55rem);
+  line-height: 1.65;
+}
+
+.tw-word-wrap {
+  display: inline;
+  min-width: 0;
+  min-height: 0;
+  vertical-align: baseline;
+}
+
+.tw-word,
+.tw-quote { color: var(--ap-red); }
+
+.tw-word {
+  line-height: inherit;
+  white-space: nowrap;
+}
+
+.tw-quote { margin-inline: 0.035em; }
+
+.tw-cursor { display: none; }
+
+.typewriter-cta { margin-top: 32px; }
+
+.tw-cta {
+  display: inline-flex;
+  min-height: 48px;
+  padding: 0 22px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--ap-red);
+  background: transparent;
+  color: var(--ap-cream);
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  line-height: 1;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.tw-cta:hover,
+.tw-cta:focus-visible {
+  background: var(--ap-red);
+  color: var(--ap-night);
+  outline: none;
+}
+
+.drop-stage {
+  cursor: default !important;
+  transform: none !important;
+}
+
+.drop-flip { transition: none !important; }
+.drop-hint { display: none !important; }
+.drop-face img { transition: none !important; }
+
+.drop-view-controls {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.drop-view-button {
+  min-height: 44px;
+  border: 1px solid rgba(243, 230, 208, 0.45);
+  border-radius: 0;
+  background: transparent;
+  color: var(--ap-cream);
+  font: inherit;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.drop-view-button:hover,
+.drop-view-button:focus-visible {
+  border-color: var(--ap-red);
+  outline: none;
+}
+
+.drop-view-button.is-active {
+  border-color: var(--ap-red);
+  background: var(--ap-red);
+  color: var(--ap-night);
+}
+
+.drop-ways-label,
+.drop-ways-name { color: var(--ap-heritage) !important; }
+
+.way {
+  transition: none !important;
+  transform: none !important;
+}
+
+.way:hover { transform: none !important; }
+.way.is-on { outline-color: var(--ap-red) !important; }
+
+.tw-word:lang(ta) { font-family: "Noto Sans Tamil", sans-serif; }
+.tw-word:lang(hi) { font-family: "Noto Sans Devanagari", sans-serif; }
+.tw-word:lang(kn) { font-family: "Noto Sans Kannada", sans-serif; }
+.tw-word:lang(bn) { font-family: "Noto Sans Bengali", sans-serif; }
+.tw-word:lang(te) { font-family: "Noto Sans Telugu", sans-serif; }
+.tw-cursor { background: var(--ap-red); }
+
+.footer {
+  position: relative;
+  z-index: 3;
+  padding: clamp(34px, 5vw, 68px);
+  display: grid;
+  grid-template-columns: minmax(150px, 280px) 1fr auto;
+  align-items: end;
+  gap: clamp(28px, 5vw, 72px);
+  border-top: 1px solid rgba(0, 15, 8, 0.2);
+  background: var(--ap-cream);
+  color: var(--ap-night);
+}
+
+.city-footer-brand {
+  display: block;
+  line-height: 0;
+}
+
+.city-footer-brand img {
+  width: min(100%, 260px);
+  height: auto;
+}
+
+.footer > p {
+  margin: 0;
+  color: var(--ap-night);
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 720px) {
+  .nav.glass { min-height: 64px; }
+  .back { max-width: 96px; font-size: 0.58rem; line-height: 1.35; }
+  .nav-city { font-size: 0.58rem; letter-spacing: 0.13em; }
+  .logo-tile img { width: 104px; }
+  .hero { padding-top: 104px; }
+  .footer { grid-template-columns: 1fr; align-items: start; }
+  .city-footer-brand img { width: min(68vw, 250px); }
+}
+
+@media (max-width: 480px) {
+  .nav-city { display: none; }
+  .logo-tile,
+  .logo-tile:hover,
+  .logo-tile:focus-visible { left: auto; right: 18px; transform: none; }
+  .typewriter-text { text-align: left; }
+  .tw-word-wrap { min-width: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-tile,
+  .logo-tile:hover,
+  .logo-tile:focus-visible { transition: none; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   POLISH PASS — device coverage and target sizes
+
+   The seven city pages were built before the main site settled these rules,
+   so they are applied here rather than seven times over. This file loads
+   after each city's own sheet, so ordinary specificity is enough.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Each city sheet sets overflow-x: hidden on html, which quietly promotes the
+   root to a scroll container and takes position: sticky down with it. clip
+   does the same containment without that side effect — it is what the main
+   site already uses. hidden stays first as the fallback for Safari < 16. */
+html,
+body {
+  overflow-x: hidden;
+  overflow-x: clip;
+}
+
+/* Notch and home indicator. The nav is fixed, so it is positioned against the
+   viewport and has to inset itself; the body inset handles everything that
+   scrolls under it. */
+.nav.glass {
+  padding-left: calc(clamp(18px, 3vw, 46px) + env(safe-area-inset-left));
+  padding-right: calc(clamp(18px, 3vw, 46px) + env(safe-area-inset-right));
+}
+
+@media (orientation: landscape) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+.footer { padding-bottom: calc(var(--footer-pb, 34px) + env(safe-area-inset-bottom)); }
+
+/* "← APSHABD HOME" measured 94x33 — the only way back to the index on these
+   pages, and under the 44px floor. Padding plus a cancelling negative margin
+   leaves the type exactly where it sits in the nav row. */
+.back {
+  display: inline-flex;
+  align-items: center;
+  padding-block: 11px;
+  margin-block: -11px;
+  min-height: 44px;
+}
+
+/* Widening the tracking on hover reflows the label and nudges the nav row.
+   The colour change already carries the state. */
+.back:hover,
+.back:focus-visible { letter-spacing: 0.14em; }
+
+/* The footer wordmark is a link with no focus treatment of its own. */
+.city-footer-brand:focus-visible {
+  outline: 2px solid var(--ap-red);
+  outline-offset: 4px;
+}
+
+/* Both of these ran at 0.58rem (9.3px) with wide tracking on top. */
+@media (max-width: 720px) {
+  .back { max-width: none; font-size: max(11px, 0.58rem); }
+  .nav-city { font-size: max(11px, 0.58rem); }
+}
+
+/* The city pages had no skip link at all — a keyboard visitor had to tab the
+   whole nav on every one of the seven. brutal.css only decorates .skip-link;
+   the positioning lives in styles.css and pin-form.css, neither of which load
+   here, so without this the link would simply sit at the top of the page. */
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  left: calc(16px + env(safe-area-inset-left));
+  top: calc(12px + env(safe-area-inset-top));
+  padding: 10px 14px;
+  background: var(--ap-cream);
+  color: var(--ap-night);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: max(11px, 0.68rem);
+  transform: translateY(-160%);
+}
+
+/* No transition: this sheet disables them globally further up. */
+.skip-link:focus { transform: translateY(0); }
+
+/* Landing on the target should move focus there, not just the scroll position. */
+#drop:focus { outline: none; }
+#drop:focus-visible { outline: 2px solid var(--ap-red); outline-offset: 6px; }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   POLISH PASS — legibility
+
+   The city pages carry the same two systemic problems the index had: a small
+   label scale that lands under 10px once tracking is applied, and the brand
+   red used as text on light grounds where it only reaches 1.7-3.0:1.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Mirrors styles.css. max() rather than a flat px so the whole scale still
+     grows for anyone who has raised their browser's default font size. */
+  --label: max(11.5px, 0.68rem);
+  --label-sm: max(10.5px, 0.6rem);
+  --tap: 44px;
+
+  /* --ap-red is 5.3:1 on night, which is where it mostly lives here, but only
+     1.7:1 on the heritage caption bands and 3.0:1 on cream. This is the same
+     red taken dark enough to read on both. */
+  --ap-red-ink: #82070f;
+}
+
+/* ── Label floors ───────────────────────────────────────────────────────────
+   Measured on chennai.html at 360px: 8.3px to 9.9px across these, every one
+   of them uppercase with 0.2em-0.3em of tracking on top. */
+.eyebrow,
+.streets-label,
+.streets-foot,
+.stamp,
+.drop-ways-label,
+.nav-city { font-size: var(--label-sm); }
+
+.face-code,
+.face-role,
+.street-role,
+.drop-face-tag { font-size: var(--label-sm); }
+
+@media (max-width: 820px) {
+  .street-role { font-size: var(--label-sm); }
+}
+
+/* ── The heritage caption band ─────────────────────────────────────────────
+   .street-cap is a light band (--bone, #c4ac90). streets.css already darkened
+   the script toward ink for exactly this reason, but the blanket
+   `.rg { color: var(--ap-red) !important }` further up this file overrode it
+   and put the full-brightness red back at 1.7:1. Re-darken it here rather
+   than weakening that rule, which the dark sections rely on. */
+.street-cap .rg,
+.street-loc .rg { color: var(--ap-red-ink) !important; }
+
+/* 50% of #161310 on that same band is 2.8:1. */
+.street-role { opacity: 0.78; }
+
+/* Heritage at 45% over night is 2.5:1 — this is the sitter's role, the line
+   that says who is actually in the photograph. */
+.face-role { color: color-mix(in srgb, var(--ap-heritage) 72%, transparent); }
+
+/* .8em of a .88rem parent puts the native script at 10.2px on the caption
+   band, smaller than the roman name it sits beside. */
+.street-loc .rg { font-size: var(--label); }
+
+/* The footer's native-script line sits on cream, the one light ground in the
+   footer, where the display red drops to 3.0:1. */
+.footer .rg { color: var(--ap-red-ink) !important; }
+
+/* Section eyebrow above the portraits — 9.6px, matching .streets-head's. */
+.faces-head span { font-size: var(--label-sm); }
+
+.skip-link { min-height: var(--tap); display: inline-flex; align-items: center; }

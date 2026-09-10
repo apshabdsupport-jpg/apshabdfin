@@ -1,0 +1,833 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   अPSHABD — OPENING TITLES
+
+   A five-second ident that plays over the site on arrival, then locks itself
+   out for fifteen minutes. The clock lives in trailer.js.
+
+   The whole piece is one fixed timeline. Every animation below starts at the
+   same instant — the moment .is-running lands — and finds its own beat with
+   animation-delay, so the cuts stay in sync with each other without a frame
+   loop running underneath them. The master length is 5000ms; APT_RUN in
+   trailer.js mirrors it, and the two have to move together.
+
+   Beat sheet
+     0.00  the aperture opens, a red ✱ falls
+     0.30  it lands: kick, shockwave, HUD arms
+     0.42  seven cities, seven hard cuts, 230ms each
+     2.06  अपशब्द — the name, and what it means
+     3.00  the wordmark wipes on, then the red mark cuts through it
+     3.95  "Wear where you're from." lands word by word
+     4.75  the aperture shuts
+     5.00  cut to the site
+
+   Two impact frames in the whole run — the ✱ landing and the wordmark — both
+   cream rather than white, both under 70ms. That is deliberately inside the
+   three-per-second limit WCAG 2.3.1 sets for photosensitivity. Under
+   prefers-reduced-motion there is no timeline at all; see the last block.
+
+   Everything is scoped under .ap-trailer, except the two rules on <html> that
+   hold the page black between the head script and DOMContentLoaded.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* ── ARMED ────────────────────────────────────────────────────────────────
+   trailer.js runs blocking in <head> and drops this class on <html> before
+   the first paint. Without the ::before cover the browser gets a frame or two
+   of the hero on screen while the rest of the document parses, and the
+   trailer then lands on top of it — which reads as a bug, not as an opening. */
+html.ap-armed { background: #000f08; }
+html.ap-armed body { overflow: hidden; }
+
+html.ap-armed::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9998;
+  background: #000f08;
+  pointer-events: none;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   STAGE
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ap-trailer {
+  --apt-night: #000f08;
+  --apt-cream: #f3e6d0;
+  --apt-heritage: #c4ac90;
+  --apt-red: #fb3640;
+  --apt-display: "Trench Slab", "Arial Narrow", Impact, sans-serif;
+  --apt-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas,
+              "Liberation Mono", "Courier New", monospace;
+
+  /* The letterbox at rest. Closed is 50%: the two bars meet and the frame
+     is black. */
+  --apt-bar: 8%;
+
+  /* Seven slots, back to back, starting the moment the ✱ has landed. */
+  --apt-t-city: 420ms;
+  --apt-slot: 230ms;
+
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--apt-night);
+  color: var(--apt-cream);
+  font-family: var(--apt-display);
+  overflow: hidden;
+  contain: layout paint;
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* styles.css sets a global img { width: 100% }, which would blow the
+   wordmark out to the full frame. */
+.ap-trailer img { width: auto; }
+
+/* The exit is not a fade to nothing. The frame pulls back off the page and
+   the site is already sitting there behind it. */
+.ap-trailer.is-out {
+  animation: aptExit 340ms cubic-bezier(0.4, 0, 1, 1) forwards;
+  pointer-events: none;
+}
+
+@keyframes aptExit {
+  0%   { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.06); }
+}
+
+/* ── Letterbox ────────────────────────────────────────────────────────────
+   One animation, both moves. Two animations on the same property would leave
+   the second one's backwards fill overriding the first from frame zero, so
+   the open and the shut share a keyframe set. */
+.ap-bar {
+  position: absolute;
+  left: 0;
+  right: 0;
+  z-index: 60;
+  height: var(--apt-bar);
+  background: var(--apt-night);
+  pointer-events: none;
+}
+
+.ap-bar-t { top: 0; }
+.ap-bar-b { bottom: 0; }
+
+.is-running .ap-bar { animation: aptAperture 5000ms cubic-bezier(0.16, 1, 0.3, 1) both; }
+
+/* The shut is on an expo ease, so it is all but closed within 50ms of
+   starting — a shutter, not a curtain. That makes where it starts the thing
+   that decides how long the finished lock-up is actually on screen. */
+@keyframes aptAperture {
+  0%          { height: 50%; }
+  6%          { height: var(--apt-bar); }  /*  300ms — open */
+  95%         { height: var(--apt-bar); }  /* 4750ms */
+  98.4%, 100% { height: 50%; }             /* 4920ms — shut */
+}
+
+/* A hairline on the inside edge of each bar, so the frame reads as a frame
+   rather than as the page simply running out. */
+.ap-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: rgba(243, 230, 208, 0.16);
+}
+
+.ap-bar-t::after { bottom: 0; }
+.ap-bar-b::after { top: 0; }
+
+/* ── Camera ───────────────────────────────────────────────────────────────
+   Two nested wrappers, because both animate transform: .ap-kick takes the two
+   impacts, .ap-drift carries a continuous handheld float underneath. Stacked
+   on one element the later animation would simply win. */
+.ap-kick,
+.ap-drift {
+  position: absolute;
+  inset: 0;
+}
+
+.is-running .ap-kick  { animation: aptKick 5000ms linear both; }
+.is-running .ap-drift { animation: aptDrift 2600ms ease-in-out infinite; }
+
+@keyframes aptKick {
+  0%, 5.9%    { transform: translate3d(0, 0, 0); }
+  6.1%        { transform: translate3d(-9px, 7px, 0) scale(1.012); }   /*  305ms — ✱ lands */
+  6.7%        { transform: translate3d(7px, -5px, 0) scale(1.006); }
+  7.3%        { transform: translate3d(-3px, 2px, 0); }
+  7.9%, 63.9% { transform: translate3d(0, 0, 0); }
+  64.1%       { transform: translate3d(11px, -8px, 0) scale(1.014); }  /* 3205ms — wordmark */
+  64.7%       { transform: translate3d(-8px, 5px, 0) scale(1.007); }
+  65.3%       { transform: translate3d(4px, -2px, 0); }
+  65.9%, 100% { transform: translate3d(0, 0, 0); }
+}
+
+@keyframes aptDrift {
+  0%   { transform: translate3d(-1.2px, 0.6px, 0); }
+  50%  { transform: translate3d(1.2px, -0.9px, 0); }
+  100% { transform: translate3d(-1.2px, 0.6px, 0); }
+}
+
+.ap-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+
+/* Every act stacks in the same cell and takes its turn on opacity. */
+.ap-act {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  padding: 0 clamp(20px, 5vw, 70px);
+  text-align: center;
+  opacity: 0;
+}
+
+/* Acts 2 to 4 all open hard and shut hard; only the length differs. */
+@keyframes aptAct {
+  0%      { opacity: 0; }
+  1%, 96% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   FILM
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ap-grain,
+.ap-scan,
+.ap-vig,
+.ap-flash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ap-grain {
+  z-index: 40;
+  opacity: 0.085;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='0.9'/%3E%3C/svg%3E");
+}
+
+/* Four positions on a step timing function, so the grain crawls the way
+   emulsion does instead of sitting there as a static texture. */
+.is-running .ap-grain { animation: aptGrain 420ms steps(1, end) infinite; }
+
+@keyframes aptGrain {
+  0%   { background-position: 0 0; }
+  25%  { background-position: -70px 40px; }
+  50%  { background-position: 55px -60px; }
+  75%  { background-position: -35px -25px; }
+  100% { background-position: 0 0; }
+}
+
+.ap-scan {
+  z-index: 41;
+  opacity: 0.5;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0 2px,
+    rgba(0, 0, 0, 0.28) 2px 3px
+  );
+}
+
+.ap-vig {
+  z-index: 42;
+  background: radial-gradient(ellipse 85% 70% at 50% 50%, transparent 42%, rgba(0, 8, 4, 0.82) 100%);
+}
+
+/* The two impact frames. Cream rather than white: the brand has no white in
+   it, and a full-strength white frame is the part that actually hurts. */
+.ap-flash {
+  z-index: 50;
+  background: var(--apt-cream);
+  opacity: 0;
+  mix-blend-mode: screen;
+}
+
+.is-running .ap-flash { animation: aptFlash 5000ms linear both; }
+
+@keyframes aptFlash {
+  0%, 5.9%    { opacity: 0; }
+  6.1%        { opacity: 0.82; }  /*  305ms */
+  7.2%, 64.3% { opacity: 0; }
+  64.5%       { opacity: 0.9; }   /* 3225ms */
+  65.6%, 100% { opacity: 0; }
+}
+
+/* ── Plates ───────────────────────────────────────────────────────────────
+   Three frames of the campaign, held about 100ms each behind the city cuts.
+   Too short to read as photographs, long enough that the sequence has a
+   texture underneath it. Screened over near-black, only the highlights
+   survive. trailer.js drops these entirely when Save-Data is on. */
+.ap-plates {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.ap-plate {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: grayscale(1) contrast(1.7) brightness(0.62);
+  mix-blend-mode: screen;
+}
+
+/* Each plate is a single hit on its own delay. The scale carries on past the
+   cut, so the frame is always moving while it is up. */
+.is-running .ap-plate { animation: aptPlate 620ms linear both; }
+
+.ap-plate-1 { animation-delay: 430ms; }   /* under Chennai   */
+.ap-plate-2 { animation-delay: 1370ms; }  /* under Bangalore */
+.ap-plate-3 { animation-delay: 2060ms; }  /* into the name   */
+
+@keyframes aptPlate {
+  0%   { opacity: 0;    transform: scale(1.16); }
+  6%   { opacity: 0.44; }
+  16%  { opacity: 0.34; }
+  26%  { opacity: 0; }
+  100% { opacity: 0;    transform: scale(1); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ACT 0 · THE PIN DROP
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ap-drop { z-index: 5; }
+.is-running .ap-drop { animation: aptHold 420ms linear both; }
+
+@keyframes aptHold {
+  0%, 92% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+.ap-reticle {
+  position: relative;
+  width: clamp(120px, 18vw, 220px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+}
+
+.is-running .ap-reticle { animation: aptReticle 340ms cubic-bezier(0.16, 1, 0.3, 1) 40ms both; }
+
+@keyframes aptReticle {
+  0%   { opacity: 0; transform: scale(1.7) rotate(-8deg); }
+  60%  { opacity: 0.9; }
+  100% { opacity: 0.9; transform: scale(1) rotate(0deg); }
+}
+
+.ap-reticle::before,
+.ap-reticle::after {
+  content: "";
+  position: absolute;
+  background: rgba(243, 230, 208, 0.5);
+}
+
+.ap-reticle::before { width: 1px; height: 100%; }
+.ap-reticle::after  { height: 1px; width: 100%; }
+
+.ap-reticle i {
+  position: absolute;
+  inset: 26%;
+  border: 1px solid rgba(243, 230, 208, 0.42);
+  border-radius: 50%;
+}
+
+/* The ✱ already sits inside the wordmark, so the site opens by dropping its
+   own asterisk onto the crosshair. */
+.ap-pin {
+  position: absolute;
+  z-index: 6;
+  color: var(--apt-red);
+  font-size: clamp(2.6rem, 8vw, 6rem);
+  line-height: 1;
+  font-style: normal;
+}
+
+.is-running .ap-pin { animation: aptPin 260ms cubic-bezier(0.55, 0, 1, 0.45) 55ms both; }
+
+@keyframes aptPin {
+  0%   { opacity: 0; transform: translate3d(0, -62vh, 0) scale(0.35) rotate(-140deg); }
+  12%  { opacity: 1; }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+}
+
+/* The shockwave outlives the act it belongs to: it is what carries the eye
+   from the centre of the frame out to the first city cut. */
+.ap-ring {
+  position: absolute;
+  z-index: 4;
+  width: 10px;
+  aspect-ratio: 1;
+  border: 2px solid var(--apt-red);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.is-running .ap-ring { animation: aptRing 620ms cubic-bezier(0.16, 1, 0.3, 1) 300ms both; }
+
+@keyframes aptRing {
+  0%   { opacity: 0.95; width: 10px;    border-width: 3px; }
+  100% { opacity: 0;    width: 150vmax; border-width: 1px; }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ACT 1 · SEVEN CITIES
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* The container never fades — each city owns its own cut. */
+.ap-cities { z-index: 5; opacity: 1; }
+
+/* The lone अ from the wordmark, held as a watermark for the whole run of city
+   cuts, so seven scripts read as one brand rather than as seven. */
+.ap-ghost {
+  grid-area: 1 / 1;
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-weight: 700;
+  font-size: min(78vh, 62vw);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(243, 230, 208, 0.09);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.is-running .ap-ghost { animation: aptGhost 1720ms linear 400ms both; }
+
+@keyframes aptGhost {
+  0%   { opacity: 0; transform: scale(1.06) rotate(-1.5deg); }
+  10%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0; transform: scale(1) rotate(1.5deg); }
+}
+
+/* .ap-city carries the cut, .ap-city-block carries the wipe. They are two
+   elements because the wipe is a clip-path, and a clip-path on the outer
+   element would take the corner counter with it. */
+.ap-city {
+  grid-area: 1 / 1;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  opacity: 0;
+}
+
+.ap-city-block {
+  display: grid;
+  justify-items: center;
+  gap: clamp(8px, 1.4vh, 18px);
+  will-change: clip-path, transform;
+}
+
+.is-running .ap-city {
+  animation: aptCut var(--apt-slot) linear
+             calc(var(--apt-t-city) + var(--i) * var(--apt-slot)) both;
+}
+
+@keyframes aptCut {
+  0%        { opacity: 0; }
+  4%, 90%   { opacity: 1; }
+  100%      { opacity: 0; }
+}
+
+/* A left-to-right reveal at 22% of a 230ms slot — a 50ms wipe. Fast enough to
+   read as a cut, slow enough that the eye catches which way it came from. */
+.is-running .ap-city-block {
+  animation: aptWipe var(--apt-slot) linear
+             calc(var(--apt-t-city) + var(--i) * var(--apt-slot)) both;
+}
+
+@keyframes aptWipe {
+  0%   { clip-path: inset(0 100% 0 0); transform: scale(1.045); }
+  22%  { clip-path: inset(0 0 0 0);    transform: scale(1); }
+  90%  { clip-path: inset(0 0 0 0);    transform: scale(1); }
+  100% { clip-path: inset(0 0 0 0);    transform: scale(0.995); }
+}
+
+.ap-city-code {
+  font-family: var(--apt-mono);
+  font-size: max(10.5px, 0.62rem);
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  text-transform: uppercase;
+  color: var(--apt-heritage);
+}
+
+.ap-city-script {
+  font-size: clamp(3rem, 12.5vw, 11rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.015em;
+  max-width: 94vw;
+}
+
+.ap-city-name {
+  position: relative;
+  font-size: clamp(0.78rem, 1.9vw, 1.35rem);
+  letter-spacing: 0.5em;
+  text-indent: 0.5em;
+  text-transform: uppercase;
+  padding-bottom: 0.7em;
+}
+
+/* The red rule under each city name rips out from the left as the cut lands —
+   the same gesture the wordmark's mark makes later on. */
+.ap-city-name::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--apt-red);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.is-running .ap-city-name::after {
+  animation: aptRip 150ms cubic-bezier(0.16, 1, 0.3, 1)
+             calc(var(--apt-t-city) + var(--i) * var(--apt-slot) + 30ms) both;
+}
+
+@keyframes aptRip {
+  0%   { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ACT 2 · THE NAME
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ap-name { z-index: 5; gap: clamp(6px, 1.2vh, 14px); }
+.is-running .ap-name { animation: aptAct 940ms linear 2060ms both; }
+
+.ap-word {
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-weight: 700;
+  font-size: clamp(2.6rem, 10.5vw, 9rem);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.is-running .ap-word { animation: aptWord 300ms cubic-bezier(0.16, 1, 0.3, 1) 2060ms both; }
+
+@keyframes aptWord {
+  0%   { clip-path: inset(0 50% 0 50%); transform: scale(1.12); }
+  100% { clip-path: inset(0 -2% 0 -2%); transform: scale(1); }
+}
+
+.ap-phon {
+  font-family: var(--apt-mono);
+  font-size: clamp(0.68rem, 1.5vw, 0.95rem);
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--apt-heritage);
+}
+
+.is-running .ap-phon { animation: aptUp 220ms ease-out 2300ms both; }
+
+@keyframes aptUp {
+  0%   { opacity: 0; transform: translate3d(0, 8px, 0); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0); }
+}
+
+.ap-gloss {
+  display: flex;
+  align-items: baseline;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0 0.7em;
+  margin-top: clamp(6px, 1.4vh, 16px);
+  padding-top: clamp(8px, 1.6vh, 18px);
+  border-top: 2px solid var(--apt-red);
+  font-size: clamp(0.95rem, 3.2vw, 2.1rem);
+  letter-spacing: 0.02em;
+}
+
+.ap-gloss em {
+  font-family: var(--apt-mono);
+  font-style: normal;
+  font-size: 0.5em;
+  letter-spacing: 0.28em;
+  color: var(--apt-red);
+  text-transform: uppercase;
+}
+
+.is-running .ap-gloss { animation: aptGloss 260ms cubic-bezier(0.16, 1, 0.3, 1) 2450ms both; }
+
+@keyframes aptGloss {
+  0%   { opacity: 0; clip-path: inset(0 100% 0 0); }
+  8%   { opacity: 1; }
+  100% { opacity: 1; clip-path: inset(0 0 0 0); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   ACTS 3 AND 4 · THE LOCK-UP
+
+   The mark and the line arrive more than a second apart but they finish as
+   one composition, so they are one act with a gap rather than two stacked
+   layers. Held apart by viewport height instead, the spacing was right at
+   720px and 230px adrift at 1000px — the mark is width-constrained, so its
+   height barely moves while a vh offset keeps growing. The line reserves its
+   row from the moment the mark lands; the mark holding its final position
+   while the line drops in underneath is what a title card does anyway.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ap-lockup {
+  z-index: 5;
+  gap: clamp(20px, 4.4vh, 52px);
+}
+
+.is-running .ap-lockup { animation: aptAct 2000ms linear 3000ms both; }
+
+.ap-mark-wrap {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+
+.ap-mark-wrap img {
+  display: block;
+  /* The cream wordmark is 463px wide. Capped here so it is never blown up
+     more than about 1.2x at 1dpr — it is a heavy geometric mark and the
+     bloom and grain cover the rest, but past this it starts to read soft. */
+  width: min(62vw, 540px);
+  max-height: 40vh;
+  object-fit: contain;
+}
+
+/* The wipe carries a bloom with it: the halation peaks as the last of the
+   mark arrives, then falls away over the next quarter second. */
+.is-running .ap-mark-wrap img { animation: aptMark 700ms cubic-bezier(0.16, 1, 0.3, 1) 3000ms both; }
+
+@keyframes aptMark {
+  0%   { clip-path: inset(0 100% 0 0); transform: scale(1.1);  filter: drop-shadow(0 0 0 rgba(243, 230, 208, 0)); }
+  32%  { clip-path: inset(0 0 0 0);    transform: scale(1.02); filter: drop-shadow(0 0 36px rgba(243, 230, 208, 0.55)); }
+  100% { clip-path: inset(0 0 0 0);    transform: scale(1);    filter: drop-shadow(0 0 0 rgba(243, 230, 208, 0)); }
+}
+
+/* The red mark: a band that rips across the finished wordmark and keeps going
+   off the far edge. The brand's own gesture, on the site. */
+.ap-slash {
+  position: absolute;
+  top: 50%;
+  left: -20%;
+  width: 140%;
+  height: clamp(6px, 1.1vw, 13px);
+  background: var(--apt-red);
+  transform: translateY(-50%) rotate(-7deg);
+}
+
+.is-running .ap-slash { animation: aptSlash 420ms cubic-bezier(0.7, 0, 0.3, 1) 3400ms both; }
+
+@keyframes aptSlash {
+  0%   { clip-path: inset(0 100% 0 0); }
+  44%  { clip-path: inset(0 0 0 0); }
+  100% { clip-path: inset(0 0 0 100%); }
+}
+
+.ap-line {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.34em;
+  margin: 0;
+  font-size: clamp(0.86rem, 2.6vw, 1.7rem);
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  text-transform: uppercase;
+}
+
+.ap-line span {
+  display: inline-block;
+  opacity: 0;
+}
+
+.ap-line span:last-child { color: var(--apt-red); }
+
+/* Three beats, 130ms apart, the last settling at 4470ms. Started at 4100 the
+   line only finished 80ms before the shutter began closing over it, which
+   left the one frame the whole film is building towards on screen for less
+   than a blink. */
+.is-running .ap-line span {
+  animation: aptBeat 260ms cubic-bezier(0.16, 1, 0.3, 1)
+             calc(3950ms + var(--i) * 130ms) both;
+}
+
+@keyframes aptBeat {
+  0%   { opacity: 0; transform: translate3d(0, 14px, 0) scale(1.16); }
+  100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   HUD
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.ap-hud {
+  position: absolute;
+  z-index: 45;
+  top: var(--apt-bar);
+  right: 0;
+  bottom: var(--apt-bar);
+  left: 0;
+  padding: clamp(14px, 2.4vh, 26px) clamp(16px, 3.4vw, 44px);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-content: space-between;
+  gap: 8px;
+  font-family: var(--apt-mono);
+  font-size: max(9.5px, 0.58rem);
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(243, 230, 208, 0.62);
+  pointer-events: none;
+  opacity: 0;
+}
+
+.is-running .ap-hud { animation: aptHud 4500ms linear 300ms both; }
+
+@keyframes aptHud {
+  0%      { opacity: 0; }
+  6%, 92% { opacity: 1; }
+  100%    { opacity: 0; }
+}
+
+.ap-hud span:nth-child(even) { text-align: right; }
+
+/* The city counter shares the HUD rather than owning a layer of its own, so
+   it is still on screen once the cuts are done — 07 / 07 held under the
+   wordmark is the point of the whole sequence, stated. */
+.ap-hud .ap-count { color: var(--apt-red); }
+
+/* The only element that tells the truth about how much is left. Sits on the
+   inside edge of the bottom bar. */
+.ap-prog {
+  position: absolute;
+  z-index: 46;
+  left: 0;
+  right: 0;
+  bottom: var(--apt-bar);
+  height: 2px;
+  background: rgba(243, 230, 208, 0.14);
+}
+
+.ap-prog i {
+  display: block;
+  height: 100%;
+  background: var(--apt-cream);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
+.is-running .ap-prog i { animation: aptProg 5000ms linear both; }
+
+@keyframes aptProg {
+  0%   { transform: scaleX(0); }
+  100% { transform: scaleX(1); }
+}
+
+/* ── Skip ─────────────────────────────────────────────────────────────────
+   A tap anywhere on the overlay skips, but the affordance still has to be
+   visible and it still has to be a real button: it is the only focusable
+   thing in the dialog, and on a keyboard or a screen reader it is the whole
+   interface. */
+.ap-skip {
+  position: absolute;
+  z-index: 70;
+  right: clamp(10px, 2.4vw, 26px);
+  bottom: calc(var(--apt-bar) + clamp(10px, 1.8vh, 20px));
+  min-height: 44px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(243, 230, 208, 0.34);
+  background: rgba(0, 15, 8, 0.55);
+  color: var(--apt-cream);
+  font-family: var(--apt-mono);
+  font-size: max(10px, 0.6rem);
+  letter-spacing: 0.28em;
+  text-indent: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.is-running .ap-skip { animation: aptUp 260ms ease-out 900ms both; }
+
+.ap-skip:hover,
+.ap-skip:focus-visible { border-color: var(--apt-cream); background: rgba(0, 15, 8, 0.85); }
+.ap-skip:focus-visible { outline: 2px solid var(--apt-red); outline-offset: 3px; }
+.ap-skip:active { transform: translateY(1px); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   SMALL SCREENS
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media (max-width: 620px) {
+  .ap-trailer     { --apt-bar: 6%; }
+  .ap-city-script { font-size: clamp(2.4rem, 15vw, 5rem); }
+  .ap-city-name   { letter-spacing: 0.34em; text-indent: 0.34em; }
+  .ap-word        { font-size: clamp(2.2rem, 13vw, 5rem); }
+  .ap-gloss       { font-size: clamp(0.9rem, 5vw, 1.4rem); }
+  .ap-mark-wrap img    { width: 84vw; max-height: 30vh; }
+  .ap-line        { letter-spacing: 0.2em; text-indent: 0.2em; }
+  .ap-hud         { letter-spacing: 0.18em; }
+}
+
+/* A landscape phone has almost no vertical room to give the lock-up. */
+@media (max-height: 520px) {
+  .ap-mark-wrap img { max-height: 34vh; }
+  .ap-lockup   { gap: clamp(12px, 3vh, 24px); }
+  .ap-ghost    { font-size: min(70vh, 50vw); }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   REDUCED MOTION
+
+   styles.css already flattens every animation and transition on the site to
+   0.01ms under this query, which would tear this timeline apart rather than
+   soften it — so there is no timeline. trailer.js sets .is-still instead of
+   .is-running and holds a card: the mark, the line, and out. Same fifteen
+   minute lock, none of the motion.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* Deliberately NOT wrapped in the media query. trailer.js decides whether
+   reduced motion is on and sets .is-still; gating these on the query as well
+   would mean two sources of truth for one preference, and if they ever
+   disagreed the result is the worst of both — a card the script has stopped
+   animating and the stylesheet has not made visible. The class is its own
+   gate, and nothing here needs the query: every animation in this sheet is
+   scoped to .is-running, which a still card never gets. */
+
+.ap-trailer.is-still .ap-lockup,
+.ap-trailer.is-still .ap-hud,
+.ap-trailer.is-still .ap-skip,
+.ap-trailer.is-still .ap-line span { opacity: 1; }
+
+.ap-trailer.is-still .ap-grain { opacity: 0.06; }
+
+.ap-trailer.is-still .ap-slash,
+.ap-trailer.is-still .ap-prog,
+.ap-trailer.is-still .ap-plates,
+.ap-trailer.is-still .ap-flash,
+.ap-trailer.is-still .ap-scan,
+.ap-trailer.is-still .ap-drop,
+.ap-trailer.is-still .ap-cities,
+.ap-trailer.is-still .ap-name { display: none; }
+
+/* The exit still has to work when styles.css has flattened every transition
+   and animation on the site to 0.01ms. It does: .is-out ends up applying
+   instantly rather than easing, which is the correct behaviour here — the
+   card is simply gone. */

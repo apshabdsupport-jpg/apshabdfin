@@ -1,0 +1,266 @@
+/* ===== DELHI · METRO CARRIAGE ROUTE PANEL =============================
+   The dot-matrix strip above the doors of a Delhi Metro coach, calling the
+   next station. Built from the reference photograph.
+
+   One thing separates it from the Chennai bus board and the Mumbai local,
+   and it is the whole reason this is its own panel rather than a recolour:
+   it is BILINGUAL AND TWO-TONE. Delhi Metro PIS panels run the Devanagari
+   name in amber on the upper rows and the Latin name in green on the lower
+   rows, both lit at once on the same matrix. Chennai shouts one line of
+   amber caps; Mumbai murmurs one line of green title case; Delhi says it
+   twice, in two scripts and two colours, because the capital has to.
+
+   Three consequences follow from that, and they drive the markup:
+   · a station is one cell holding both scripts stacked, not two tracks.
+     Two tracks would scroll at the same rate but their pairs would drift
+     apart, and the entire read of the reference is the Devanagari sitting
+     directly over its own Latin.
+   · the matrix has to stay fine enough to keep the matras and the
+     shirorekha, so the pitch here is the tightest of the three boards.
+   · no bitmap Devanagari face exists to set the amber rows in, so they are
+     Noto and the matrix overlay does the work — which is exactly what the
+     hardware does to its own ROM font anyway.
+
+   The three stops are the three Delhi drops, and Chandni Chowk, Rajiv
+   Chowk and Hauz Khas really are consecutive Yellow Line stations in that
+   order, which is why the module says so.
+
+   Loaded after city-brand.css: that file hides .marquee outright and kills
+   every animation site-wide, and this has to win. Delhi only. */
+
+.metro-board {
+  --amber: #ffae1c;
+  --amber-bloom: rgba(255, 146, 0, 0.5);
+  --green: #4bf257;
+  --green-bloom: rgba(38, 214, 68, 0.45);
+  --board: #06080a;
+  /* 2px: the tightest of the three boards. The bus board can afford 3px
+     because it only ever sets Latin caps; this one has to hold a matra. */
+  --cell: 2px;
+}
+
+/* city-brand.css carries `.marquee { display: none !important }`. Both are
+   important, so specificity decides — (0,2,0) beats (0,1,0). */
+.marquee.metro-board {
+  display: block !important;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(14px, 2.4vw, 24px) clamp(14px, 3vw, 26px);
+  background: none;
+  color: inherit;
+  font-family: inherit;
+  letter-spacing: normal;
+  /* The stock marquee feathers its ends. This is a panel bolted into a
+     ceiling channel — a faded edge would read as a torn screen. */
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* The housing. The reference shows the panel sunk behind glass, with a
+   brushed alloy channel catching the coach lighting along its top edge. */
+.metro-board .mb-inner {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid rgba(255, 174, 28, 0.13);
+  border-top: 2px solid rgba(214, 222, 226, 0.34);
+  border-radius: 3px;
+  background: var(--board);
+  box-shadow:
+    inset 0 0 0 4px #000,
+    inset 0 2px 22px rgba(0, 0, 0, 0.95),
+    0 12px 32px rgba(0, 0, 0, 0.55);
+}
+
+/* Dormant LEDs. One neutral pass rather than an amber band stacked over a
+   green one: unlit dots carry almost no hue on the real panel, and faking
+   the split would only ever show up as a seam where the two bands met. */
+.metro-board .mb-line,
+.metro-board .mb-screen {
+  background-color: var(--board);
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgba(198, 216, 140, 0.06) 0 30%,
+    transparent 32%);
+  background-size: var(--cell) var(--cell);
+}
+
+/* ── The line module ──────────────────────────────────────────────────
+   The drop is a route before it is a collection. */
+.metro-board .mb-line {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  gap: 3px;
+  padding: 0 clamp(10px, 1.7vw, 20px);
+  border-right: 2px solid #000;
+  box-shadow: 1px 0 0 rgba(255, 174, 28, 0.12);
+  font-family: "Silkscreen", "DotGothic16", monospace;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.metro-board .mb-line b {
+  font-size: clamp(0.6rem, 1.2vw, 0.84rem);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--amber);
+  text-shadow: 0 0 5px var(--amber-bloom), 0 0 14px rgba(255, 130, 0, 0.32);
+}
+
+.metro-board .mb-line i {
+  font-size: clamp(0.46rem, 0.9vw, 0.62rem);
+  font-style: normal;
+  letter-spacing: 0.18em;
+  color: rgba(255, 174, 28, 0.5);
+}
+
+.metro-board .mb-screen {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(8px, 1.3vw, 14px) 0;
+}
+
+/* ── The scrolling stations ───────────────────────────────────────────
+   !important because city-brand.css kills animation globally with
+     *, *::before, *::after { animation: none !important }
+   Own keyframes too, so this never leans on delhi.css's `scroll` surviving
+   that reset. Deliberately narrow: this revives one element, not the rule. */
+.metro-board .marquee-track {
+  display: flex;
+  width: max-content;
+  align-items: stretch;
+  animation: mb-scroll 32s linear infinite !important;
+}
+
+/* Both halves are identical, so -50% closes the loop invisibly. */
+@keyframes mb-scroll {
+  to { transform: translateX(-50%); }
+}
+
+.metro-board .mb-set {
+  display: flex;
+  align-items: stretch;
+}
+
+/* One station = one cell carrying both scripts. This is the piece that
+   keeps each Devanagari name locked over its own Latin rather than
+   drifting past it. */
+.metro-board .mb-stop {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.14em;
+  padding: 0 1.5em;
+  white-space: nowrap;
+}
+
+/* Upper rows: amber, Devanagari. Noto, because no bitmap face covers the
+   script — the matrix overlay is what makes it read as lit dots. */
+.metro-board .mb-hi {
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-style: normal;
+  font-weight: 700;
+  font-size: clamp(0.82rem, 1.62vw, 1.18rem);
+  line-height: 1.5;
+  letter-spacing: 0.01em;
+  color: var(--amber);
+  text-shadow: 0 0 5px var(--amber-bloom), 0 0 15px rgba(255, 130, 0, 0.3);
+}
+
+/* Lower rows: green, Latin, on a bitmap face so the glyphs land square on
+   the grid the way the panel's own ROM font does. */
+.metro-board .mb-en {
+  font-family: "DotGothic16", "Silkscreen", monospace;
+  font-weight: 400;
+  font-size: clamp(0.86rem, 1.7vw, 1.24rem);
+  line-height: 1.15;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+  color: var(--green);
+  text-shadow: 0 0 5px var(--green-bloom), 0 0 14px rgba(38, 200, 70, 0.3);
+}
+
+/* The separator is struck in both plates at once — the one character on
+   the panel where the two colours meet. */
+.metro-board .mb-sep {
+  display: grid;
+  place-items: center;
+  padding: 0 0.1em;
+  font-size: 0.7em;
+  font-style: normal;
+  color: rgba(255, 174, 28, 0.42);
+  text-shadow: 0 0.55em 0 rgba(75, 242, 87, 0.3);
+}
+
+/* The stop that sets context rather than naming a drop. */
+.metro-board .mb-stop--label .mb-hi,
+.metro-board .mb-stop--label .mb-en { opacity: 0.7; }
+
+/* ── The matrix ───────────────────────────────────────────────────────
+   The mesh that cuts glyphs and dormant dots alike into discrete cells.
+   This is what makes the panel an LED board rather than coloured text on
+   black, and what makes Noto's Devanagari read as hardware. */
+.metro-board .mb-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(3, 5, 7, 0.9) 0 1px, transparent 1px var(--cell)),
+    repeating-linear-gradient(180deg, rgba(3, 5, 7, 0.9) 0 1px, transparent 1px var(--cell));
+}
+
+/* Glass: a warm wash off the top where the amber rows sit, a cooler one
+   rising under the green, and a vignette so the panel reads as lit from
+   within rather than printed. */
+.metro-board .mb-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 174, 28, 0.05) 0%, transparent 46%),
+    linear-gradient(0deg, rgba(75, 242, 87, 0.045) 0%, transparent 44%),
+    radial-gradient(140% 130% at 50% 50%, transparent 52%, rgba(0, 0, 0, 0.55) 100%);
+}
+
+/* Coach power is not clean. Kept very small — a visible blink is a gimmick,
+   an occasional dip is the tell. Same !important, same reason as above. */
+@media (prefers-reduced-motion: no-preference) {
+  .metro-board .mb-screen,
+  .metro-board .mb-line {
+    animation: mb-flicker 6.5s steps(1, end) infinite !important;
+  }
+}
+
+@keyframes mb-flicker {
+  0%, 96%, 100% { filter: brightness(1); }
+  97%           { filter: brightness(0.91); }
+  98%           { filter: brightness(1.04); }
+}
+
+/* Re-asserted, because the !important above now outranks delhi.css's own
+   reduced-motion rule and it can no longer stop these on its own. */
+@media (prefers-reduced-motion: reduce) {
+  .metro-board .marquee-track,
+  .metro-board .mb-screen,
+  .metro-board .mb-line { animation: none !important; }
+}
+
+@media (max-width: 720px) {
+  .marquee.metro-board { padding-inline: 12px; }
+  .metro-board .mb-stop { padding-inline: 1.1em; }
+  .metro-board .mb-en { letter-spacing: 0.04em; }
+}

@@ -1,0 +1,1759 @@
+/* Cross-document view transitions, index -> city pages. Needs the same opt-in on
+   the destination stylesheet (city-brand.css, pin-form.css) to fire. Browsers
+   without support simply hard-cut the way they always did — no fallback needed. */
+@view-transition { navigation: auto; }
+
+::view-transition-old(root) { animation: vt-out 200ms cubic-bezier(0.4, 0, 1, 1) both; }
+::view-transition-new(root) { animation: vt-in 340ms cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+@keyframes vt-out { to { opacity: 0; } }
+@keyframes vt-in { from { opacity: 0; transform: translateY(10px); } }
+
+@font-face {
+  font-family: "Trench Slab";
+  src: url("assets/fonts/trench-slab/TrenchSlab-Regular.woff2") format("woff2"),
+       url("assets/fonts/trench-slab/TrenchSlab-Regular.woff") format("woff");
+  font-display: swap;
+  font-style: normal;
+  font-weight: 400;
+}
+
+:root {
+  --night: #000f08;
+  --night-soft: #071810;
+  --cream: #f3e6d0;
+  --heritage: #c4ac90;
+  --red: #fb3640;
+  /* The brand red reads at 5.3:1 on --night but only 2.99:1 on --cream, so on
+     light grounds it fails AA for anything that is actually meant to be read.
+     --red-ink is the same red pulled down to 4.8:1 on cream. Rule of thumb:
+     --red on dark and on display type, --red-ink for red *text* on cream. */
+  --red-ink: #c8101e;
+  --ink: #06110b;
+  --line-dark: rgba(0, 15, 8, 0.22);
+  --line-light: rgba(243, 230, 208, 0.23);
+  --font: "Trench Slab", "Arial Narrow", Impact, sans-serif;
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --page: clamp(20px, 3.4vw, 58px);
+
+  /* ── Small-label scale ──────────────────────────────────────────────────
+     Every uppercase, wide-tracked label on the site draws from these two.
+     They were plain rem values, which put the section indexes at 10.9px and
+     the frame captions at 9px — and tracking that wide costs another notch
+     of legibility on top. max() sets a hard px floor while still letting the
+     whole scale grow for anyone who has raised their browser's font size.  */
+  --label: max(11.5px, 0.68rem);
+  --label-sm: max(10.5px, 0.6rem);
+
+  /* Nothing tappable should be smaller than this. iOS asks for 44, Android
+     for 48dp; 44 with generous hit padding satisfies both. */
+  --tap: 44px;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+  background: var(--night);
+  overscroll-behavior-x: none;
+  /* Every tap target gets a deliberate, on-brand :active state below, so the
+     browser's default flash box is only ever noise on top of it. */
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  background: var(--night);
+  color: var(--cream);
+  font-family: var(--font);
+  font-size: 16px;
+  line-height: 1.35;
+  overflow-x: clip;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+/* ── Notch and home indicator ──────────────────────────────────────────────
+   A landscape iPhone reserves ~44px on the notch side. The page gutter is
+   20px there, so without this the section indexes, the city rows and the
+   footer all run under the cutout. Insetting the whole body rather than each
+   section keeps the full-bleed blocks aligned with the copy above them, and
+   the strip that opens up is filled by the body's own --night, so it reads
+   as letterboxing rather than as a gap. Fixed chrome is positioned against
+   the viewport, not the body, so the header and rail inset themselves. */
+@media (orientation: landscape) {
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+}
+
+body.menu-open { overflow: hidden; }
+body.menu-open .site-header { color: var(--night); }
+body.menu-open .brand-logo-cream { display: none; }
+body.menu-open .brand-logo-night { display: block; }
+
+img { display: block; width: 100%; }
+a { color: inherit; }
+button, input { font: inherit; }
+button { color: inherit; }
+
+/* Removes the ~300ms tap delay and the double-tap-to-zoom ambiguity on every
+   tappable element, and drops them fractionally on press so a tap always
+   reads as felt, on any pointer, before whatever it triggers has time to run. */
+a, button {
+  touch-action: manipulation;
+}
+
+a:active,
+button:active {
+  transition-duration: 0.08s;
+}
+
+.scroll-route {
+  position: fixed;
+  z-index: 40;
+  top: 88px;
+  right: calc(clamp(8px, 1.1vw, 18px) + env(safe-area-inset-right));
+  bottom: calc(22px + env(safe-area-inset-bottom));
+  width: clamp(42px, 4.2vw, 68px);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  contain: layout paint;
+}
+
+.scroll-route.is-ready { opacity: 1; }
+
+.scroll-route-map {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.scroll-route-path {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-dasharray: 1 12;
+  vector-effect: non-scaling-stroke;
+  opacity: 0.66;
+}
+
+.scroll-route-pointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 17px;
+  height: 22px;
+  background: var(--red);
+  clip-path: polygon(50% 0, 100% 100%, 50% 78%, 0 100%);
+  filter: drop-shadow(0 0 1px var(--cream)) drop-shadow(0 3px 5px rgba(0, 15, 8, 0.35));
+  transform-origin: 50% 50%;
+  will-change: transform;
+}
+
+::selection {
+  background: var(--red);
+  color: var(--cream);
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  left: calc(16px + env(safe-area-inset-left));
+  top: calc(12px + env(safe-area-inset-top));
+  padding: 10px 14px;
+  background: var(--cream);
+  color: var(--ink);
+  transform: translateY(-150%);
+  transition: transform 0.2s;
+}
+
+.skip-link:focus { transform: translateY(0); }
+
+.site-header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 100;
+  height: 76px;
+  padding: 0 calc(var(--page) + env(safe-area-inset-right))
+           0 calc(var(--page) + env(safe-area-inset-left));
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  border-bottom: 1px solid transparent;
+  color: var(--cream);
+  transition: background 0.3s ease, border-color 0.3s ease, height 0.3s ease;
+}
+
+.site-header.is-scrolled {
+  height: 64px;
+  background: rgba(0, 15, 8, 0.93);
+  border-color: var(--line-light);
+  backdrop-filter: blur(14px);
+}
+
+.brand {
+  position: relative;
+  z-index: 102;
+  width: max-content;
+  /* The wordmark is only 38px tall. Flex-centring it inside a --tap-high box
+     keeps it exactly where it was — the header centres the row either way —
+     while giving the home link a full-size target. */
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  line-height: 0;
+}
+
+.brand-logo { width: clamp(116px, 10.5vw, 158px); height: auto; }
+.brand-logo-night { display: none; }
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(20px, 2.6vw, 44px);
+}
+
+.site-nav a {
+  position: relative;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  font-size: 0.72rem;
+}
+
+.site-nav a:not(.nav-cta)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 100%;
+  bottom: -5px;
+  height: 1px;
+  background: var(--red);
+  transition: right 0.35s var(--ease);
+}
+
+.site-nav a:hover::after,
+.site-nav a:focus-visible::after,
+.site-nav a:active::after { right: 0; }
+
+.nav-cta {
+  padding: 11px 16px 10px;
+  border: 1px solid var(--cream);
+  transition: color 0.25s ease, background 0.25s ease;
+}
+
+.nav-cta:hover,
+.nav-cta:focus-visible,
+.nav-cta:active {
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.menu-toggle { display: none; }
+
+/* The wordmark and the hamburger are the first two things a keyboard visitor
+   reaches on every page, and neither had a focus treatment — the header's own
+   :focus-visible rules only ever covered the nav links. */
+.brand:focus-visible,
+.menu-toggle:focus-visible {
+  outline: 2px solid var(--red);
+  outline-offset: 6px;
+}
+
+/* Inside the open red panel a red ring would disappear. */
+body.menu-open .brand:focus-visible,
+body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  padding-top: 76px;
+  display: grid;
+  grid-template-columns: 54% 46%;
+  grid-template-rows: minmax(650px, 1fr) auto;
+  background: var(--night);
+  border-bottom: 1px solid var(--line-light);
+}
+
+.hero-copy {
+  position: relative;
+  z-index: 1;
+  padding: clamp(72px, 9vh, 124px) var(--page) 46px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+/* ── Hero background type ────────────────────────────────────────────────
+   The typewriter interlude further down asks "which location, in your own
+   script" — this is that same idea, ambient, behind the hero. Stroke-only
+   and z-index 0 under the real copy (.hero-copy/.hero-image/.hero-ticker
+   below are all lifted to z-index 1): wherever a solid foreground glyph and
+   a decorative one would overlap, the opaque one simply paints over it, so
+   this can never reduce the real copy's contrast — it only ever reads in
+   the negative space around the letters. */
+.hero-typefield {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+}
+
+.tf-word {
+  position: absolute;
+  display: block;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(196, 172, 144, 0.1);
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.tf-word-a {
+  top: 8%;
+  left: 40%;
+  font-family: "Noto Sans Tamil", sans-serif;
+  font-size: clamp(6.5rem, 16vw, 16rem);
+  animation: tf-drift-a 42s ease-in-out infinite;
+}
+
+.tf-word-b {
+  top: 48%;
+  left: 60%;
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-size: clamp(5.5rem, 13vw, 13rem);
+  animation: tf-drift-b 51s ease-in-out infinite;
+}
+
+.tf-word-c {
+  top: 76%;
+  left: 6%;
+  font-family: "Noto Sans Bengali", sans-serif;
+  font-size: clamp(4.5rem, 10vw, 10rem);
+  animation: tf-drift-c 37s ease-in-out infinite;
+}
+
+/* Three different periods so the words never fall into step with each
+   other — the point is that it keeps drifting, not that it repeats cleanly. */
+@keyframes tf-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-2.5%, 1.6%) scale(1.035); }
+}
+
+@keyframes tf-drift-b {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(2.2%, -2%) scale(0.968); }
+}
+
+@keyframes tf-drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(1.8%, -1.3%) scale(1.04); }
+}
+
+/* Below this width hero-copy runs full-bleed with little negative space
+   left over, so the field would sit under the text rather than beside it. */
+@media (max-width: 720px) {
+  .hero-typefield { display: none; }
+}
+
+.hero-kicker,
+.section-index {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid currentColor;
+  text-transform: uppercase;
+  font-size: var(--label);
+  letter-spacing: 0.17em;
+}
+
+.hero-kicker { color: var(--heritage); }
+
+.hero-title {
+  max-width: 860px;
+  margin: auto 0;
+  padding: 54px 0 50px;
+  font-size: clamp(4.7rem, 9.6vw, 10.8rem);
+  font-weight: 400;
+  line-height: 0.75;
+  letter-spacing: -0.065em;
+  text-transform: uppercase;
+}
+
+.hero-title span { display: block; white-space: nowrap; }
+.hero-title span:nth-child(2) {
+  margin-left: 0.02em;
+  font-size: 0.78em;
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+}
+.hero-title-accent { color: var(--red); }
+
+/* Print wipe: each line is squeegeed in left to right rather than fading up.
+   Armed from JS so the headline is plainly legible if the script never runs.
+   The vertical insets are negative because line-height 0.75 lets the glyphs
+   overflow their own line box — clipping at 0 would shave the caps. */
+.hero-title.is-armed span { clip-path: inset(-0.32em 100% -0.32em 0); }
+
+/* Deliberately not var(--ease): that curve is ~96% done by the halfway point,
+   which is right for something settling into place but hides the travelling
+   edge that makes this read as a wipe rather than a pop. */
+.hero-title.is-wiping span { animation: hero-wipe 0.9s cubic-bezier(0.5, 0, 0.2, 1) both; }
+.hero-title.is-wiping span:nth-child(2) { animation-delay: 0.13s; }
+.hero-title.is-wiping span:nth-child(3) { animation-delay: 0.26s; }
+
+@keyframes hero-wipe {
+  from { clip-path: inset(-0.32em 100% -0.32em 0); }
+  to { clip-path: inset(-0.32em -0.5em -0.32em 0); }
+}
+
+.hero-footer {
+  display: grid;
+  grid-template-columns: minmax(210px, 330px) auto;
+  align-items: end;
+  gap: 34px;
+}
+
+.hero-footer p {
+  margin: 0;
+  color: var(--heritage);
+  font-size: clamp(1rem, 1.3vw, 1.25rem);
+}
+
+.text-link {
+  position: relative;
+  width: max-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 28px;
+  padding: 0 0 8px;
+  border-bottom: 1px solid currentColor;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 0.74rem;
+  transition: color 0.25s ease, gap 0.35s var(--ease);
+}
+
+/* These are the in-copy CTAs — "Find your city", "Put your street on the map"
+   — and the rule under them is the whole visual, so the box can only be 25px
+   tall. Padding would drag the underline off the baseline it shares with the
+   text, and a negative margin to cancel it would pull the link out of the
+   grids it sits in. An overlay costs no layout and takes the target to 44. */
+.text-link::before {
+  content: "";
+  position: absolute;
+  inset: calc((var(--tap) - 25px) / -2) -10px calc((var(--tap) - 25px) / -2 - 8px);
+}
+
+.text-link:hover,
+.text-link:focus-visible,
+.text-link:active { color: var(--red); gap: 38px; }
+/* .dark sits on cream, where the display red drops to 2.99:1. */
+.text-link.dark:hover,
+.text-link.dark:focus-visible,
+.text-link.dark:active { color: var(--red-ink); }
+
+.hero-image {
+  position: relative;
+  z-index: 1;
+  min-height: 650px;
+  margin: 0;
+  overflow: hidden;
+  background: #0e1813;
+}
+
+/* Scaled up to leave headroom for the scroll parallax to travel into without
+   ever exposing an edge. JS writes the translate straight onto .style.transform,
+   which is why there is no hover-zoom here any more — an inline transform would
+   win over it regardless, and the parallax is the better-behaved effect on touch. */
+.hero-image > img {
+  height: 100%;
+  object-fit: cover;
+  object-position: 52% 50%;
+  transform: scale(1.12);
+  filter: saturate(0.82) contrast(1.05);
+  transition: filter 0.7s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-image:hover > img { filter: saturate(1) contrast(1.04); }
+}
+
+.hero-image::after,
+.campaign-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 15, 8, 0.04) 45%, rgba(0, 15, 8, 0.7) 100%);
+}
+
+.hero-image figcaption,
+.campaign-card figcaption {
+  position: absolute;
+  z-index: 2;
+  inset: auto 22px 20px;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  color: var(--cream);
+  font-size: var(--label);
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+}
+
+.image-stamp {
+  position: absolute;
+  z-index: 3;
+  top: 28px;
+  right: 28px;
+  width: 112px;
+  aspect-ratio: 1;
+  padding: 13px;
+  display: grid;
+  place-items: center;
+  background: var(--red);
+  color: var(--night);
+  transform: rotate(4deg);
+  text-align: center;
+  text-transform: uppercase;
+  font-size: var(--label-sm);
+  letter-spacing: 0.16em;
+}
+
+.image-stamp strong {
+  font-size: 2.5rem;
+  font-weight: 400;
+  line-height: 0.7;
+}
+
+.hero-ticker {
+  position: relative;
+  z-index: 1;
+  grid-column: 1 / -1;
+  overflow: hidden;
+  border-top: 1px solid var(--line-light);
+  background: var(--red);
+  color: var(--night);
+}
+
+.ticker-track {
+  width: max-content;
+  min-width: 200%;
+  padding: 12px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  animation: ticker 28s linear infinite;
+  white-space: nowrap;
+  font-size: clamp(1.05rem, 1.6vw, 1.45rem);
+}
+
+/* Cream on the ticker's red is 2.99:1 — fine for a hairline ornament, thin for
+   a 14px glyph sitting inline with the city names. Night is what the names
+   already use and takes it to 5.3:1; the size drop keeps it reading as a
+   separator rather than as an eighth city. */
+.ticker-track i {
+  font-style: normal;
+  color: var(--night);
+  font-size: 0.72em;
+}
+
+@keyframes ticker { to { transform: translateX(-50%); } }
+
+/* ── Faux 3D: the hero as a shallow diorama ────────────────────────────────
+   JS writes the pointer position into --px / --py as -1..1, and everything
+   here reads off those two numbers. Nothing tracks the pointer in script, so
+   the whole effect costs two custom properties per frame.
+
+   Depth is sold three ways at once: the photo is a card that turns on a real
+   perspective, the flat layers slide by different amounts so they part like
+   planes, and a highlight rides across the glass. Angles stay under 4° — past
+   that the off-axis projection starts to shear the photo. */
+@media (hover: hover) and (pointer: fine) {
+  .hero {
+    perspective: 1400px;
+    perspective-origin: 50% 42%;
+  }
+
+  /* Opt in to .reveal.in's variable so the tilt survives the reveal, and take
+     the transition back off the inherited 0.7s — at that length the card is
+     still coasting to a stop long after the pointer has moved on. */
+  .hero-image {
+    --reveal-rest:
+      rotateY(calc(var(--px, 0) * 3.4deg))
+      rotateX(calc(var(--py, 0) * -2.6deg));
+    transition: opacity 0.7s var(--ease), transform 0.38s var(--ease);
+    will-change: transform;
+  }
+
+  /* Specular pass. Sits over the photo but under the caption and the stamp,
+     so the type it has to stay legible behind never picks up the sheen. */
+  .hero-image::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    background: radial-gradient(
+      58% 58% at calc(50% + var(--px, 0) * 42%) calc(50% + var(--py, 0) * 42%),
+      rgba(243, 230, 208, 0.15),
+      rgba(243, 230, 208, 0.04) 45%,
+      transparent 72%);
+    transition: background 0.38s var(--ease);
+  }
+
+  /* The stamp is inside an overflow:hidden parent, so it cannot actually leave
+     the card in Z. It counter-slides instead: moving against the tilt reads as
+     something standing off the surface rather than printed onto it. */
+  .image-stamp {
+    transform:
+      translate3d(calc(var(--px, 0) * -13px), calc(var(--py, 0) * -9px), 0)
+      rotate(4deg);
+    transition: transform 0.38s var(--ease);
+  }
+
+  /* The headline is clipped by the print wipe, which forces the lines flat —
+     no Z available here. Staggered offsets stand in for it: the last line
+     travels furthest, so it reads as the nearest plane. */
+  .hero-title span {
+    transform: translate3d(
+      calc(var(--px, 0) * var(--layer, 0) * -1px),
+      calc(var(--py, 0) * var(--layer, 0) * -0.55px),
+      0);
+    transition: transform 0.45s var(--ease);
+  }
+
+  .hero-title span:nth-child(1) { --layer: 6; }
+  .hero-title span:nth-child(2) { --layer: 11; }
+  .hero-title span:nth-child(3) { --layer: 17; }
+
+  .hero-kicker,
+  .hero-footer {
+    --reveal-rest: translate3d(calc(var(--px, 0) * 4px), 0, 0);
+    transition: opacity 0.7s var(--ease), transform 0.5s var(--ease);
+  }
+}
+
+.manifesto {
+  position: relative;
+  padding: 88px var(--page) clamp(100px, 12vw, 180px);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.section-index { color: currentColor; opacity: 0.77; }
+.section-index.light { color: var(--heritage); }
+
+.manifesto-grid {
+  padding: clamp(72px, 9vw, 140px) 0 clamp(80px, 10vw, 160px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(320px, 0.72fr);
+  align-items: start;
+  gap: clamp(50px, 9vw, 160px);
+}
+
+.manifesto-title,
+.campaign-heading h2,
+.cities-heading h2,
+.pin-copy h2 {
+  margin: 0;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: -0.055em;
+  line-height: 0.8;
+}
+
+.manifesto-title { font-size: clamp(4.7rem, 9vw, 10rem); }
+
+.manifesto-copy {
+  padding-top: 8px;
+  font-size: clamp(1.05rem, 1.35vw, 1.3rem);
+}
+
+.manifesto-copy p {
+  margin: 0 0 1.25em;
+  max-width: 540px;
+}
+
+/* Red on cream, and at the small end of its clamp it is well under the 24px
+   that would let it count as large text — so this is the darker red. */
+.manifesto-copy .lead {
+  margin-bottom: 1.7em;
+  color: var(--red-ink);
+  font-size: clamp(1.35rem, 2vw, 2rem);
+  line-height: 1.15;
+}
+
+.manifesto-copy .text-link { margin-top: 34px; }
+
+.identity-wordmark {
+  position: relative;
+  min-height: clamp(250px, 36vw, 540px);
+  padding: clamp(42px, 6vw, 92px) 0;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-top: 1px solid var(--line-dark);
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.wordmark-type {
+  position: relative;
+  width: min(100%, 1500px);
+  line-height: 0;
+}
+
+.identity-wordmark img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* Typed wordmark. The stops below are the real gaps between the seven glyphs
+   in the artwork (890px wide), so each jump lands on a letter, not a fraction
+   of the width. Armed by JS so the mark still shows if the script never runs. */
+.wordmark-caret {
+  position: absolute;
+  top: 50%;
+  left: 2.07%;
+  width: 1.7%;
+  height: 62%;
+  background: var(--red);
+  transform: translate(-50%, -50%);
+  opacity: 0;
+}
+
+.identity-wordmark.is-armed img { clip-path: inset(0 97.08% 0 0); }
+.identity-wordmark.is-armed .wordmark-caret { opacity: 1; }
+
+.identity-wordmark.is-typing img {
+  animation: wordmark-type 1.2s steps(1, end) 0.25s forwards;
+}
+
+.identity-wordmark.is-typing .wordmark-caret {
+  animation:
+    wordmark-caret 1.2s steps(1, end) 0.25s forwards,
+    tw-blink 0.9s steps(1, end) 1.45s infinite;
+}
+
+@keyframes wordmark-type {
+  0%     { clip-path: inset(0 97.08% 0 0); }
+  12.5%  { clip-path: inset(0 76.12% 0 0); }
+  25%    { clip-path: inset(0 64.44% 0 0); }
+  37.5%  { clip-path: inset(0 52.08% 0 0); }
+  50%    { clip-path: inset(0 39.49% 0 0); }
+  62.5%  { clip-path: inset(0 27.42% 0 0); }
+  75%    { clip-path: inset(0 15.06% 0 0); }
+  87.5%  { clip-path: inset(0 0 0 0); }
+  100%   { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes wordmark-caret {
+  0%     { left: 2.07%; }
+  12.5%  { left: 23.88%; }
+  25%    { left: 35.56%; }
+  37.5%  { left: 47.92%; }
+  50%    { left: 60.51%; }
+  62.5%  { left: 72.58%; }
+  75%    { left: 84.94%; }
+  87.5%  { left: 97.75%; }
+  100%   { left: 97.75%; }
+}
+
+.campaign {
+  padding: 88px var(--page) clamp(110px, 13vw, 200px);
+  background: var(--night);
+  color: var(--cream);
+}
+
+.campaign-heading,
+.cities-heading {
+  padding: clamp(70px, 9vw, 140px) 0 76px;
+  display: grid;
+  grid-template-columns: 1.35fr minmax(280px, 0.65fr);
+  align-items: end;
+  gap: 50px;
+}
+
+.campaign-heading h2,
+.cities-heading h2 { font-size: clamp(5rem, 9.5vw, 10.5rem); }
+
+.campaign-heading p,
+.cities-heading p {
+  max-width: 420px;
+  margin: 0 0 4px;
+  color: var(--heritage);
+  font-size: clamp(1.05rem, 1.35vw, 1.28rem);
+}
+
+.campaign-grid {
+  display: grid;
+  grid-template-columns: 0.86fr 1.14fr;
+  grid-template-rows: minmax(430px, 49vw) minmax(400px, 43vw);
+  gap: clamp(16px, 2vw, 30px);
+}
+
+.campaign-card {
+  position: relative;
+  min-height: 430px;
+  margin: 0;
+  overflow: hidden;
+  background: var(--night-soft);
+}
+
+.campaign-card-tall { grid-row: 1 / 3; }
+.campaign-card-wide { grid-column: 2; }
+
+.campaign-card img {
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.83);
+  transition: transform 1s var(--ease), filter 0.55s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .campaign-card:hover img {
+    transform: scale(1.035);
+    filter: saturate(1);
+  }
+}
+
+.campaign-card-wide img { object-position: center 36%; }
+
+/* ── The wall / the craft ──────────────────────────────────────────────────
+   Three columns of campaign frames that drift past each other on scroll.
+   Each frame wipes in with the same clip-path move as the hero headline, so
+   the reveal language stays consistent across the page. The ident film sits
+   pinned behind the whole section, so the frames scroll across it. */
+.wall {
+  position: relative;
+  isolation: isolate;
+  background: var(--night);
+  color: var(--cream);
+  /* clip, not hidden: overflow:hidden would make this a scroll container and
+     the sticky film below would stop tracking the viewport. */
+  overflow: clip;
+}
+
+/* Height of its own, then a matching negative margin so the content that
+   follows is pulled back over it — the film holds still, the wall moves. */
+.wall-stage {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  margin-bottom: -100svh;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+/* The frames have to stay legible over moving footage, so the film is held
+   well back and pressed down hardest where the section meets its neighbours. */
+.wall-veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg,
+      var(--night) 0%,
+      rgba(0, 15, 8, 0.72) 18%,
+      rgba(0, 15, 8, 0.72) 82%,
+      var(--night) 100%);
+}
+
+.wall-body {
+  position: relative;
+  z-index: 1;
+  padding: 88px var(--page) clamp(110px, 13vw, 190px);
+}
+
+.wall-heading {
+  padding: clamp(70px, 9vw, 140px) 0 76px;
+  display: grid;
+  grid-template-columns: 1.35fr minmax(280px, 0.65fr);
+  align-items: end;
+  gap: clamp(34px, 5vw, 70px);
+}
+
+.wall-heading h2 {
+  margin: 0;
+  font-size: clamp(3.4rem, 6.4vw, 7.4rem);
+  font-weight: 400;
+  line-height: 0.82;
+  letter-spacing: -0.055em;
+  text-transform: uppercase;
+}
+
+.wall-heading p {
+  margin: 0;
+  max-width: 420px;
+  color: var(--heritage);
+  font-size: clamp(1rem, 1.25vw, 1.2rem);
+}
+
+.wall-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  align-items: start;
+  gap: clamp(14px, 1.8vw, 28px);
+}
+
+.wall-col {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(14px, 1.8vw, 28px);
+  /* JS writes the drift into this variable rather than onto transform itself,
+     so the column keeps its own transform declaration in one place. */
+  transform: translate3d(0, var(--wall-shift, 0px), 0);
+}
+
+/* Offset starts so the three columns never line up in a row. */
+.wall-col:nth-child(2) { margin-top: clamp(30px, 5vw, 90px); }
+.wall-col:nth-child(3) { margin-top: clamp(12px, 2vw, 36px); }
+
+.wall-frame {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  background: var(--night-soft);
+}
+
+.wall-frame img {
+  width: 100%;
+  height: auto;
+  filter: saturate(0.86) contrast(1.04);
+  transition: filter 0.6s ease, transform 1s var(--ease);
+}
+
+.wall-frame figcaption {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 28px 14px 12px;
+  background: linear-gradient(180deg, rgba(0, 15, 8, 0) 0%, rgba(0, 15, 8, 0.82) 100%);
+  color: var(--cream);
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--label-sm);
+}
+
+.wall-frame figcaption i { font-style: normal; color: var(--heritage); }
+
+@media (hover: hover) and (pointer: fine) {
+  .wall-frame:hover img { filter: saturate(1) contrast(1.02); transform: scale(1.03); }
+}
+
+/* Armed from JS so every frame stays visible if the script never runs.
+   The clip lands on the image, never on .wall-frame itself: the frame is what
+   the IntersectionObserver watches, and an element clipped to zero height
+   reports an intersection ratio of zero forever — it would never reveal. */
+.wall-frame.is-armed img { clip-path: inset(0 0 100% 0); }
+.wall-frame.is-armed figcaption { opacity: 0; }
+
+.wall-frame.is-revealed img { animation: wall-wipe 0.85s cubic-bezier(0.5, 0, 0.2, 1) both; }
+.wall-frame.is-revealed figcaption { opacity: 1; transition: opacity 0.5s ease 0.4s; }
+
+@keyframes wall-wipe {
+  from { clip-path: inset(0 0 100% 0); }
+  to { clip-path: inset(0 0 0 0); }
+}
+
+.typewriter-section {
+  position: relative;
+  min-height: min(840px, 84svh);
+  padding: 88px var(--page) clamp(88px, 10vw, 150px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-top: 1px solid var(--line-light);
+  border-bottom: 1px solid var(--line-light);
+  background: var(--night);
+  color: var(--cream);
+}
+
+.route-question-inner {
+  flex: 1;
+  padding-top: clamp(72px, 10vh, 130px);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: clamp(60px, 9vh, 110px);
+}
+
+.typewriter-text {
+  max-width: 1450px;
+  margin: 0;
+  font-size: clamp(4.1rem, 9.2vw, 10.5rem);
+  font-weight: 400;
+  line-height: 0.78;
+  letter-spacing: -0.06em;
+  text-transform: uppercase;
+}
+
+.tw-line { display: block; }
+
+/* Plain inline flow, not flex. Six scripts share this line, and only the
+   text baseline lines them up — flex centred each box instead, which let
+   every script float to its own height above "WHICH". Because the line box
+   is set by the h2 strut (line-height .78) and every word sits at .78em or
+   less, tall glyphs overshoot as ink without reflowing the line, so nothing
+   jumps as the word cycles. */
+.tw-language-line {
+  display: block;
+  white-space: nowrap;
+}
+
+/* Carries the per-script size so the cursor scales with the word.
+   typewriter.js sets lang here; .tw-word inherits it. */
+.tw-word-wrap {
+  /* Plain inline, not inline-block: an inline-block contributes its own box
+     height to the line, and the Indic faces have far taller intrinsic
+     ascent/descent than the Latin heading face, which pushed line two down
+     as the word cycled. Inline keeps the heading strut in charge. */
+  display: inline;
+  color: var(--red);
+  font-size: 0.7em;
+  /* Zero, so the word contributes no height of its own and the heading strut
+     alone sets the line box. The six Noto faces have content areas of
+     1.21em-1.36em, so at any shared line-height each one sized its inline box
+     differently and shifted line two by up to 18px as the word cycled.
+     Glyphs still draw from the shared baseline; only the box is collapsed. */
+  line-height: 0;
+}
+
+/* Optical size per script, measured from each Noto face rather than guessed:
+   the Indic base-consonant body is matched to roughly the Latin cap height,
+   so all six read at one size. Tamil is the outlier — its body is small next
+   to tall letters like இ, so it is set to let those rise like a Latin
+   ascender instead of towering over the cap line. */
+.tw-word-wrap:lang(ta) { font-size: 0.64em; }
+.tw-word-wrap:lang(hi) { font-size: 0.79em; }
+.tw-word-wrap:lang(kn) { font-size: 0.63em; }
+.tw-word-wrap:lang(bn) { font-size: 0.72em; }
+.tw-word-wrap:lang(te) { font-size: 0.68em; }
+
+/* Inherits line-height from the wrapper on purpose: .tw-word-wrap is an
+   inline-block, so its box height comes from this line box, and a value of 1
+   here would let the taller scripts push the whole heading down mid-cycle. */
+.tw-word {
+  font-size: 1em;
+  letter-spacing: -0.02em;
+}
+
+.tw-word:lang(ta) { font-family: "Noto Sans Tamil", sans-serif; }
+.tw-word:lang(hi) { font-family: "Noto Sans Devanagari", sans-serif; }
+.tw-word:lang(kn) { font-family: "Noto Sans Kannada", sans-serif; }
+.tw-word:lang(bn) { font-family: "Noto Sans Bengali", sans-serif; }
+.tw-word:lang(te) { font-family: "Noto Sans Telugu", sans-serif; }
+
+.tw-quote {
+  color: var(--red);
+  font-size: 0.72em;
+  opacity: 0.72;
+}
+
+/* Sits on the baseline and scales with the word, so it tracks each script
+   instead of staying at the heading's size. */
+.tw-cursor {
+  display: inline-block;
+  vertical-align: baseline;
+  width: 0.07em;
+  height: 0.72em;
+  margin-left: 0.06em;
+  background: var(--red);
+  animation: tw-blink 0.9s steps(1, end) infinite;
+}
+
+@keyframes tw-blink {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+.typewriter-action {
+  display: grid;
+  grid-template-columns: minmax(220px, 440px) auto;
+  align-items: end;
+  gap: 48px;
+}
+
+.typewriter-action p {
+  margin: 0;
+  color: var(--heritage);
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+}
+
+.typewriter-link {
+  justify-self: end;
+  min-width: min(100%, 260px);
+  padding: 18px 22px 16px;
+  display: inline-flex;
+  justify-content: space-between;
+  gap: 36px;
+  border: 1px solid var(--cream);
+  color: var(--cream);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 0.72rem;
+  transition: background 0.3s var(--ease), color 0.3s var(--ease), border-color 0.3s var(--ease);
+}
+
+.typewriter-link:hover,
+.typewriter-link:focus-visible,
+.typewriter-link:active {
+  border-color: var(--red);
+  background: var(--red);
+  color: var(--night);
+}
+
+.city-index {
+  padding: 88px var(--page) clamp(110px, 13vw, 190px);
+  background: var(--cream);
+  color: var(--ink);
+}
+
+.cities-heading { padding-bottom: 100px; }
+.cities-heading p { color: rgba(0, 15, 8, 0.68); }
+
+.cities-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.8fr) minmax(550px, 1.2fr);
+  align-items: start;
+  gap: clamp(42px, 6vw, 110px);
+}
+
+.city-preview {
+  position: sticky;
+  top: 90px;
+  height: calc(100svh - 130px);
+  min-height: 560px;
+  max-height: 820px;
+  overflow: hidden;
+  background: var(--night);
+}
+
+/* ── The map ─────────────────────────────────────────────────────────────
+   .city-index runs cream, like the rest of this section - .city-preview is
+   the one dark surface inside it (background: var(--night), above), which
+   is exactly why the map lives here rather than as a separate full-bleed
+   layer that would otherwise have to fight a light background it was never
+   drawn for.
+
+   The zoom is a single CSS transform, not a JS animation loop: script.js's
+   activateCity() sets --ox/--oy (where the hovered city's own pin sits,
+   as a percentage of the map) and toggles [data-active] on .city-map, and
+   this transition does the rest - the same "JS only sets variables and
+   toggles classes, CSS performs the motion" split the whole site already
+   uses. transform-origin is what makes a plain scale() read as "zooming
+   toward that city" instead of just "the map got bigger". */
+.city-map {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+.city-map-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  /* translate() then scale() - composed so the point script.js solves for
+     lands under the translate BEFORE the scale is applied (transform
+     functions apply right-to-left), which is what keeps that point fixed
+     under the zoom. transform-origin is pinned to 0 0 so scale() itself
+     never shifts the anchor out from under that math. Both numbers live in
+     one property now (previously scale() and a separate transform-origin
+     swap), so a fast re-hover interpolates a single continuous pan+zoom
+     instead of the scale finishing an old transition while the origin
+     jumps to the new city with no transition at all - that jump was the
+     "glitchy" snap on quick hovers. */
+  transform: translate(var(--tx, 0px), var(--ty, 0px)) scale(var(--map-zoom, 1));
+  transform-origin: 0 0;
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+.city-map[data-active]:not([data-active=""]) .city-map-svg { --map-zoom: 2.85; }
+
+.city-map-land {
+  fill: var(--heritage);
+  fill-opacity: 0.85;
+  stroke: var(--night);
+  stroke-width: 1.6;
+  /* Without this the stroke thickens as the map scales up on zoom, so a
+     hairline at rest turns into a heavy outline at 2.85x. */
+  vector-effect: non-scaling-stroke;
+}
+
+.city-map-pin circle:first-child {
+  fill: var(--red);
+  opacity: 0.5;
+  transition: opacity 0.4s ease, r 0.4s var(--ease);
+  vector-effect: non-scaling-stroke;
+}
+
+.city-map-pin-ring {
+  fill: none;
+  stroke: var(--red);
+  stroke-width: 2.5;
+  opacity: 0;
+  vector-effect: non-scaling-stroke;
+  transition: opacity 0.4s ease;
+}
+
+/* Set by activateCity(), not a CSS attribute match on data-pin: PS 5.1 rules
+   aside, "highlight whichever pin's data-pin equals the ancestor's
+   data-active" is not something attribute selectors can express between
+   siblings, so JS just says which one directly. */
+.city-map-pin.is-active circle:first-child { opacity: 1; r: 14; }
+.city-map-pin.is-active .city-map-pin-ring { opacity: 0.85; }
+
+/* ── The photo ───────────────────────────────────────────────────────────
+   A pinned inset over the map rather than the full-bleed cover it used to
+   be: this section is nothing but coordinates already (city codes, lat/long
+   captions everywhere), so "here is the map, and here is a photograph from
+   that exact point on it" is the same idea the rest of the page is already
+   making, not a new one. */
+.city-preview-photo {
+  position: absolute;
+  z-index: 1;
+  right: clamp(18px, 3vw, 32px);
+  bottom: clamp(18px, 3vw, 32px);
+  width: clamp(148px, 26%, 240px);
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  border: 2px solid var(--cream);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+  transform: rotate(-2deg);
+}
+
+.city-preview img {
+  height: 100%;
+  object-fit: cover;
+  transition: opacity 0.2s ease, transform 0.5s var(--ease);
+}
+
+.city-preview.is-switching img {
+  opacity: 0.25;
+  transform: scale(1.025);
+}
+
+.city-preview::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 48%, rgba(0, 15, 8, 0.78));
+}
+
+.city-preview-overlay {
+  position: absolute;
+  z-index: 2;
+  inset: auto 24px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 20px;
+  color: var(--cream);
+}
+
+.city-preview-overlay span {
+  font-size: var(--label);
+  letter-spacing: 0.18em;
+}
+
+.city-preview-overlay strong {
+  font-size: clamp(2rem, 3vw, 3.3rem);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+}
+
+.city-list { border-top: 1px solid var(--line-dark); }
+
+.city-row {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: 42px minmax(95px, 0.4fr) minmax(150px, 1fr) auto 24px;
+  align-items: center;
+  gap: 18px;
+  min-height: 98px;
+  padding: 16px 4px;
+  border-bottom: 1px solid var(--line-dark);
+  text-decoration: none;
+  transition: color 0.2s ease, padding 0.25s var(--ease), background 0.2s ease;
+}
+
+.city-row::before {
+  content: "";
+  position: absolute;
+  inset: 0 100% 0 0;
+  z-index: 0;
+  background: var(--night);
+  transition: right 0.3s var(--ease);
+}
+
+.city-row > * {
+  position: relative;
+  z-index: 1;
+}
+
+.city-row:hover,
+.city-row:focus-visible,
+.city-row:active,
+.city-row.is-active {
+  color: var(--cream);
+  padding-inline: 18px;
+}
+
+.city-row:hover::before,
+.city-row:focus-visible::before,
+.city-row:active::before,
+.city-row.is-active::before { right: 0; }
+
+/* Floored in px, not rem: at 0.64rem these land near 10px, and "Shop live" is
+   the one label on this page that tells a visitor what they can actually buy.
+   It does not get to be the least readable thing in the section. */
+.city-number,
+.city-status {
+  text-transform: uppercase;
+  font-size: clamp(11px, 0.64rem, 0.64rem);
+  letter-spacing: 0.13em;
+}
+
+.city-native { font-size: clamp(1.05rem, 1.6vw, 1.42rem); }
+.city-native.tamil { font-family: "Noto Sans Tamil", sans-serif; }
+.city-native.devanagari { font-family: "Noto Sans Devanagari", sans-serif; }
+.city-native.kannada { font-family: "Noto Sans Kannada", sans-serif; }
+.city-native.bengali { font-family: "Noto Sans Bengali", sans-serif; }
+.city-native.telugu { font-family: "Noto Sans Telugu", sans-serif; }
+
+.city-row strong {
+  font-size: clamp(1.8rem, 3vw, 3.15rem);
+  font-weight: 400;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+.city-status { opacity: 0.7; text-align: right; }
+/* Idle the row sits on cream, so the darker red; the fill below swaps it back. */
+.city-status.live { color: var(--red-ink); opacity: 1; }
+.city-row:hover .city-status.live,
+.city-row:focus-visible .city-status.live,
+.city-row:active .city-status.live,
+.city-row.is-active .city-status.live { color: var(--red); }
+
+.city-arrow {
+  font-size: 1.25rem;
+  transition: transform 0.35s var(--ease);
+}
+
+.city-row:hover .city-arrow,
+.city-row:focus-visible .city-arrow,
+.city-row:active .city-arrow { transform: translate(3px, -3px); }
+.city-row-yours::before { background: var(--red); }
+.city-row-yours:hover,
+.city-row-yours:focus-visible,
+.city-row-yours:active { color: var(--night); }
+
+.pin-cta {
+  min-height: 720px;
+  padding: clamp(80px, 9vw, 140px) var(--page);
+  display: grid;
+  grid-template-columns: 1.25fr 0.75fr;
+  align-items: center;
+  overflow: hidden;
+  background: var(--red);
+  color: var(--night);
+}
+
+.eyebrow {
+  display: block;
+  margin-bottom: 34px;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  font-size: var(--label);
+}
+
+.pin-copy { position: relative; z-index: 2; min-width: 0; }
+.pin-copy h2 { font-size: clamp(4.6rem, 8.7vw, 10rem); }
+.pin-copy h2 span { font-family: "Noto Sans Devanagari", sans-serif; }
+
+.pin-copy p {
+  max-width: 520px;
+  margin: 38px 0 46px;
+  font-size: clamp(1.05rem, 1.4vw, 1.3rem);
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 190px;
+  gap: 30px;
+  padding: 16px 19px 14px;
+  border: 1px solid currentColor;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  font-size: 0.7rem;
+  transition: background 0.25s ease, color 0.25s ease;
+}
+
+.button-light:hover,
+.button-light:focus-visible,
+.button-light:active {
+  background: var(--night);
+  color: var(--cream);
+}
+
+.pin-mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  justify-self: end;
+  width: min(34vw, 500px);
+  aspect-ratio: 0.62;
+  border: 2px solid var(--night);
+  transform: rotate(4deg);
+}
+
+.pin-mark::before,
+.pin-mark::after {
+  content: "";
+  position: absolute;
+  background: var(--night);
+}
+
+.pin-mark::before { width: 2px; height: 120%; transform: rotate(35deg); }
+.pin-mark::after { height: 2px; width: 120%; transform: rotate(-18deg); }
+
+.pin-mark span {
+  position: relative;
+  z-index: 1;
+  font-family: "Noto Sans Devanagari", sans-serif;
+  font-size: clamp(9rem, 20vw, 22rem);
+  font-weight: 700;
+  line-height: 1;
+}
+
+.pin-mark i {
+  position: absolute;
+  z-index: 2;
+  bottom: 20%;
+  right: 10%;
+  color: var(--cream);
+  font-size: clamp(3rem, 7vw, 7rem);
+  font-style: normal;
+}
+
+/* The ident film, now the ground the wall scrolls over (see .wall-stage). */
+.reel-bg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 50%;
+}
+
+.site-footer {
+  padding: 40px var(--page) 34px;
+  background: var(--cream);
+  color: var(--ink);
+  overflow: hidden;
+}
+
+.footer-logo {
+  position: relative;
+  display: block;
+  border-bottom: 1px solid var(--line-dark);
+}
+
+.footer-logo img { width: 100%; height: auto; padding: clamp(18px, 2vw, 34px) 0; }
+
+.footer-meta {
+  padding-top: 26px;
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  align-items: end;
+  gap: 70px;
+  text-transform: uppercase;
+  font-size: var(--label);
+  letter-spacing: 0.12em;
+}
+
+.footer-meta > div { display: grid; gap: 6px; }
+.footer-meta a {
+  width: max-content;
+  /* Text is ~14px tall; the padding takes the real tap target to the 44px
+     minimum without shifting the visible layout (negative margin cancels it).
+     10px each side only reached 34px, so it is computed off --tap now. */
+  padding: calc((var(--tap) - 14px) / 2) 0;
+  margin: calc((var(--tap) - 14px) / -2) 0;
+  text-decoration: none;
+}
+/* Cream ground: the darker red. */
+.footer-meta a:hover,
+.footer-meta a:focus-visible,
+.footer-meta a:active { color: var(--red-ink); }
+.footer-meta p { margin: 0; }
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+/* Settled state. The transform is a variable so an element that has its own
+   resting transform (the hero card's tilt) can keep it once revealed —
+   everything else resolves to none and behaves exactly as before. */
+.reveal.in {
+  opacity: 1;
+  transform: var(--reveal-rest, none);
+}
+
+@media (max-width: 1100px) {
+  .hero { grid-template-columns: 52% 48%; }
+  .hero-title { font-size: clamp(4.5rem, 8.75vw, 7.7rem); }
+  .manifesto-grid,
+  .campaign-heading,
+  .cities-heading { grid-template-columns: 1fr 0.72fr; gap: 50px; }
+  .cities-layout { grid-template-columns: 0.75fr 1.25fr; gap: 46px; }
+  .city-row { grid-template-columns: 34px minmax(74px, 0.3fr) 1fr auto 20px; gap: 10px; }
+  .city-row strong { font-size: clamp(1.55rem, 2.65vw, 2.4rem); }
+}
+
+@media (max-width: 820px) {
+  .scroll-route {
+    top: 78px;
+    right: 4px;
+    bottom: 14px;
+    width: 38px;
+    opacity: 0;
+  }
+  .scroll-route.is-ready { opacity: 0.78; }
+  .scroll-route-path { stroke-width: 1.8; stroke-dasharray: 1 10; }
+  .scroll-route-pointer { width: 13px; height: 17px; }
+  .site-header { height: 68px; }
+  .menu-toggle {
+    position: relative;
+    z-index: 102;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    justify-self: end;
+    min-height: 44px;
+    padding: 10px 0;
+    border: 0;
+    background: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: var(--label);
+  }
+  .menu-icon,
+  .menu-icon::before {
+    display: block;
+    width: 18px;
+    height: 1px;
+    background: currentColor;
+    transition: transform 0.3s ease;
+  }
+  .menu-icon::before { content: ""; transform: translateY(-5px); }
+  .menu-toggle[aria-expanded="true"] .menu-icon { transform: rotate(45deg); }
+  .menu-toggle[aria-expanded="true"] .menu-icon::before { transform: rotate(-90deg); }
+  .site-nav {
+    position: fixed;
+    inset: 0;
+    padding: calc(110px + env(safe-area-inset-top)) calc(var(--page) + env(safe-area-inset-right))
+             calc(44px + env(safe-area-inset-bottom)) calc(var(--page) + env(safe-area-inset-left));
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    /* flex-end while the links fit — the panel is meant to sit down by the
+       thumb — but a landscape phone is only ~375px tall and the four links
+       need ~577px. Pinned to the bottom with no scroller, the overflow went
+       off the *top*: "Our story" ended up above y=0, behind the fixed header,
+       unreachable because nothing could scroll. safe-area-inset keeps the
+       same links clear of the notch and the home indicator. */
+    justify-content: flex-end;
+    gap: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    background: var(--red);
+    color: var(--night);
+    transform: translateY(-100%);
+    visibility: hidden;
+    transition: transform 0.55s var(--ease), visibility 0.55s;
+  }
+  .site-nav.is-open { transform: translateY(0); visibility: visible; }
+  .site-nav a {
+    flex: none;
+    padding: 18px 0 14px;
+    border-bottom: 1px solid currentColor;
+    font-size: clamp(2.2rem, 8vw, 4.2rem);
+    letter-spacing: -0.04em;
+  }
+
+  /* Short viewport — landscape phones, and portrait once the keyboard is up.
+     Shrink the links and drop the top padding to the header's height so the
+     whole menu fits without scrolling wherever it still can. */
+  @media (max-height: 560px) {
+    .site-nav {
+      padding-top: calc(78px + env(safe-area-inset-top));
+      padding-bottom: calc(20px + env(safe-area-inset-bottom));
+      justify-content: flex-start;
+    }
+    .site-nav a {
+      padding: 11px 0 9px;
+      font-size: clamp(1.5rem, 5.2vh, 2.4rem);
+    }
+  }
+  .site-nav .nav-cta { border: 0; border-bottom: 1px solid currentColor; }
+  .site-nav .nav-cta:hover { background: none; }
+  .hero {
+    min-height: auto;
+    padding-top: 68px;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(620px, 82svh) auto;
+  }
+  .hero-copy { min-height: 630px; padding-top: 62px; }
+  .hero-title { font-size: clamp(4.4rem, 17vw, 8.4rem); }
+  .hero-image { min-height: 620px; }
+  .hero-ticker { grid-column: 1; }
+  .manifesto-grid,
+  .campaign-heading,
+  .cities-heading { grid-template-columns: minmax(0, 1fr); }
+  .wall-heading { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 48px; }
+  .wall-grid { grid-template-columns: repeat(2, 1fr); }
+  /* At two columns the third stack would strand itself in a half-width row, so
+     it spans the full width and re-lays its own frames as a pair instead. */
+  .wall-col:nth-child(3) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+  }
+  .manifesto-copy { max-width: 600px; }
+  .identity-wordmark { min-height: clamp(230px, 39vw, 420px); }
+  .campaign-heading,
+  .cities-heading { gap: 30px; }
+  .campaign-grid { grid-template-columns: 1fr 1fr; grid-template-rows: minmax(480px, 76vw) minmax(420px, 68vw); }
+  .campaign-card-wide { grid-column: 2; }
+  .typewriter-section { min-height: 720px; }
+  .route-question-inner { padding-top: 90px; }
+  .typewriter-text { font-size: clamp(4rem, 12.5vw, 7rem); }
+  .typewriter-action { grid-template-columns: 1fr; align-items: start; gap: 34px; }
+  .typewriter-link { justify-self: start; }
+  .cities-layout { grid-template-columns: 1fr; }
+  .city-preview { display: none; }
+  .city-row { grid-template-columns: 38px minmax(100px, 0.4fr) 1fr auto 22px; }
+  .pin-cta { grid-template-columns: 1fr; min-height: auto; }
+  .pin-mark { position: absolute; right: -10%; width: 48vw; opacity: 0.13; }
+  /* As a backdrop the film has to fill the stage at every width — letterboxing
+     it here would open bars across the frames sitting on top of it. */
+  .reel-bg { object-fit: cover; }
+  .footer-meta { grid-template-columns: 1fr 1fr; gap: 30px; }
+  .footer-meta p { grid-column: 1 / -1; }
+}
+
+@media (max-width: 560px) {
+  :root { --page: 18px; }
+  .brand-logo { width: 112px; }
+  .hero-copy { min-height: 580px; padding-top: 44px; padding-bottom: 32px; }
+  .hero-title { font-size: clamp(4rem, 19vw, 6.3rem); padding-block: 46px; }
+  .hero-title span { white-space: normal; }
+  .hero-title span:nth-child(2) { margin-left: 0; font-size: 0.82em; }
+  .hero-footer { grid-template-columns: 1fr; align-items: start; }
+  .hero-image { min-height: 560px; }
+  .hero-image figcaption,
+  .campaign-card figcaption { inset-inline: 14px; bottom: 14px; }
+  .image-stamp { top: 16px; right: 16px; width: 92px; }
+  .manifesto,
+  .campaign,
+  .city-index { padding-top: 58px; }
+  .section-index { font-size: var(--label-sm); }
+  .manifesto-grid { padding-block: 70px 90px; gap: 50px; }
+  .manifesto-title,
+  .campaign-heading h2,
+  .cities-heading h2,
+  .pin-copy h2 { font-size: clamp(3.7rem, 18vw, 6rem); }
+  .cities-heading h2 { font-size: clamp(3.2rem, 14vw, 5rem); }
+  .identity-wordmark { min-height: 210px; padding-block: 48px; }
+  .campaign-heading,
+  .cities-heading { padding-block: 70px 48px; }
+  .wall-body { padding-top: 58px; }
+  .wall-heading { padding-block: 70px 40px; }
+  .wall-heading h2 { font-size: clamp(2.8rem, 12vw, 4rem); }
+  .wall-grid { grid-template-columns: 1fr; }
+  .wall-col { margin-top: 0 !important; }
+  /* align-items must return to stretch here: inherited from the two-column rule
+     above it would shrink each frame to its content, and a lazy image that has
+     not loaded yet has no intrinsic width — the frame would collapse to zero. */
+  .wall-col:nth-child(3) {
+    grid-column: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .campaign-grid { display: flex; flex-direction: column; }
+  .campaign-card { min-height: 116vw; }
+  .campaign-card-wide { min-height: 92vw; }
+  .typewriter-section { min-height: 660px; padding-top: 58px; padding-bottom: 72px; }
+  .route-question-inner { padding-top: 76px; gap: 64px; }
+  .typewriter-text { font-size: clamp(3.15rem, 15vw, 5rem); line-height: 0.82; }
+  .tw-word-wrap { min-width: 0; }
+  .typewriter-link { width: 100%; max-width: none; }
+  .cities-heading { padding-bottom: 70px; }
+  /* minmax(0, 1fr), not 1fr: a bare fr track floors at min-content, so the
+     city name set at 8vw held the whole row open and the grid could not fit
+     the gutter. On a 280px screen that pushed the row 26px past its column
+     and the fill ran off under the clip. This lets the name column give. */
+  .city-row {
+    min-height: 92px;
+    grid-template-columns: 26px minmax(0, 1fr) auto 20px;
+    gap: 10px;
+  }
+  .city-native { display: none; }
+  .city-row strong { font-size: clamp(1.65rem, 8vw, 2.4rem); }
+  .city-status { font-size: 11px; }
+  .city-row:hover,
+  .city-row:focus-visible,
+  .city-row.is-active { padding-inline: 10px; }
+  .pin-cta { min-height: 620px; }
+  .pin-copy h2 { max-width: 100%; font-size: clamp(3.25rem, 15vw, 5.3rem); }
+  .pin-copy p { margin-block: 30px 40px; }
+  .footer-meta { grid-template-columns: 1fr; }
+  .footer-meta p { grid-column: auto; line-height: 1.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+  .reveal { opacity: 1; transform: none; }
+  .scroll-route-pointer { display: none; }
+  .scroll-route-path { stroke-dasharray: 1 14; opacity: 0.44; }
+  .tw-cursor { animation: none; opacity: 1; }
+  .identity-wordmark img { clip-path: none !important; animation: none !important; }
+  .wordmark-caret { display: none; }
+  .hero-title.is-armed span,
+  .hero-title.is-wiping span { clip-path: none !important; animation: none !important; }
+  ::view-transition-old(root),
+  ::view-transition-new(root) { animation: none !important; }
+  .wall-frame.is-armed img,
+  .wall-frame.is-revealed img { clip-path: none !important; animation: none !important; }
+  .wall-frame.is-armed figcaption { opacity: 1; }
+  .wall-col { transform: none !important; }
+}

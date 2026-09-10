@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>APSHABD — DELHI · ख़ामोशी</title>
+  <meta name="theme-color" content="#2a0f0a" />
+  <meta name="description" content="APSHABD Delhi - Old city stone, new city glass, and the quiet that runs between them." />
+  <link rel="canonical" href="https://apshabd.com/delhi.html" />
+
+  <!-- Icons. One square mark, every surface: browser tab, iOS home screen,
+       Android install prompt. See assets/icons/. -->
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="icon" type="image/png" sizes="16x16" href="assets/icons/favicon-16.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="assets/icons/favicon-32.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="assets/icons/apple-touch-icon.png" />
+  <link rel="manifest" href="site.webmanifest" />
+
+  <!-- Share card. Without these a link pasted into WhatsApp, Instagram DMs or
+       LinkedIn renders as a bare grey rectangle. Absolute URLs are required:
+       most scrapers do not resolve relative ones. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="APSHABD" />
+  <meta property="og:locale" content="en_IN" />
+  <meta property="og:url" content="https://apshabd.com/delhi.html" />
+  <meta property="og:title" content="APSHABD - Delhi / DEL 03" />
+  <meta property="og:description" content="APSHABD Delhi - Old city stone, new city glass, and the quiet that runs between them." />
+  <meta property="og:image" content="https://apshabd.com/assets/social/og-delhi.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="A dark card reading DELHI with the APSHABD wordmark" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="APSHABD - Delhi / DEL 03" />
+  <meta name="twitter:description" content="APSHABD Delhi - Old city stone, new city glass, and the quiet that runs between them." />
+  <meta name="twitter:image" content="https://apshabd.com/assets/social/og-delhi.jpg" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;700&family=DotGothic16&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href=".//delhi.css?v=4" />
+  <link rel="stylesheet" href=".//drop.css?v=4" />
+  <link rel="stylesheet" href=".//streets.css?v=5" />
+  <link rel="stylesheet" href=".//city-brand.css?v=10" />
+  <!-- Last: city-brand.css hides .marquee and kills animation, and the
+       metro panel has to win. -->
+  <link rel="stylesheet" href=".//metro-board.css?v=1" />
+  <link rel="stylesheet" href=".//brutal.css?v=4" />
+  <link rel="stylesheet" href=".//cart.css?v=1" />
+</head>
+<body>
+  <div class="bg-word" aria-hidden="true">ख़ामोशी</div>
+  <div class="grain" aria-hidden="true"></div>
+  <a class="skip-link" href="#drop">Skip to the drop</a>
+
+
+  <nav class="nav glass">
+    <a href="index.html" class="back">← APSHABD HOME</a>
+    <span class="logo-tile"><img src="assets/brand/apshabd-wordmark-cream.png" alt="APSHABD" /></span>
+    <span class="nav-city">DELHI · 03</span>
+  </nav>
+
+  <header class="hero" style="transform-style:preserve-3d;perspective:1200px;">
+    <p class="eyebrow reveal">THE CAPITAL · दिलवालों की दिल्ली</p>
+    <h1 class="hero-title">
+      <span class="reveal depth-layer" data-depth="0.8">DEL</span>
+      <span class="reveal outline depth-layer" data-depth="1.2">HI</span>
+    </h1>
+    <p class="hero-sub reveal">Seven cities buried under one. Empire after empire,<br />and the streets still keep their secrets quietly.</p>
+    <a href="#drop" class="cta reveal">ENTER THE GATE ↓</a>
+  </header>
+
+  <!-- The Yellow Line coach panel. Each stop is one cell carrying both
+       scripts, so the Devanagari stays locked over its own Latin instead
+       of drifting past it. Both halves of the track are identical: the
+       keyframes travel -50%, so the loop only closes if they match. -->
+  <div class="marquee metro-board" aria-hidden="true">
+    <div class="mb-inner">
+      <span class="mb-line"><b>Yellow</b><i>Line</i></span>
+      <div class="mb-screen">
+        <div class="marquee-track">
+          <span class="mb-set">
+            <span class="mb-stop mb-stop--label"><i class="mb-hi">अगला स्टेशन</i><b class="mb-en">Next Station</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop"><i class="mb-hi">चांदनी चौक</i><b class="mb-en">Chandni Chowk</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop"><i class="mb-hi">कनॉट प्लेस</i><b class="mb-en">Connaught Place</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop"><i class="mb-hi">हौज़ ख़ास</i><b class="mb-en">Hauz Khas</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop mb-stop--label"><i class="mb-hi">दरवाज़े बायीं ओर खुलेंगे</i><b class="mb-en">Doors will open on the left</b></span>
+            <i class="mb-sep">✦</i>
+          </span>
+          <span class="mb-set">
+            <span class="mb-stop mb-stop--label"><i class="mb-hi">अगला स्टेशन</i><b class="mb-en">Next Station</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop"><i class="mb-hi">चांदनी चौक</i><b class="mb-en">Chandni Chowk</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop"><i class="mb-hi">कनॉट प्लेस</i><b class="mb-en">Connaught Place</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop"><i class="mb-hi">हौज़ ख़ास</i><b class="mb-en">Hauz Khas</b></span>
+            <i class="mb-sep">✦</i>
+            <span class="mb-stop mb-stop--label"><i class="mb-hi">दरवाज़े बायीं ओर खुलेंगे</i><b class="mb-en">Doors will open on the left</b></span>
+            <i class="mb-sep">✦</i>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── THE FACES ── -->
+  <section class="faces" id="faces">
+    <div class="faces-head reveal">
+      <h2>THE FACES OF DROP 001</h2>
+      <span>CAMPAIGN 001 · DELHI</span>
+    </div>
+
+    <article class="face reveal">
+      <div class="face-shot">
+        <img src=".//assets/campaign/models/set2-03-delhi-chandni-chowk-vendor.jpg"
+             alt="A vegetable seller resting beside her basket in the Chandni Chowk tee"
+             loading="lazy" width="1024" height="1536" />
+      </div>
+      <div class="face-copy">
+        <span class="face-code">DELHI DROP 001</span>
+        <h3 class="face-name">CHANDNI CHOWK</h3>
+        <span class="face-script rg">चांदनी चौक</span>
+        <p class="face-line">Onions counted, basket balanced, the same lane worked since
+          before the shop signs were in English. The market opens around her.</p>
+        <span class="face-role">THE VENDOR</span>
+      </div>
+    </article>
+
+    <article class="face reveal">
+      <div class="face-shot">
+        <img src=".//assets/campaign/models/set2-04-delhi-connaught-place-coffee-house.jpg"
+             alt="A regular at an old coffee house table wearing the Connaught Place tee"
+             loading="lazy" width="1023" height="1538" />
+      </div>
+      <div class="face-copy">
+        <span class="face-code">DELHI DROP 001</span>
+        <h3 class="face-name">CONNAUGHT PLACE</h3>
+        <span class="face-script rg">कनॉट प्लेस</span>
+        <p class="face-line">One filter coffee, one argument about politics, three hours at
+          a table meant for twenty minutes. The colonnade never asked anyone to hurry.</p>
+        <span class="face-role">THE REGULAR</span>
+      </div>
+    </article>
+
+    <article class="face reveal">
+      <div class="face-shot">
+        <img src=".//assets/campaign/models/set2-11-delhi-hauz-khas-back.jpg"
+             alt="Back view of the Hauz Khas tee against a weathered green wall"
+             loading="lazy" width="1092" height="1440" />
+      </div>
+      <div class="face-copy">
+        <span class="face-code">DELHI DROP 001</span>
+        <h3 class="face-name">HAUZ KHAS</h3>
+        <span class="face-script rg">हौज़ ख़ास</span>
+        <p class="face-line">A hand on a wall that has outlasted six dynasties and one
+          nightlife boom. The ruins are still the best thing in the postcode.</p>
+        <span class="face-role">THE WALL</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="section" id="drop" tabindex="-1">
+    <div class="section-head reveal">
+      <span class="stamp">DELHI DROP 001</span>
+      <h2>EMPIRE STREETWEAR</h2>
+      <p>Three neighbourhoods, three centuries of noise. Pick a colour, turn it over.</p>
+    </div>
+
+    <div class="drop-grid" data-city="delhi">
+
+      <!-- 03 · HAUZ KHAS -->
+      <article class="drop reveal" data-loc="hauz-khas">
+        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
+             aria-label="Hauz Khas tee — activate to see the back" data-cursor="FLIP">
+          <div class="drop-flip">
+            <div class="drop-face drop-face--front">
+              <img src=".//assets/delhi/hauz-khas/faded-charcoal-front.jpg" alt="Hauz Khas tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">FRONT</span>
+            </div>
+            <div class="drop-face drop-face--back">
+              <img src=".//assets/delhi/hauz-khas/faded-charcoal-back.jpg" alt="Hauz Khas tee, back" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="drop-face-tag">BACK</span>
+            </div>
+          </div>
+          <span class="drop-hint">TAP TO FLIP</span>
+        </div>
+        <div class="drop-info">
+          <div class="drop-head">
+            <h3>HAUZ KHAS</h3>
+            <span class="rg">हौज़ ख़ास</span>
+          </div>
+          <p>Ruins by the lake, fits by the fort, and a deer park nobody expects.</p>
+          <div class="drop-ways" role="group" aria-label="Hauz Khas colourways">
+            <button type="button" class="way" data-cw="white"                  style="--sw:#eff1f1" aria-label="White"></button>
+            <button type="button" class="way is-on" data-cw="faded-charcoal"   style="--sw:#363735" aria-label="Faded charcoal"></button>
+            <button type="button" class="way" data-cw="muted-olive"            style="--sw:#55583a" aria-label="Muted olive"></button>
+            <button type="button" class="way" data-cw="vintage-cream"          style="--sw:#e7dabd" aria-label="Vintage cream"></button>
+            <button type="button" class="way" data-cw="washed-black"           style="--sw:#212322" aria-label="Washed black"></button>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="wait glass reveal">
+      <span class="stamp">LAUNCHING SOON</span>
+      <h2>ख़ामोशी. THEN THE DROP.</h2>
+      <p>The capital gets its crown quietly.</p>
+      <a href="index.html#cities" class="cta">BACK TO THE MAP</a>
+    </div>
+  </section>
+
+  <!-- ── SHOT ON LOCATION ── -->
+  <section class="streets" id="streets">
+    <div class="streets-head reveal">
+      <span class="streets-label">CAMPAIGN 001 · SHOT ON LOCATION</span>
+      <h2>DELHI,<br />DOCUMENTED.</h2>
+      <p>From the wholesale lanes at dawn to the metro at rush hour — the capital wore it
+         before anyone else could. Everyone in these frames is wearing their own area.</p>
+    </div>
+
+    <div class="streets-grid trio">
+      <figure class="street-print reveal">
+        <div class="street-frame">
+          <img src=".//assets/campaign/models/set2-07-delhi-chandni-chowk-field.jpg"
+               alt="A worker in an open field wearing the APSHABD Chandni Chowk tee"
+               loading="lazy" width="1086" height="1448" />
+        </div>
+        <figcaption class="street-cap">
+          <span class="street-loc">CHANDNI CHOWK<i class="rg">चांदनी चौक</i></span>
+          <span class="street-role">THE EARLY SHIFT</span>
+        </figcaption>
+      </figure>
+
+      <figure class="street-print reveal">
+        <div class="street-frame">
+          <img src=".//assets/campaign/models/set1-04-delhi-connaught-place-blurred.jpg"
+               alt="A commuter on the metro wearing the APSHABD Connaught Place tee"
+               loading="lazy" width="1023" height="1538" />
+        </div>
+        <figcaption class="street-cap">
+          <span class="street-loc">CONNAUGHT PLACE<i class="rg">कनॉट प्लेस</i></span>
+          <span class="street-role">THE YELLOW LINE</span>
+        </figcaption>
+      </figure>
+
+      <figure class="street-print reveal">
+        <div class="street-frame">
+          <img src=".//assets/campaign/models/set1-07-delhi-hauz-khas-blurred.jpg"
+               alt="A late-night kitchen scene with the APSHABD Hauz Khas tee"
+               loading="lazy" width="1122" height="1402" />
+        </div>
+        <figcaption class="street-cap">
+          <span class="street-loc">HAUZ KHAS<i class="rg">हौज़ ख़ास</i></span>
+          <span class="street-role">AFTER HOURS</span>
+        </figcaption>
+      </figure>
+    </div>
+
+    <p class="streets-foot reveal">WORN BY THE CITY FIRST · DELHI</p>
+  </section>
+
+  <!-- ── TYPEWRITER PROMPT ── -->
+  <section class="typewriter-section" data-words="location|जगह">
+    <p class="typewriter-text">
+      Which <span class="tw-quote">'</span><span class="tw-word-wrap"><span class="tw-word" lang="hi">जगह</span></span><span class="tw-quote">'</span> would you like for us to add in your city wardrobe, do let us know.
+    </p>
+    <div class="typewriter-cta">
+      <a href="drop-a-pin.html" class="tw-cta" data-cursor="DROP"><span>DROP A PIN →</span></a>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <a class="city-footer-brand" href="index.html" aria-label="APSHABD home"><img src="assets/brand/apshabd-wordmark-night.png" alt="" /></a>
+    <p>APSHABD — DELHI · <span class="rg">ख़ामोश रहो</span></p>
+  </footer>
+
+
+  <script src=".//cart.js?v=1"></script>
+  <script src=".//delhi.js"></script>
+  <script src=".//drop.js?v=5"></script>
+</body>
+</html>

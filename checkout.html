@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout — APSHABD</title>
+  <meta name="robots" content="noindex" />
+  <meta name="theme-color" content="#000f08" />
+  <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none';" />
+  <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  <link rel="stylesheet" href="styles.css?v=33" />
+  <link rel="stylesheet" href="brutal.css?v=4" />
+  <link rel="stylesheet" href="cart.css?v=1" />
+</head>
+<body style="background:#000f08;">
+
+  <header class="site-header" id="top">
+    <a class="brand" href="index.html" aria-label="अPSHABD home">
+      <img class="brand-logo brand-logo-cream" src="assets/brand/apshabd-wordmark-cream.png" alt="" />
+    </a>
+    <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="index.html">Back to site</a>
+    </nav>
+  </header>
+
+  <main class="checkout-page">
+    <div id="checkoutEmpty" class="checkout-empty" hidden>
+      <h1 class="checkout-heading">Your cart is empty</h1>
+      <p class="checkout-subhead">Add a tee from one of the city drops first.</p>
+      <a href="index.html#cities">Find your city →</a>
+    </div>
+
+    <div id="checkoutContent" hidden>
+      <span class="checkout-demo-banner">Demo checkout — no real payment is processed</span>
+      <h1 class="checkout-heading">Checkout</h1>
+      <p class="checkout-subhead">Shipping details are stored only in this session — nothing is sent anywhere.</p>
+
+      <div class="checkout-grid">
+        <form id="shippingForm" novalidate>
+          <div class="checkout-field">
+            <label for="fullName">Full name</label>
+            <input id="fullName" name="fullName" type="text" autocomplete="name" required />
+          </div>
+          <div class="checkout-field">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" autocomplete="email" required />
+          </div>
+          <div class="checkout-field">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" autocomplete="tel" required />
+          </div>
+          <div class="checkout-field">
+            <label for="address">Address</label>
+            <textarea id="address" name="address" rows="3" autocomplete="street-address" required></textarea>
+          </div>
+          <div class="checkout-row">
+            <div class="checkout-field">
+              <label for="city">City</label>
+              <input id="city" name="city" type="text" autocomplete="address-level2" required />
+            </div>
+            <div class="checkout-field">
+              <label for="pin">PIN code</label>
+              <input id="pin" name="pin" type="text" inputmode="numeric" autocomplete="postal-code" required />
+            </div>
+          </div>
+        </form>
+
+        <div class="checkout-summary">
+          <h2>Order summary</h2>
+          <div id="summaryLines"></div>
+          <div class="checkout-totals">
+            <div class="checkout-line"><span>Subtotal</span><span id="summarySubtotal"></span></div>
+            <div class="checkout-line"><span>Shipping</span><span>Free</span></div>
+            <div class="checkout-line"><span><strong>Total</strong></span><span><strong id="summaryTotal"></strong></span></div>
+          </div>
+          <button type="button" id="payBtn" class="checkout-pay-btn">Pay now</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Mock payment gateway modal. Deliberately collects no card details —
+       it is a demo of the flow (method choice → processing → success), not
+       a fake card-capture form. Swap this for a real Razorpay/Stripe
+       Checkout redirect once there's a merchant account and a backend to
+       verify the payment. -->
+  <div class="pay-modal" id="payModal" aria-hidden="true">
+    <div class="pay-modal-scrim" data-pay-close></div>
+    <div class="pay-modal-card" role="dialog" aria-modal="true" aria-label="Payment">
+      <div class="pay-modal-head">
+        <h3>Complete payment</h3>
+        <button type="button" class="pay-modal-close" data-pay-close aria-label="Close">×</button>
+      </div>
+      <p class="pay-modal-brand">Demo Pay · sandbox mode</p>
+
+      <div id="payMethods">
+        <label class="pay-method is-selected">
+          <input type="radio" name="payMethod" value="upi" checked /> UPI
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="card" /> Card
+        </label>
+        <label class="pay-method">
+          <input type="radio" name="payMethod" value="netbanking" /> Netbanking
+        </label>
+      </div>
+
+      <div class="pay-modal-amount">
+        <span>Amount payable</span>
+        <strong id="payAmount"></strong>
+      </div>
+
+      <div id="payProcessing" hidden>
+        <div class="pay-modal-spinner"></div>
+        <p class="pay-modal-status">Processing payment…</p>
+      </div>
+
+      <div id="paySuccess" class="pay-modal-success" hidden>
+        <div class="pay-tick">✓</div>
+        <p class="pay-modal-status">Payment successful</p>
+        <p class="pay-modal-order" id="payOrderId"></p>
+      </div>
+
+      <button type="button" id="payConfirmBtn" class="checkout-pay-btn">Pay <span id="payConfirmAmount"></span></button>
+    </div>
+  </div>
+
+  <script src="cart.js?v=1"></script>
+  <script src="checkout.js?v=1"></script>
+</body>
+</html>

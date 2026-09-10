@@ -1,0 +1,46 @@
+# Netlify / Cloudflare Pages header rules.
+#
+# This file is the portable replacement for .htaccess, which only Apache reads.
+# Keep the two in sync: .htaccess still governs if the site is ever moved to
+# cPanel or a VPS running Apache, and this file governs everywhere else.
+#
+# NOT carried over from .htaccess, deliberately:
+#
+#   X-XSS-Protection — the legacy auditor it enabled was removed from Chrome
+#   and Edge and could itself be abused to disable inline scripts on a page.
+#   Modern guidance is to omit it and rely on the CSP below.
+#
+#   The WebP content-negotiation rewrite — it needs mod_rewrite. Every JPEG and
+#   PNG here still has a .webp sibling in the repo, but nothing serves them
+#   automatically now, so browsers get the originals. To recover the ~41% image
+#   saving on a static host, the <img> tags have to become <picture> elements.
+#
+#   The hotlink and bad-bot rules — both need mod_rewrite. Cloudflare's own
+#   hotlink protection and bot rules cover this if it matters later.
+
+/*
+  X-Frame-Options: DENY
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; script-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'self'; form-action 'self';
+
+# HSTS tells browsers to refuse plain HTTP for a year, and they cache that
+# instruction — it cannot be called back early. Safe here because both hosts
+# serve HTTPS only. 'preload' is intentionally absent: submitting to the
+# preload list is genuinely hard to reverse.
+/*
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# HTML is always revalidated so a redeploy is visible immediately.
+/*.html
+  Cache-Control: no-cache, no-store, must-revalidate
+
+/
+  Cache-Control: no-cache, no-store, must-revalidate
+
+# Fingerprint-free asset URLs, so this is a plain 30-day cache rather than
+# 'immutable'. Assets here are overwritten in place on redeploy, and immutable
+# would let a browser hold a stale image for the full month.
+/assets/*
+  Cache-Control: public, max-age=2592000

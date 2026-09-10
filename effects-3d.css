@@ -1,0 +1,164 @@
+/* ═══════════════════════════════════════════════════════
+   PDS — 3D EFFECTS SYSTEM
+   Shared depth, parallax, particles, and perspective
+═══════════════════════════════════════════════════════ */
+
+/* ── PERSPECTIVE CONTAINER ────────────────────────────── */
+.perspective-wrap {
+  perspective: 1200px;
+  perspective-origin: 50% 50%;
+  transform-style: preserve-3d;
+}
+
+/* ── 3D REVEAL — sections flip toward viewer ──────────── */
+.reveal-3d {
+  opacity: 0;
+  transform: rotateX(6deg) translateZ(-50px) translateY(40px);
+  transform-origin: bottom center;
+  transition: opacity 1s cubic-bezier(.22,1,.36,1),
+              transform 1s cubic-bezier(.22,1,.36,1);
+  will-change: transform, opacity;
+}
+.reveal-3d.in {
+  opacity: 1;
+  transform: rotateX(0) translateZ(0) translateY(0);
+}
+
+/* ── HERO DEPTH LAYERS ────────────────────────────────── */
+.depth-layer {
+  transform-style: preserve-3d;
+  will-change: transform;
+  transition: transform .15s ease-out;
+}
+
+/* ── 3D TILT ELEMENT ──────────────────────────────────── */
+.tilt-3d {
+  transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.2,.8,.2,1),
+              box-shadow .5s ease;
+  will-change: transform;
+}
+.tilt-3d:hover {
+  z-index: 5;
+}
+
+/* ── CARD SHINE REFLECTION ────────────────────────────── */
+.card-shine {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  background: linear-gradient(
+    105deg,
+    transparent 38%,
+    rgba(255,255,255,.06) 42%,
+    rgba(255,255,255,.12) 48%,
+    rgba(255,255,255,.06) 52%,
+    transparent 56%
+  );
+  opacity: 0;
+  transition: opacity .35s ease;
+  border-radius: inherit;
+  mix-blend-mode: overlay;
+}
+.card:hover .card-shine {
+  opacity: 1;
+}
+
+/* ── MARQUEE PERSPECTIVE ──────────────────────────────── */
+.marquee-3d {
+  transform: perspective(600px) rotateX(2deg);
+  transform-origin: center bottom;
+}
+
+/* ── AMBIENT PARTICLES ────────────────────────────────── */
+.particles-container {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  will-change: transform;
+  opacity: 0;
+  animation: particleFloat linear infinite;
+}
+@keyframes particleFloat {
+  0% {
+    opacity: 0;
+    transform: translateY(100vh) translateZ(var(--pz, 0px)) scale(var(--ps, 1));
+  }
+  5% { opacity: var(--po, .3); }
+  90% { opacity: var(--po, .3); }
+  100% {
+    opacity: 0;
+    transform: translateY(-10vh) translateZ(var(--pz, 0px)) scale(var(--ps, 1));
+  }
+}
+
+/* ── DEPTH SHADOW UTILITY ─────────────────────────────── */
+.depth-shadow {
+  transition: box-shadow .5s cubic-bezier(.2,.8,.2,1);
+}
+.depth-shadow:hover {
+  box-shadow:
+    0 20px 40px rgba(0,0,0,.3),
+    0 8px 16px rgba(0,0,0,.2),
+    0 2px 4px rgba(0,0,0,.15);
+}
+
+/* ── FLOATING ANIMATION ───────────────────────────────── */
+.float-3d {
+  animation: float3d 8s ease-in-out infinite;
+}
+@keyframes float3d {
+  0%, 100% {
+    transform: translateY(0) rotateX(0) rotateY(0);
+  }
+  25% {
+    transform: translateY(-8px) rotateX(2deg) rotateY(-1.5deg);
+  }
+  50% {
+    transform: translateY(-4px) rotateX(-1deg) rotateY(2deg);
+  }
+  75% {
+    transform: translateY(-10px) rotateX(1.5deg) rotateY(-1deg);
+  }
+}
+
+/* ── FOOTER 3D PULSE ──────────────────────────────────── */
+.footer-3d-pulse {
+  animation: footerDepthPulse 6s ease-in-out infinite;
+}
+@keyframes footerDepthPulse {
+  0%, 100% { transform: translateZ(0); opacity: .06; }
+  50%      { transform: translateZ(20px); opacity: .1; }
+}
+
+/* ── SCROLL PERSPECTIVE SHIFT (driven by JS via CSS var) ── */
+body {
+  --scroll-pct: 0;
+}
+
+/* ── REDUCED MOTION ───────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .reveal-3d { opacity: 1; transform: none; transition: none; }
+  .float-3d { animation: none; }
+  .footer-3d-pulse { animation: none; }
+  .particle { animation: none; display: none; }
+  .tilt-3d { transition: none; }
+  .card-shine { display: none; }
+  .marquee-3d { transform: none; }
+  .depth-layer { transition: none; }
+}
+
+/* ── MOBILE — disable mouse-dependent 3D on touch ─────── */
+@media (hover: none) {
+  .tilt-3d:hover { transform: none; }
+  .card-shine { display: none; }
+  .depth-layer { transform: none !important; }
+}

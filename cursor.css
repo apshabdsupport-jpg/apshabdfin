@@ -1,0 +1,107 @@
+/* ═══════════════════════════════════════════════════════
+   PDS — PIN CURSOR (shared, all pages)
+   A pin-head dot + a slow sonar ring in the page accent.
+   Click = a pin drops → ripple in the silence.
+═══════════════════════════════════════════════════════ */
+
+/* Native cursor is hidden only when the JS has booted
+   (desktop, fine pointer, motion allowed). */
+html.pds-cursor-on,
+html.pds-cursor-on * { cursor: none !important; }
+
+/* ── PIN HEAD (dot) ─────────────────────────────────── */
+.pds-dot {
+  position: fixed; top: 0; left: 0; z-index: 10001;
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #e8e3da;
+  mix-blend-mode: difference;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  transition:
+    width  .25s cubic-bezier(.22,1,.36,1),
+    height .25s cubic-bezier(.22,1,.36,1),
+    border-radius .25s,
+    opacity .3s;
+}
+
+/* ── SONAR RING ─────────────────────────────────────── */
+.pds-ring {
+  position: fixed; top: 0; left: 0; z-index: 10000;
+  width: 38px; height: 38px;
+  margin: -19px 0 0 -19px;          /* center on the point */
+  pointer-events: none;
+  transition:
+    width  .35s cubic-bezier(.22,1,.36,1),
+    height .35s cubic-bezier(.22,1,.36,1),
+    margin .35s cubic-bezier(.22,1,.36,1),
+    opacity .3s;
+}
+.pds-ring-arc {
+  position: absolute; inset: 0;
+  border-radius: 50%;
+  border: 1px solid var(--acc, var(--yellow, #f5b301));
+  border-top-color: transparent;     /* the gap = the sweep */
+  opacity: .7;
+  animation: pds-spin 3.6s linear infinite;
+  transition: opacity .3s, border-color .3s;
+}
+@keyframes pds-spin { to { transform: rotate(360deg); } }
+
+/* ── RING LABEL (data-cursor="ENTER" etc.) ──────────── */
+.pds-ring-label {
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: .5rem; font-weight: 700;
+  letter-spacing: .22em; text-indent: .22em;
+  color: var(--acc, var(--yellow, #f5b301));
+  opacity: 0; transform: scale(.6);
+  transition: opacity .25s, transform .25s cubic-bezier(.22,1,.36,1);
+  user-select: none; white-space: nowrap;
+}
+
+/* ── STATES (classes live on <body>) ────────────────── */
+
+/* Hovering a link / button / card */
+body.pds-hover .pds-dot  { width: 4px; height: 4px; }
+body.pds-hover .pds-ring { width: 58px; height: 58px; margin: -29px 0 0 -29px; }
+body.pds-hover .pds-ring-arc {
+  border-top-color: var(--acc, var(--yellow, #f5b301)); /* gap closes */
+  opacity: .95;
+}
+
+/* Hover target carries a data-cursor label */
+body.pds-label .pds-ring { width: 74px; height: 74px; margin: -37px 0 0 -37px; }
+body.pds-label .pds-ring-label { opacity: 1; transform: scale(1); }
+body.pds-label .pds-dot { opacity: 0; }
+
+/* Over a text field: dot becomes a caret bar */
+body.pds-text .pds-dot {
+  width: 2px; height: 20px; border-radius: 1px;
+}
+body.pds-text .pds-ring { opacity: 0; }
+
+/* Mouse pressed: pin pushes in */
+body.pds-down .pds-dot  { width: 10px; height: 10px; }
+body.pds-down .pds-ring { width: 30px; height: 30px; margin: -15px 0 0 -15px; }
+body.pds-down.pds-label .pds-ring { width: 62px; height: 62px; margin: -31px 0 0 -31px; }
+
+/* Mouse left the window */
+body.pds-out .pds-dot,
+body.pds-out .pds-ring { opacity: 0; }
+
+/* ── PIN-DROP RIPPLE (on click) ─────────────────────── */
+.pds-ripple {
+  position: fixed; top: 0; left: 0; z-index: 9999;
+  width: 44px; height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  border: 1.5px solid var(--acc, var(--yellow, #f5b301));
+  opacity: 0;
+  pointer-events: none;
+  animation: pds-drop .8s cubic-bezier(.22,1,.36,1) forwards;
+}
+@keyframes pds-drop {
+  0%   { transform: scale(.12); opacity: .85; }
+  100% { transform: scale(1.7); opacity: 0; }
+}

@@ -1,0 +1,20 @@
+Contact: security@apshabd.com
+Preferred-Languages: en
+Canonical: https://apshabd.com/.well-known/security.txt
+Expires: 2027-09-08T00:00:00.000Z
+
+# ── RESPONSIBLE DISCLOSURE ────────────────────────────────
+# If you discover a vulnerability in this website, please
+# report it responsibly to: security@apshabd.com
+#
+# We commit to:
+#   • Acknowledging receipt within 48 hours
+#   • Keeping you informed of fix progress
+#   • Not pursuing legal action for good-faith disclosures
+#
+# Please do NOT:
+#   • Publicly disclose before we patch
+#   • Access or modify user data
+#   • Perform denial-of-service attacks
+#
+# Thank you for helping keep PDS safe.

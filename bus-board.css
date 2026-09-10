@@ -1,0 +1,192 @@
+/* ===== CHENNAI · MTC LED DESTINATION BOARD ==============================
+   The route board that sits above the windscreen of a Chennai MTC bus:
+   a fixed route-number module on the left, the destination scrolling
+   beside it, the whole panel chopped into cells by an LED grid.
+
+   Built from the reference photograph and the display specs:
+   · amber is the transit standard — the LEDs land between #FFA500 and
+     #FFBF00, so the lit colour here is #ffab1f with an orange bloom
+   · character cells are a 5x7-ish matrix on a 16- or 24-row board, so the
+     grid pitch is set to give roughly seven cells of cap height
+   · unlit LEDs are not black — they sit in the substrate as faint warm
+     dots, which is what stops the panel reading as flat painted type
+
+   Loaded after city-brand.css on purpose: that file hides .marquee
+   outright, and this needs to win. Chennai only — no other city page
+   loads this stylesheet. */
+
+.led-board {
+  --led: #ffab1f;
+  --led-bloom: rgba(255, 138, 0, 0.55);
+  --board: #080906;
+  --cell: 3px; /* LED pitch: the grid overlay and the dormant dots share it */
+}
+
+/* city-brand.css carries `.marquee { display: none !important }`. Two
+   important declarations, so specificity decides: .marquee.led-board is
+   (0,2,0) and beats (0,1,0) regardless of which file loads last. */
+.marquee.led-board {
+  display: block !important;
+  position: relative;
+  z-index: 2;
+  overflow: visible;
+  max-width: 1220px;
+  margin: 0 auto;
+  padding: clamp(14px, 2.4vw, 22px) clamp(14px, 3vw, 26px);
+  background: none;
+  /* The stock marquee feathers its ends. A board is a physical panel with
+     a bezel, so the fade has to go or the edges look torn. */
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* The bezel: a dark housing with the glass sunk into it. */
+.led-inner {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid rgba(255, 171, 31, 0.16);
+  border-radius: 3px;
+  background: var(--board);
+  box-shadow:
+    inset 0 0 0 3px rgba(0, 0, 0, 0.85),
+    inset 0 2px 22px rgba(0, 0, 0, 0.9),
+    0 10px 34px rgba(0, 0, 0, 0.5);
+}
+
+/* Dormant LEDs. Present across the whole panel, so the matrix is legible
+   even in the gaps between words. */
+.led-route,
+.led-screen {
+  background-color: var(--board);
+  background-image: radial-gradient(
+    circle at 50% 50%,
+    rgba(255, 171, 31, 0.075) 0 30%,
+    transparent 32%);
+  background-size: var(--cell) var(--cell);
+}
+
+/* ── The route number module ──────────────────────────────────────────
+   Its own zone on the real board, brighter and set off by a hard rule.
+   Silkscreen is a bitmap face, so the digits land square on the grid the
+   way a chunky route number does. */
+.led-route {
+  flex: 0 0 auto;
+  display: grid;
+  place-items: center;
+  padding: 0 clamp(12px, 1.8vw, 22px);
+  border-right: 2px solid rgba(0, 0, 0, 0.9);
+  box-shadow: 1px 0 0 rgba(255, 171, 31, 0.14);
+  font-family: "Silkscreen", "DotGothic16", monospace;
+  font-weight: 700;
+  font-size: clamp(1.15rem, 2.6vw, 1.9rem);
+  line-height: 1;
+  letter-spacing: 0.02em;
+  color: var(--led);
+  text-shadow: 0 0 5px var(--led-bloom), 0 0 16px rgba(255, 120, 0, 0.35);
+}
+
+.led-screen {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(9px, 1.5vw, 15px) 0;
+}
+
+/* ── The scrolling destination ────────────────────────────────────────
+   city-brand.css kills motion site-wide with
+     *, *::before, *::after { animation: none !important }
+   which is the real reason no city page has a moving marquee. The board
+   needs its own !important to come back, and its own keyframes so it does
+   not depend on chennai.css's `scroll` surviving that reset either.
+   Deliberately narrow: this re-enables one element, not the global rule. */
+.led-board .marquee-track {
+  font-family: "DotGothic16", "Silkscreen", monospace;
+  font-size: clamp(0.92rem, 1.9vw, 1.42rem);
+  font-weight: 400;
+  letter-spacing: 0.055em;
+  line-height: 1.15;
+  color: var(--led);
+  text-shadow: 0 0 5px var(--led-bloom), 0 0 15px rgba(255, 120, 0, 0.3);
+  animation: led-scroll 34s linear infinite !important;
+}
+
+/* Both halves of the track are identical, so -50% is a seamless loop. */
+@keyframes led-scroll {
+  to { transform: translateX(-50%); }
+}
+
+.led-board .marquee-track > span {
+  padding-right: 2.2em;
+  white-space: nowrap;
+}
+
+/* The 'via' line is a smaller matrix on the real board. */
+.led-via {
+  font-size: 0.82em;
+  opacity: 0.86;
+}
+
+.led-sep {
+  color: rgba(255, 171, 31, 0.42);
+  text-shadow: none;
+}
+
+/* ── The LED grid ─────────────────────────────────────────────────────
+   The piece that does the actual work: a mesh of dark lines laid over
+   everything, so the glyphs and the dormant dots are all cut into
+   discrete cells. Sits above the type, below nothing. */
+.led-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  background-image:
+    repeating-linear-gradient(90deg, rgba(4, 5, 3, 0.92) 0 1px, transparent 1px var(--cell)),
+    repeating-linear-gradient(180deg, rgba(4, 5, 3, 0.92) 0 1px, transparent 1px var(--cell));
+}
+
+/* Curved glass: a soft warm wash and a vignette, so the panel catches
+   light instead of sitting flat on the page. */
+.led-inner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background:
+    radial-gradient(120% 80% at 50% 0%, rgba(255, 171, 31, 0.07), transparent 60%),
+    radial-gradient(140% 120% at 50% 50%, transparent 55%, rgba(0, 0, 0, 0.5) 100%);
+}
+
+/* A barely-there mains flicker. Amplitude is deliberately tiny — the tell
+   of a real board is that it is never perfectly steady. Same !important
+   for the same reason as the scroll above. */
+@media (prefers-reduced-motion: no-preference) {
+  .led-screen,
+  .led-route { animation: led-flicker 5.5s steps(1, end) infinite !important; }
+}
+
+@keyframes led-flicker {
+  0%, 96%, 100% { filter: brightness(1); }
+  97%           { filter: brightness(0.9); }
+  98%           { filter: brightness(1.04); }
+}
+
+/* Re-asserted here because the !important above outranks chennai.css's own
+   reduced-motion rule, so that rule can no longer stop the board on its own. */
+@media (prefers-reduced-motion: reduce) {
+  .led-board .marquee-track,
+  .led-screen,
+  .led-route { animation: none !important; }
+}
+
+@media (max-width: 720px) {
+  .led-board { --cell: 2px; }
+  .marquee.led-board { padding-inline: 12px; }
+  .led-board .marquee-track { letter-spacing: 0.04em; }
+}

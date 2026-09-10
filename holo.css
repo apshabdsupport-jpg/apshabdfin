@@ -1,0 +1,249 @@
+/* ===== PIN DROP SILENCE — PROJECTION LAYER =====
+   Monochrome hologram. NO new hues: everything is the page's own
+   --acc plus white light. The effect comes from how projected light
+   behaves — scanlines, bloom, edge falloff, judder — not from colour.
+   Body copy is deliberately left untouched.
+   ================================================================ */
+
+:root {
+  /* The single projection colour. Each page supplies its own. */
+  --holo: var(--acc, var(--yellow, #f5b301));
+
+  --holo-rim-op:  .42;   /* edge at rest */
+  --holo-rim-hov: .85;   /* edge under pointer */
+  --holo-line:    7%;    /* scanline strength */
+  --holo-blur:    22px;
+  --holo-sat:     140%;
+}
+
+/* ── 1. FROSTED SURFACES ─────────────────────────────────────────
+   Slightly less saturation than the prism pass — projected light
+   shouldn't over-boost what's behind the glass.                   */
+
+.glass,
+.nav {
+  backdrop-filter: blur(var(--holo-blur)) saturate(var(--holo-sat));
+  -webkit-backdrop-filter: blur(var(--holo-blur)) saturate(var(--holo-sat));
+}
+
+/* Nav hairline: one colour, fading out at both ends like a beam
+   losing focus away from centre. */
+.nav {
+  border-bottom-color: transparent;
+  position: relative;
+}
+.nav::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--holo) 30%, transparent) 22%,
+    color-mix(in srgb, var(--holo) 70%, transparent) 50%,
+    color-mix(in srgb, var(--holo) 30%, transparent) 78%,
+    transparent 100%);
+  opacity: .62;
+}
+
+/* ── 2. PROJECTION EDGE ──────────────────────────────────────────
+   Injected by holo.js as <i class="holo-rim"> so it never collides
+   with the ::before/::after already used by .btn, .cta, .city-card.
+   One hue, varying alpha — bright where the beam hits, dim where it
+   falls away.                                                     */
+
+.holo-rim {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  pointer-events: none;
+  z-index: 3;
+  opacity: var(--holo-rim-op);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--holo) 85%, transparent) 0%,
+    color-mix(in srgb, var(--holo) 22%, transparent) 38%,
+    color-mix(in srgb, var(--holo) 18%, transparent) 62%,
+    color-mix(in srgb, var(--holo) 60%, transparent) 100%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+          mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+          mask-composite: exclude;
+  transition: opacity .5s var(--ease, cubic-bezier(.22,1,.36,1));
+}
+
+/* Light pooling inside the panel, following the pointer. */
+.holo-rim::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity .5s var(--ease, cubic-bezier(.22,1,.36,1));
+  background: radial-gradient(
+    40% 58% at var(--hx, 50%) var(--hy, 0%),
+    color-mix(in srgb, var(--holo) 20%, transparent) 0%,
+    color-mix(in srgb, var(--holo) 8%, transparent) 45%,
+    transparent 74%);
+}
+
+.holo-host { position: relative; }
+
+.holo-host:hover > .holo-rim,
+.holo-host:focus-visible > .holo-rim { opacity: var(--holo-rim-hov); }
+
+.holo-host:hover > .holo-rim::after { opacity: 1; }
+
+/* Sticky city cards must NOT be forced to position:relative — sticky
+   already establishes the containing block and relative would kill
+   the scroll-stack effect. */
+.city-card.holo-host { position: sticky; }
+
+/* On the home deck each card carries its own city colour inline as
+   --c. Rebind --holo there so a card projects in its own light
+   instead of the page accent — it inherits into the injected rim. */
+.city-card { --holo: var(--c, var(--yellow, #f5b301)); }
+
+/* Same trap on the Mumbai drop: .drop-face is absolutely positioned
+   inside a preserve-3d flip. Forcing relative would collapse it. */
+.drop-face.holo-host { position: absolute; }
+
+/* ── 3. SCANLINES + SCAN PASS ────────────────────────────────────
+   The tell of a projection. Fixed to the panel, so scrolling doesn't
+   make them crawl.                                                */
+
+.holo-scan {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 2;
+}
+
+/* Horizontal raster — 1px line every 3px, in the page's own colour. */
+.holo-scan::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0 2px,
+    color-mix(in srgb, var(--holo) var(--holo-line), transparent) 2px 3px);
+  opacity: .5;
+  transition: opacity .5s var(--ease, cubic-bezier(.22,1,.36,1));
+}
+.holo-host:hover > .holo-scan::before { opacity: .85; }
+
+/* A single bright pass down the panel on hover — the beam refreshing. */
+.holo-scan::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 20%;
+  top: 0;
+  opacity: 0;
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--holo) 10%, transparent) 40%,
+    color-mix(in srgb, #fff 9%, transparent) 50%,
+    color-mix(in srgb, var(--holo) 10%, transparent) 60%,
+    transparent 100%);
+}
+.holo-host:hover > .holo-scan::after {
+  animation: holoPass 1.5s cubic-bezier(.4,0,.5,1);
+}
+
+@keyframes holoPass {
+  0%   { opacity: 0;  transform: translateY(-100%); }
+  12%  { opacity: 1; }
+  88%  { opacity: 1; }
+  100% { opacity: 0;  transform: translateY(500%); }
+}
+
+/* ── 4. SIGNATURE TYPE — BLOOM & JUDDER ──────────────────────────
+   Projected type blooms into the air around it and sits a hair
+   unstable. Same colour as the page. No hue splitting.            */
+
+.hero-title .accent {
+  text-shadow:
+    0 0 26px color-mix(in srgb, var(--holo) 30%, transparent),
+    0 0 60px color-mix(in srgb, var(--holo) 14%, transparent);
+}
+
+/* The holoJudder keyframes lived here: a permanent 7s loop nudging the
+   headline's opacity and baseline to simulate an unstable projection.
+   Simulated instability and actual jank look identical to a visitor, so
+   the headline now holds still and the bloom carries the effect. */
+
+/* Outline line: back to its original bone stroke, with a faint
+   accent bloom behind it rather than a recoloured stroke. */
+.hero-title .outline {
+  -webkit-text-stroke-color: rgba(232,227,218,.3);
+  text-shadow: 0 0 34px color-mix(in srgb, var(--holo) 12%, transparent);
+}
+
+/* Section labels keep their ORIGINAL colour — only a soft bloom is
+   added, so nothing new enters the palette. */
+.city-num,
+.cities-count,
+.eyebrow,
+.section-head .rg,
+.hero-eyebrow {
+  text-shadow: 0 0 16px color-mix(in srgb, var(--holo) 26%, transparent);
+}
+
+.city-card:hover .city-name {
+  text-shadow: 0 0 30px color-mix(in srgb, var(--holo) 22%, transparent);
+}
+
+/* ── 5. LOGO TILES ───────────────────────────────────────────────  */
+
+.hero-logo-tile,
+.logo-tile,
+.nav-sticker {
+  backdrop-filter: blur(10px) saturate(130%);
+  -webkit-backdrop-filter: blur(10px) saturate(130%);
+}
+
+/* Garment faces are near-white — scanlines need multiply to register,
+   and the raster should be finer on a photograph. */
+.drop-face > .holo-scan::before {
+  mix-blend-mode: multiply;
+  opacity: .3;
+}
+.drop-face > .holo-rim { opacity: .6; }
+.drop-face.holo-host:hover > .holo-rim { opacity: .95; }
+
+/* Colourway swatches are 44px circles — too small to raster. */
+.way > .holo-scan { display: none; }
+
+/* ── 6. FALLBACKS & ACCESSIBILITY ────────────────────────────────  */
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass { background: color-mix(in srgb, var(--ink, #0c0c0c) 88%, transparent); }
+  .nav   { background: color-mix(in srgb, var(--ink, #0c0c0c) 94%, transparent); }
+}
+
+@supports not (background: color-mix(in srgb, red 50%, transparent)) {
+  .holo-rim, .holo-scan { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-title .accent { animation: none; }
+  .holo-scan::after { display: none; }
+  .holo-rim, .holo-rim::after, .holo-scan::before { transition: none; }
+}
+
+@media (prefers-contrast: more) {
+  .holo-scan::before { display: none; }
+  .hero-title .accent { text-shadow: none; animation: none; }
+  :root { --holo-rim-op: .75; }
+}
+
+/* No hover to reveal the edge on touch, so show it at rest. */
+@media (hover: none) {
+  :root { --holo-rim-op: .6; }
+  .holo-scan::after { display: none; }
+}

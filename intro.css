@@ -1,0 +1,771 @@
+/* ═══════════════════════════════════════════════════════
+   PIN DROP SILENCE — CINEMATIC INTRO  ·  7-city trailer (6.2s)
+   ═══════════════════════════════════════════════════════ */
+
+/* ── INTRO OVERLAY ───────────────────────────────────── */
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: #0a0a0a;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  pointer-events: all;
+}
+
+/* Fades the moment .done lands — no delay, or the overlay just sits
+   there opaque and then vanishes without ever animating. */
+.intro-overlay.done {
+  pointer-events: none;
+  animation: introFadeOut 0.8s ease-in-out forwards;
+}
+
+@keyframes introFadeOut {
+  0%   { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+/* ── NOISE GRAIN FOR INTRO ───────────────────────────── */
+.intro-grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+}
+
+/* ── VIGNETTE ────────────────────────────────────────── */
+.intro-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 5;
+  background: radial-gradient(ellipse at center, transparent 30%, rgba(0, 0, 0, 0.7) 100%);
+}
+
+/* ── HORIZONTAL LINES (scanline effect) ──────────────── */
+.intro-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 6;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.06) 2px,
+    rgba(0, 0, 0, 0.06) 4px
+  );
+}
+
+/* ── CAMERA FLASH ────────────────────────────────────── */
+.intro-flash {
+  position: absolute;
+  inset: 0;
+  z-index: 9;
+  pointer-events: none;
+  background: white;
+  opacity: 0;
+}
+.intro-flash.flash-1 { animation: cameraFlash 0.3s 0.6s ease-out forwards; }
+.intro-flash.flash-2 { animation: cameraFlash 0.2s 2.2s ease-out forwards; }
+.intro-flash.flash-3 { animation: cameraFlash 0.2s 3.9s ease-out forwards; }
+.intro-flash.flash-4 { animation: cameraFlash 0.15s 5.3s ease-out forwards; }
+
+@keyframes cameraFlash {
+  0%   { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+/* ── CITY SLIDES ─────────────────────────────────────── */
+.intro-stage {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+}
+
+.intro-city {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transform: scale(1.15);
+  will-change: opacity, transform;
+}
+
+/* Seven cities across 5.7s, then the logo lands. Each slide holds
+   ~0.8s and hands off to the next with a slight accelerando. */
+/* 01 Chennai */
+.intro-city:nth-child(1) {
+  animation:
+    cityZoomIn 0.45s 0.0s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.28s 0.80s ease-in forwards;
+}
+/* 02 Mumbai */
+.intro-city:nth-child(2) {
+  animation:
+    cityZoomIn 0.42s 0.80s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.26s 1.60s ease-in forwards;
+}
+/* 03 Delhi */
+.intro-city:nth-child(3) {
+  animation:
+    cityZoomIn 0.40s 1.60s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.26s 2.40s ease-in forwards;
+}
+/* 04 Pune */
+.intro-city:nth-child(4) {
+  animation:
+    cityZoomIn 0.38s 2.40s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.24s 3.20s ease-in forwards;
+}
+/* 05 Bangalore */
+.intro-city:nth-child(5) {
+  animation:
+    cityZoomIn 0.36s 3.20s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.24s 4.00s ease-in forwards;
+}
+/* 06 Kolkata */
+.intro-city:nth-child(6) {
+  animation:
+    cityZoomIn 0.32s 4.00s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.22s 4.75s ease-in forwards;
+}
+/* 07 Hyderabad */
+.intro-city:nth-child(7) {
+  animation:
+    cityZoomIn 0.30s 4.75s cubic-bezier(.16,1,.3,1) forwards,
+    cityZoomOut 0.22s 5.50s ease-in forwards;
+}
+
+@keyframes cityZoomIn {
+  0%   { opacity: 0; transform: scale(1.3) rotate(-1deg); filter: blur(8px); }
+  100% { opacity: 1; transform: scale(1) rotate(0deg); filter: blur(0); }
+}
+@keyframes cityZoomOut {
+  0%   { opacity: 1; transform: scale(1); filter: blur(0); }
+  100% { opacity: 0; transform: scale(0.85); filter: blur(4px); }
+}
+
+/* ── CITY GRADIENT BACKGROUNDS ───────────────────────── */
+.intro-city::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  opacity: 0.15;
+}
+.intro-city:nth-child(1)::before {
+  background: radial-gradient(ellipse at 40% 50%, #f5b301 0%, transparent 70%),
+              radial-gradient(ellipse at 80% 30%, #ff6b35 0%, transparent 60%);
+}
+.intro-city:nth-child(2)::before {
+  background: radial-gradient(ellipse at 60% 40%, #4d9fff 0%, transparent 70%),
+              radial-gradient(ellipse at 20% 80%, #0e2a52 0%, transparent 60%);
+}
+.intro-city:nth-child(3)::before {
+  background: radial-gradient(ellipse at 50% 60%, #e8a020 0%, transparent 70%),
+              radial-gradient(ellipse at 80% 20%, #c4721a 0%, transparent 60%);
+}
+.intro-city:nth-child(4)::before {
+  background: radial-gradient(ellipse at 30% 50%, #cf6b35 0%, transparent 70%),
+              radial-gradient(ellipse at 70% 70%, #6e3a1c 0%, transparent 60%);
+}
+.intro-city:nth-child(5)::before {
+  background: radial-gradient(ellipse at 50% 40%, #38e54d 0%, transparent 70%),
+              radial-gradient(ellipse at 20% 70%, #1a8a2e 0%, transparent 60%);
+}
+.intro-city:nth-child(6)::before {
+  background: radial-gradient(ellipse at 45% 55%, #e63946 0%, transparent 70%),
+              radial-gradient(ellipse at 75% 25%, #7d1d24 0%, transparent 60%);
+}
+.intro-city:nth-child(7)::before {
+  background: radial-gradient(ellipse at 55% 45%, #17b3a3 0%, transparent 70%),
+              radial-gradient(ellipse at 25% 75%, #0b5f57 0%, transparent 60%);
+}
+
+/* ── CITY NUMBER (big cinematic) ─────────────────────── */
+.intro-city-num {
+  position: absolute;
+  z-index: 1;
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(14rem, 35vw, 28rem);
+  line-height: 0.8;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255, 255, 255, 0.04);
+  user-select: none;
+  pointer-events: none;
+  opacity: 0;
+  animation: numReveal 0.8s 0.1s ease-out forwards;
+}
+.intro-city:nth-child(1) .intro-city-num { animation-delay: 0.10s; }
+.intro-city:nth-child(2) .intro-city-num { animation-delay: 0.90s; }
+.intro-city:nth-child(3) .intro-city-num { animation-delay: 1.70s; }
+.intro-city:nth-child(4) .intro-city-num { animation-delay: 2.50s; }
+.intro-city:nth-child(5) .intro-city-num { animation-delay: 3.30s; }
+.intro-city:nth-child(6) .intro-city-num { animation-delay: 4.10s; }
+.intro-city:nth-child(7) .intro-city-num { animation-delay: 4.85s; }
+
+@keyframes numReveal {
+  0%   { opacity: 0; transform: translateY(40px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ── CITY NAME ───────────────────────────────────────── */
+.intro-city-name {
+  position: relative;
+  z-index: 2;
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(3rem, 10vw, 8rem);
+  line-height: 0.95;
+  color: #e8e3da;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(30px);
+}
+.intro-city:nth-child(1) .intro-city-name { animation: textSlam 0.45s 0.10s cubic-bezier(.16,1,.3,1) forwards; }
+.intro-city:nth-child(2) .intro-city-name { animation: textSlam 0.42s 0.90s cubic-bezier(.16,1,.3,1) forwards; }
+.intro-city:nth-child(3) .intro-city-name { animation: textSlam 0.40s 1.70s cubic-bezier(.16,1,.3,1) forwards; }
+.intro-city:nth-child(4) .intro-city-name { animation: textSlam 0.38s 2.50s cubic-bezier(.16,1,.3,1) forwards; }
+.intro-city:nth-child(5) .intro-city-name { animation: textSlam 0.36s 3.30s cubic-bezier(.16,1,.3,1) forwards; }
+.intro-city:nth-child(6) .intro-city-name { animation: textSlam 0.32s 4.10s cubic-bezier(.16,1,.3,1) forwards; }
+.intro-city:nth-child(7) .intro-city-name { animation: textSlam 0.30s 4.85s cubic-bezier(.16,1,.3,1) forwards; }
+
+@keyframes textSlam {
+  0%   { opacity: 0; transform: translateY(50px) scale(0.85); filter: blur(6px); }
+  60%  { opacity: 1; transform: translateY(-4px) scale(1.02); filter: blur(0); }
+  100% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+}
+
+/* ── CITY SCRIPT (native language) ───────────────────── */
+.intro-city-script {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 700;
+  margin-top: 8px;
+  opacity: 0;
+  letter-spacing: 0.08em;
+}
+.intro-city:nth-child(1) .intro-city-script {
+  color: #f5b301;
+  font-family: 'Noto Sans Tamil', sans-serif;
+  animation: scriptFade 0.45s 0.30s ease-out forwards;
+}
+.intro-city:nth-child(2) .intro-city-script {
+  color: #4d9fff;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  animation: scriptFade 0.42s 1.10s ease-out forwards;
+}
+.intro-city:nth-child(3) .intro-city-script {
+  color: #e8a020;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  animation: scriptFade 0.40s 1.90s ease-out forwards;
+}
+.intro-city:nth-child(4) .intro-city-script {
+  color: #cf6b35;
+  font-family: 'Noto Sans Devanagari', sans-serif;
+  animation: scriptFade 0.38s 2.70s ease-out forwards;
+}
+.intro-city:nth-child(5) .intro-city-script {
+  color: #38e54d;
+  font-family: 'Noto Sans Kannada', sans-serif;
+  animation: scriptFade 0.36s 3.50s ease-out forwards;
+}
+.intro-city:nth-child(6) .intro-city-script {
+  color: #e63946;
+  font-family: 'Noto Sans Bengali', sans-serif;
+  animation: scriptFade 0.32s 4.25s ease-out forwards;
+}
+.intro-city:nth-child(7) .intro-city-script {
+  color: #17b3a3;
+  font-family: 'Noto Sans Telugu', sans-serif;
+  animation: scriptFade 0.30s 5.00s ease-out forwards;
+}
+
+@keyframes scriptFade {
+  0%   { opacity: 0; transform: translateY(12px); }
+  100% { opacity: 0.85; transform: translateY(0); }
+}
+
+/* ── COORDINATES & METADATA ──────────────────────────── */
+.intro-city-coords {
+  position: relative;
+  z-index: 2;
+  font-family: 'Space Grotesk', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: rgba(232, 227, 218, 0.3);
+  margin-top: 20px;
+  opacity: 0;
+}
+.intro-city:nth-child(1) .intro-city-coords { animation: coordsType 0.45s 0.35s ease-out forwards; }
+.intro-city:nth-child(2) .intro-city-coords { animation: coordsType 0.42s 1.15s ease-out forwards; }
+.intro-city:nth-child(3) .intro-city-coords { animation: coordsType 0.40s 1.95s ease-out forwards; }
+.intro-city:nth-child(4) .intro-city-coords { animation: coordsType 0.38s 2.75s ease-out forwards; }
+.intro-city:nth-child(5) .intro-city-coords { animation: coordsType 0.36s 3.55s ease-out forwards; }
+.intro-city:nth-child(6) .intro-city-coords { animation: coordsType 0.32s 4.30s ease-out forwards; }
+.intro-city:nth-child(7) .intro-city-coords { animation: coordsType 0.30s 5.05s ease-out forwards; }
+
+@keyframes coordsType {
+  0%   { opacity: 0; letter-spacing: 0.8em; }
+  100% { opacity: 1; letter-spacing: 0.35em; }
+}
+
+/* ── HORIZONTAL TRAVEL LINES ─────────────────────────── */
+.intro-travel-line {
+  position: absolute;
+  z-index: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245, 179, 1, 0.4), transparent);
+  opacity: 0;
+  pointer-events: none;
+}
+.intro-travel-line:nth-child(1) {
+  top: 30%; left: -100%; width: 200%;
+  animation: travelSweep 0.8s 0.8s ease-out forwards;
+}
+.intro-travel-line:nth-child(2) {
+  top: 55%; left: -100%; width: 200%;
+  animation: travelSweep 0.6s 1.8s ease-out forwards;
+}
+.intro-travel-line:nth-child(3) {
+  top: 70%; left: -100%; width: 200%;
+  animation: travelSweep 0.5s 2.8s ease-out forwards;
+}
+
+@keyframes travelSweep {
+  0%   { opacity: 0; transform: translateX(-50%); }
+  50%  { opacity: 1; }
+  100% { opacity: 0; transform: translateX(50%); }
+}
+
+/* ── CROSSHAIR / RETICLE ─────────────────────────────── */
+.intro-reticle {
+  position: absolute;
+  z-index: 3;
+  width: clamp(80px, 15vw, 160px);
+  height: clamp(80px, 15vw, 160px);
+  border: 1px solid rgba(245, 179, 1, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: reticleAppear 6.2s 0.2s ease-out forwards;
+}
+.intro-reticle::before,
+.intro-reticle::after {
+  content: '';
+  position: absolute;
+  background: rgba(245, 179, 1, 0.2);
+}
+.intro-reticle::before {
+  top: 50%; left: -20px; right: -20px; height: 1px;
+  transform: translateY(-50%);
+}
+.intro-reticle::after {
+  left: 50%; top: -20px; bottom: -20px; width: 1px;
+  transform: translateX(-50%);
+}
+
+@keyframes reticleAppear {
+  0%   { opacity: 0; transform: scale(2) rotate(90deg); }
+  15%  { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  85%  { opacity: 0.6; transform: scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.5) rotate(-45deg); }
+}
+
+/* ── ROTATING RING ───────────────────────────────────── */
+.intro-ring {
+  position: absolute;
+  z-index: 2;
+  width: clamp(200px, 40vw, 500px);
+  height: clamp(200px, 40vw, 500px);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+  border-top: 1px solid rgba(245, 179, 1, 0.15);
+  border-radius: 50%;
+  pointer-events: none;
+  animation: ringRotate 6.2s linear forwards;
+  opacity: 0;
+}
+.intro-ring.ring-1 {
+  animation: ringFadeRotate 6.2s 0s ease-out forwards;
+}
+.intro-ring.ring-2 {
+  width: clamp(280px, 55vw, 650px);
+  height: clamp(280px, 55vw, 650px);
+  border-top-color: rgba(77, 159, 255, 0.1);
+  animation: ringFadeRotate 6.2s 0.2s ease-out reverse forwards;
+}
+
+@keyframes ringFadeRotate {
+  0%   { opacity: 0; transform: rotate(0deg); }
+  10%  { opacity: 0.5; }
+  90%  { opacity: 0.5; }
+  100% { opacity: 0; transform: rotate(360deg); }
+}
+
+/* ── BOTTOM PROGRESS BAR ─────────────────────────────── */
+.intro-progress {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 8;
+  height: 2px;
+  width: 0%;
+  background: linear-gradient(90deg, #f5b301, #e8e3da);
+  animation: progressFill 6.2s linear forwards;
+}
+
+@keyframes progressFill {
+  0%   { width: 0%; }
+  100% { width: 100%; }
+}
+
+/* ── TOP-LEFT LABEL ──────────────────────────────────── */
+.intro-label-tl {
+  position: absolute;
+  top: 30px;
+  left: 40px;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.intro-label-tl span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.4em;
+  color: rgba(232, 227, 218, 0.25);
+  opacity: 0;
+  animation: labelSlide 0.6s ease-out forwards;
+}
+.intro-label-tl span:nth-child(1) { animation-delay: 0.1s; }
+.intro-label-tl span:nth-child(2) { animation-delay: 0.25s; color: rgba(245, 179, 1, 0.4); }
+
+@keyframes labelSlide {
+  0%   { opacity: 0; transform: translateX(-12px); }
+  100% { opacity: 1; transform: translateX(0); }
+}
+
+/* ── TOP-RIGHT COUNTER ───────────────────────────────── */
+.intro-counter {
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  z-index: 7;
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(1.5rem, 3vw, 2.5rem);
+  color: rgba(232, 227, 218, 0.12);
+  letter-spacing: 0.05em;
+}
+
+/* ── BOTTOM-LEFT TEXT ────────────────────────────────── */
+.intro-tagline {
+  position: absolute;
+  bottom: 28px;
+  left: 40px;
+  z-index: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.intro-tagline span {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.58rem;
+  letter-spacing: 0.25em;
+  color: rgba(232, 227, 218, 0.2);
+  opacity: 0;
+}
+.intro-tagline span:nth-child(1) { animation: labelSlide 0.5s 0.4s ease-out forwards; }
+.intro-tagline span:nth-child(2) { animation: labelSlide 0.5s 0.55s ease-out forwards; }
+
+/* ── BOTTOM-RIGHT SKIP HINT ──────────────────────────── */
+.intro-skip {
+  position: absolute;
+  bottom: 30px;
+  right: 40px;
+  z-index: 7;
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.55rem;
+  letter-spacing: 0.3em;
+  color: rgba(232, 227, 218, 0.2);
+  opacity: 0;
+  animation: labelSlide 0.5s 1.5s ease-out forwards;
+  cursor: pointer;
+  transition: color 0.3s;
+  border: none;
+  background: none;
+  padding: 8px 0;
+}
+.intro-skip:hover {
+  color: rgba(245, 179, 1, 0.6);
+}
+
+/* ── FINAL LOGO REVEAL ───────────────────────────────── */
+.intro-final {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  animation: finalReveal 1.2s 5.45s cubic-bezier(.16,1,.3,1) forwards;
+}
+
+@keyframes finalReveal {
+  0%   { opacity: 0; transform: scale(1.1); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+/* Sticker proportions — a square crop lands on blank margin. */
+.intro-final-logo {
+  width: 54px;
+  height: 74px;
+  border-radius: 10px;
+  object-fit: cover;
+  transform: scale(1.3);
+  transform-origin: 50% 47%;
+  background: #efeae0;
+  box-shadow: 0 0 60px rgba(245, 179, 1, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  margin-bottom: 24px;
+  animation: logoPulse 1s 5.7s ease-in-out forwards;
+}
+
+@keyframes logoPulse {
+  0%   { box-shadow: 0 0 60px rgba(245, 179, 1, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06); }
+  50%  { box-shadow: 0 0 80px rgba(245, 179, 1, 0.4), 0 0 0 1px rgba(245, 179, 1, 0.2); }
+  100% { box-shadow: 0 0 60px rgba(245, 179, 1, 0.2), 0 0 0 1px rgba(255, 255, 255, 0.06); }
+}
+
+.intro-final-brand {
+  font-family: 'Anton', sans-serif;
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  letter-spacing: 0.25em;
+  color: #e8e3da;
+  opacity: 0;
+  animation: brandText 0.8s 5.75s ease-out forwards;
+}
+
+@keyframes brandText {
+  0%   { opacity: 0; letter-spacing: 0.8em; }
+  100% { opacity: 1; letter-spacing: 0.25em; }
+}
+
+.intro-final-sub {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 0.6rem;
+  letter-spacing: 0.35em;
+  color: rgba(245, 179, 1, 0.5);
+  margin-top: 6px;
+  opacity: 0;
+  animation: brandText 0.6s 5.95s ease-out forwards;
+}
+
+/* ── PARTICLE DOTS ───────────────────────────────────── */
+.intro-particles {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.intro-particle {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: rgba(245, 179, 1, 0.3);
+  border-radius: 50%;
+  animation: particleDrift 6.2s linear forwards;
+}
+
+.intro-particle:nth-child(1)  { top: 20%; left: 10%; animation-delay: 0s; }
+.intro-particle:nth-child(2)  { top: 40%; left: 25%; animation-delay: 0.3s; }
+.intro-particle:nth-child(3)  { top: 60%; left: 50%; animation-delay: 0.6s; }
+.intro-particle:nth-child(4)  { top: 30%; left: 70%; animation-delay: 0.9s; }
+.intro-particle:nth-child(5)  { top: 75%; left: 85%; animation-delay: 1.2s; }
+.intro-particle:nth-child(6)  { top: 15%; left: 60%; animation-delay: 1.5s; }
+.intro-particle:nth-child(7)  { top: 55%; left: 35%; animation-delay: 1.8s; }
+.intro-particle:nth-child(8)  { top: 80%; left: 15%; animation-delay: 2.1s; }
+.intro-particle:nth-child(9)  { top: 45%; left: 90%; animation-delay: 2.4s; }
+.intro-particle:nth-child(10) { top: 70%; left: 45%; animation-delay: 2.7s; }
+.intro-particle:nth-child(11) { top: 25%; left: 80%; animation-delay: 3.0s; }
+.intro-particle:nth-child(12) { top: 85%; left: 55%; animation-delay: 3.3s; }
+
+@keyframes particleDrift {
+  0%   { opacity: 0; transform: translateY(0) scale(1); }
+  20%  { opacity: 1; }
+  80%  { opacity: 1; }
+  100% { opacity: 0; transform: translateY(-60px) scale(0); }
+}
+
+/* ── ROUTE CONNECTOR LINE (animated SVG-like path) ──── */
+.intro-route {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  overflow: hidden;
+}
+.intro-route-line {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  transform-origin: left center;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(245, 179, 1, 0.08) 12%,
+    rgba(77, 159, 255, 0.08) 24%,
+    rgba(232, 160, 32, 0.08) 36%,
+    rgba(207, 107, 53, 0.08) 48%,
+    rgba(56, 229, 77, 0.08) 61%,
+    rgba(230, 57, 70, 0.08) 74%,
+    rgba(23, 179, 163, 0.08) 87%,
+    transparent 100%
+  );
+  animation: routeDraw 5.4s 0.4s ease-in-out forwards;
+  transform: scaleX(0);
+}
+
+@keyframes routeDraw {
+  0%   { transform: scaleX(0); opacity: 0; }
+  10%  { opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+
+/* ── DOT MARKERS ON ROUTE ────────────────────────────── */
+.intro-dot-marker {
+  position: absolute;
+  top: 50%;
+  z-index: 2;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  pointer-events: none;
+}
+.intro-dot-marker::after {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  border: 1px solid;
+  opacity: 0.3;
+  animation: dotPing 1s ease-out forwards;
+}
+.intro-dot-marker:nth-child(2) {
+  left: 12%; background: #f5b301;
+  animation: dotPop 0.4s 0.5s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(2)::after { border-color: #f5b301; animation-delay: 0.6s; }
+
+.intro-dot-marker:nth-child(3) {
+  left: 24%; background: #4d9fff;
+  animation: dotPop 0.4s 1.3s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(3)::after { border-color: #4d9fff; animation-delay: 1.4s; }
+
+.intro-dot-marker:nth-child(4) {
+  left: 36%; background: #e8a020;
+  animation: dotPop 0.4s 2.1s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(4)::after { border-color: #e8a020; animation-delay: 2.2s; }
+
+.intro-dot-marker:nth-child(5) {
+  left: 48%; background: #cf6b35;
+  animation: dotPop 0.4s 2.9s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(5)::after { border-color: #cf6b35; animation-delay: 3.0s; }
+
+.intro-dot-marker:nth-child(6) {
+  left: 61%; background: #38e54d;
+  animation: dotPop 0.4s 3.7s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(6)::after { border-color: #38e54d; animation-delay: 3.8s; }
+
+.intro-dot-marker:nth-child(7) {
+  left: 74%; background: #e63946;
+  animation: dotPop 0.4s 4.4s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(7)::after { border-color: #e63946; animation-delay: 4.5s; }
+
+.intro-dot-marker:nth-child(8) {
+  left: 87%; background: #17b3a3;
+  animation: dotPop 0.4s 5.1s cubic-bezier(.16,1,.3,1) forwards;
+}
+.intro-dot-marker:nth-child(8)::after { border-color: #17b3a3; animation-delay: 5.2s; }
+
+@keyframes dotPop {
+  0%   { transform: translate(-50%, -50%) scale(0); }
+  100% { transform: translate(-50%, -50%) scale(1); }
+}
+@keyframes dotPing {
+  0%   { transform: scale(1); opacity: 0.3; }
+  100% { transform: scale(3); opacity: 0; }
+}
+
+/* ── HIDE MAIN CONTENT DURING INTRO ──────────────────── */
+body.intro-active {
+  overflow: hidden;
+}
+
+/* ── RESPONSIVE ──────────────────────────────────────── */
+@media (max-width: 760px) {
+  .intro-label-tl { top: 16px; left: 16px; }
+  .intro-label-tl span { font-size: 0.48rem; letter-spacing: 0.3em; }
+  .intro-counter { top: 16px; right: 16px; font-size: clamp(1.1rem, 4vw, 1.8rem); }
+  .intro-tagline { bottom: 16px; left: 16px; }
+  .intro-tagline span { font-size: 0.5rem; letter-spacing: 0.18em; }
+  .intro-skip { bottom: 16px; right: 16px; font-size: 0.5rem; padding: 6px 0; }
+
+  /* City slides — scale everything down for mobile */
+  .intro-city-num { font-size: clamp(6rem, 28vw, 14rem); }
+  .intro-city-name { font-size: clamp(2.2rem, 12vw, 5rem); }
+  .intro-city-script { font-size: clamp(0.9rem, 4vw, 1.4rem); margin-top: 4px; }
+  .intro-city-coords { font-size: 0.5rem; letter-spacing: 0.25em; margin-top: 14px; }
+
+  /* Rings — smaller on mobile so they don't overflow */
+  .intro-ring.ring-1 { width: clamp(140px, 45vw, 300px); height: clamp(140px, 45vw, 300px); }
+  .intro-ring.ring-2 { width: clamp(200px, 60vw, 400px); height: clamp(200px, 60vw, 400px); }
+
+  /* Reticle — smaller */
+  .intro-reticle { width: clamp(50px, 14vw, 100px); height: clamp(50px, 14vw, 100px); }
+
+  /* Final logo — smaller */
+  .intro-final-logo { width: 44px; height: 44px; border-radius: 10px; margin-bottom: 14px; }
+  .intro-final-brand { font-size: clamp(0.9rem, 4vw, 1.4rem); letter-spacing: 0.18em; }
+  .intro-final-sub { font-size: 0.5rem; letter-spacing: 0.25em; }
+
+  /* Progress bar — slightly thicker on mobile for visibility */
+  .intro-progress { height: 3px; }
+
+  /* Travel lines — keep contained */
+  .intro-travel-line { height: 1px; }
+}
+
+@media (max-width: 480px) {
+  .intro-city-num { font-size: clamp(4.5rem, 25vw, 10rem); }
+  .intro-city-name { font-size: clamp(1.8rem, 14vw, 4rem); }
+  .intro-city-script { font-size: clamp(0.8rem, 4.5vw, 1.2rem); }
+  .intro-ring.ring-1 { width: 120px; height: 120px; }
+  .intro-ring.ring-2 { width: 170px; height: 170px; }
+  .intro-reticle { width: 45px; height: 45px; }
+  .intro-final-logo { width: 36px; height: 36px; }
+  .intro-final-brand { font-size: 0.85rem; }
+}
+
+/* ── REDUCED MOTION ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay { display: none !important; }
+  body.intro-active { overflow: auto; }
+}

@@ -1,0 +1,144 @@
+/* ═══════════════════════════════════════════════════════
+   TYPEWRITER — "Which 'location' would you like…" section
+   ═══════════════════════════════════════════════════════ */
+
+.typewriter-section {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 80px 40px 60px;
+  border-top: 1px solid var(--border, rgba(255,255,255,.07));
+}
+
+.typewriter-text {
+  font-family: 'Space Grotesk', var(--body, sans-serif);
+  font-size: clamp(1rem, 2.5vw, 1.35rem);
+  line-height: 1.8;
+  color: var(--muted, rgba(232,227,218,.45));
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+/* The cycling word wrapper */
+.tw-word-wrap {
+  display: inline;
+  position: relative;
+}
+
+/* Opening and closing quote marks */
+.tw-quote {
+  color: var(--acc, #f5b301);
+  font-weight: 700;
+  opacity: 0.7;
+}
+
+/* The actual typing text */
+.tw-word {
+  color: var(--acc, #f5b301);
+  font-weight: 700;
+  font-size: 1.15em;
+  letter-spacing: 0.04em;
+  transition: color 0.3s ease;
+}
+
+/* Blinking cursor */
+.tw-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1.1em;
+  background: var(--acc, #f5b301);
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  animation: twBlink 1s steps(1) infinite;
+}
+
+@keyframes twBlink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* ── CTA under the prompt → the location request form ──
+   Lives here because typewriter.css is the one stylesheet the home page
+   AND all seven city pages load. It reads the city's own --acc/--bone/--ink
+   when they exist, so the button takes each city's colour, and falls back
+   to the home page's yellow-on-dark when they don't. */
+.typewriter-cta {
+  margin-top: 34px;
+}
+
+.tw-cta {
+  display: inline-block;
+  position: relative;
+  overflow: hidden;
+  padding: 16px 38px;
+  border: 2px solid var(--bone, #e8e3da);
+  color: var(--bone, #e8e3da);
+  text-decoration: none;
+  font-family: 'Space Grotesk', var(--body, sans-serif);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  transition: color 0.35s, border-color 0.35s, transform 0.35s cubic-bezier(.2,.8,.2,1);
+}
+
+/* Accent floods up from the bottom on hover */
+.tw-cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--acc, #f5b301);
+  transform: translateY(100%);
+  transition: transform 0.42s cubic-bezier(.2,.8,.2,1);
+  z-index: 0;
+}
+.tw-cta > * { position: relative; z-index: 1; }
+
+.tw-cta:hover,
+.tw-cta:focus-visible {
+  color: var(--ink, #0c0c0c);
+  border-color: var(--acc, #f5b301);
+  transform: translateY(-2px);
+}
+.tw-cta:hover::before,
+.tw-cta:focus-visible::before { transform: translateY(0); }
+.tw-cta:focus-visible { outline: 2px solid var(--acc, #f5b301); outline-offset: 4px; }
+
+/* ── Reveal animation ── */
+.typewriter-section.tw-hidden {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.85s cubic-bezier(.22,1,.36,1),
+              transform 0.85s cubic-bezier(.22,1,.36,1);
+}
+
+.typewriter-section.tw-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 760px) {
+  .typewriter-section {
+    padding: 60px 20px 40px;
+  }
+
+  .typewriter-text {
+    font-size: clamp(0.88rem, 3.5vw, 1.1rem);
+    line-height: 1.9;
+  }
+
+  .typewriter-cta { margin-top: 28px; }
+  .tw-cta { padding: 15px 30px; letter-spacing: 0.18em; }
+}
+
+@media (max-width: 480px) {
+  .typewriter-section {
+    padding: 50px 16px 32px;
+  }
+
+  .typewriter-text {
+    font-size: 0.88rem;
+  }
+}

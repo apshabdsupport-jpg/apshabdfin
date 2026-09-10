@@ -1,0 +1,643 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   BRUTALIST LAYER — अPSHABD
+
+   One design pass, loaded last on every page of the main site, so ordinary
+   rules here win on source order. !important appears in three places only,
+   each annotated where it happens: the zero-specificity radius reset, the
+   collapsing of a pressed control's plate, and the declarations
+   city-brand.css already marks !important itself. Never as a shortcut.
+
+   The move: everything soft becomes structural. Hairlines thicken into
+   rules, blurs and gradient scrims become flat slabs, section joins are
+   declared rather than blended, and anything you can press stands on a hard
+   offset shadow — screen-print misregistration, not a drop shadow. The
+   palette does not change; the brand's four colours simply stop blending
+   into each other.
+
+   To revert: delete the <link rel="stylesheet" href="brutal.css"> from each
+   page. Nothing in the base sheets depends on this file.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --br-rule: 3px;
+  --br-rule-heavy: 6px;
+  --br-off: 10px;
+  --br-off-sm: 6px;
+
+  /* The brand's own values, restated under this layer's own names rather
+     than read off the base sheets. The three page families spell the same
+     palette differently — styles.css and pin-form.css say --cream/--night,
+     the city pages say --ap-cream/--ap-night — and an unresolvable var()
+     silently voids the whole declaration it sits in, so a rule shared
+     between them cannot safely name either set. These always resolve. */
+  --br-ink: #000f08;
+  --br-paper: #f3e6d0;
+  --br-red: #fb3640;
+
+  /* A system stack, so the "exposed data" labels cost no extra font request
+     and stay legible at the 0.6rem sizes the meta rows run at. */
+  --br-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas,
+             "Liberation Mono", "Courier New", monospace;
+}
+
+/* ── Global: nothing rounded, nothing blurred ─────────────────────────────
+   Brutalism has no soft edge to hide behind.
+
+   The radius reset needs !important despite loading last: the universal
+   selector has zero specificity, so the 2–3px radii already set on .card,
+   .wait and the attribution badge would all outrank it. Nothing on the site
+   wants a rounded corner while this layer is on, so the blanket is safe.
+
+   The blur removals are listed by selector rather than swept up the same way
+   because backdrop-filter creates a containing block — dropping it
+   everywhere would move fixed descendants that currently anchor to those
+   bars. */
+*,
+*::before,
+*::after { border-radius: 0 !important; }
+
+.site-header,
+.site-header.is-scrolled,
+.nav,
+.nav.glass,
+.glass,
+.pin-progress {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Photography goes harder, not softer: the base sheets desaturate to sit
+   the images back into the page, which is the opposite of what this wants. */
+.hero-image > img,
+.campaign-card img,
+.wall-frame img,
+.city-preview img,
+.face-shot img,
+.street-frame img { filter: saturate(0.92) contrast(1.16); }
+
+@media (hover: hover) and (pointer: fine) {
+  .hero-image:hover > img,
+  .campaign-card:hover img,
+  .wall-frame:hover img { filter: saturate(1) contrast(1.2); }
+}
+
+/* ── Micro-labels ─────────────────────────────────────────────────────────
+   Every piece of meta type on the site — indices, coordinates, statuses,
+   captions — reads as machine output rather than as quiet editorial type. */
+.site-nav a,
+.hero-kicker,
+.section-index,
+.text-link,
+.hero-image figcaption,
+.campaign-card figcaption,
+.wall-frame figcaption,
+.city-number,
+.city-status,
+.city-preview-overlay span,
+.image-stamp,
+.eyebrow,
+.footer-meta,
+.typewriter-link,
+.button,
+.nav-cta,
+.nav-links a,
+.pin-hero-meta,
+.hero-index,
+.q-num,
+.progress-label,
+.pin-progress-count,
+.char-count,
+.volume-scale,
+.pin-receipt dt,
+.pin-receipt-label,
+.pin-footer-meta,
+.field label,
+.product-fieldset legend,
+.city-choice em,
+.back,
+.nav-city,
+.stamp,
+.streets-label,
+.face-code,
+.face-role,
+.street-loc,
+.street-role,
+.drop-face-tag,
+.drop-ways-label,
+.footer > p {
+  font-family: var(--br-mono);
+  font-weight: 700;
+}
+
+/* ── Pressables ───────────────────────────────────────────────────────────
+   One behaviour everywhere: the control sits on a hard offset plate, and
+   pressing it drives the control down into that plate until the two line
+   up. Because the travel and the shadow are the same distance, the outer
+   edge never moves — only the gap under it closes.
+
+   The collapse is !important because several of these controls take their
+   resting plate from a hover rule or, on the city pages, from a declaration
+   this layer already had to mark !important — the press has to win over
+   whichever one is in play. */
+.nav-cta,
+.typewriter-link,
+.button,
+.btn,
+.cta,
+.tw-cta,
+.drop-view-button,
+.skip-link {
+  border-width: var(--br-rule);
+  border-style: solid;
+  font-family: var(--br-mono);
+  font-weight: 700;
+}
+
+.nav-cta:active,
+.typewriter-link:active,
+.button:active,
+.btn:not(:disabled):active,
+.cta:active,
+.tw-cta:active,
+.drop-view-button:active {
+  transform: translate(var(--br-off-sm), var(--br-off-sm));
+  box-shadow: 0 0 0 transparent !important;
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   INDEX
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* The header stops floating and becomes a fixed bar with a declared bottom
+   edge. It was already night-on-night once scrolled; committing to that at
+   rest costs nothing and removes the height change mid-scroll. */
+.site-header,
+.site-header.is-scrolled {
+  height: 76px;
+  background: var(--br-ink);
+  border-bottom: var(--br-rule) solid var(--br-paper);
+  transition: none;
+}
+
+/* The open mobile menu is a red panel that covers the viewport, and only the
+   wordmark and the toggle sit above it — a solid header bar behind that
+   panel would strand its own night-coloured type on night. */
+body.menu-open .site-header,
+body.menu-open .site-header.is-scrolled {
+  background: transparent;
+  border-bottom-color: transparent;
+}
+
+.skip-link { box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red); }
+
+.nav-cta {
+  padding: 10px 15px 9px;
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red);
+}
+
+.nav-cta:hover,
+.nav-cta:focus-visible,
+.nav-cta:active {
+  background: var(--br-red);
+  border-color: var(--br-red);
+  color: var(--br-ink);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
+}
+
+/* Underlines carry the same weight as every other rule on the page. */
+.site-nav a:not(.nav-cta)::after { height: var(--br-rule); bottom: -7px; }
+.text-link { border-bottom-width: var(--br-rule); padding-bottom: 7px; }
+
+/* ── Index slabs ──────────────────────────────────────────────────────────
+   The kicker and the section indices were hairline-ruled captions. They
+   become solid tags instead — the loudest, cheapest way to make the page's
+   own structure visible, and they already have the right flex shape. */
+.hero-kicker,
+.section-index {
+  padding: 12px 16px 10px;
+  border: 0;
+  opacity: 1;
+}
+
+.hero-kicker { background: var(--br-red); color: var(--br-ink); }
+.section-index { background: var(--br-ink); color: var(--br-paper); }
+.section-index.light { background: var(--br-paper); color: var(--br-ink); }
+
+/* ── Hero ─────────────────────────────────────────────────────────────────
+   The accent line prints out of register with itself. Kept in em so it
+   tracks the headline's clamp all the way down to the 4rem mobile size. */
+.hero { border-bottom: var(--br-rule-heavy) solid var(--br-paper); }
+
+.hero-title-accent { text-shadow: 0.05em 0.05em 0 var(--br-paper); }
+
+/* Border only, no offset plate: this cell runs to the right edge of the
+   viewport, so a shadow would fall straight into body's overflow clip. */
+.hero-image { border: var(--br-rule) solid var(--br-paper); }
+
+/* The specular sweep and the scrim were both there to soften — the caption
+   picks up its own ground below, so neither is load-bearing any more. */
+.hero-image::before,
+.hero-image::after,
+.campaign-card::after,
+.city-preview::after { display: none; }
+
+/* Captions become clamped information bars rather than type floating on a
+   fade. Full-bleed and hard-ruled, so they read as part of the frame. */
+.hero-image figcaption,
+.campaign-card figcaption,
+.wall-frame figcaption,
+.city-preview-overlay {
+  inset: auto 0 0;
+  padding: 12px 16px 10px;
+  border-top: var(--br-rule) solid var(--br-paper);
+  background: var(--br-ink);
+}
+
+/* 0.58rem put these at 9.3px, and they carry the one piece of information the
+   craft wall is making a claim about — which postcode each frame was shot in.
+   --label-sm floors them at 10.5px; the fallback keeps this sheet standalone. */
+.wall-frame figcaption { font-size: var(--label-sm, max(10.5px, 0.6rem)); }
+.city-preview-overlay { align-items: center; }
+
+.image-stamp {
+  border: var(--br-rule) solid var(--br-ink);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink);
+}
+
+.hero-ticker { border-top: var(--br-rule) solid var(--br-paper); }
+
+/* ── Sections ─────────────────────────────────────────────────────────────
+   Every section join is declared with a heavy rule in the contrasting
+   colour, so the page reads as stacked slabs with visible seams rather
+   than as one continuous scroll. */
+.manifesto,
+.city-index,
+.site-footer { border-top: var(--br-rule-heavy) solid var(--br-ink); }
+
+.campaign,
+.wall,
+.typewriter-section { border-top: var(--br-rule-heavy) solid var(--br-paper); }
+
+.pin-cta { border-top: var(--br-rule-heavy) solid var(--br-ink); }
+
+.typewriter-section { border-bottom: var(--br-rule) solid var(--br-paper); }
+.wall { border-bottom: 0; }
+
+/* The lead paragraph carries the section's colour as a structural bar
+   instead of as tinted type sitting on its own. */
+.manifesto-copy .lead {
+  padding: 4px 0 4px 22px;
+  border-left: var(--br-rule-heavy) solid var(--br-red);
+}
+
+.identity-wordmark {
+  border-top: var(--br-rule) solid var(--br-ink);
+  border-bottom: var(--br-rule) solid var(--br-ink);
+}
+
+.campaign-card,
+.wall-frame,
+.city-preview { border: var(--br-rule) solid var(--br-paper); }
+
+.city-preview { border-color: var(--br-ink); }
+
+/* Flat scrim over the ident film. The gradient version faded the footage
+   out at the section's top and bottom edge; a hard cut is the honest
+   version of the same job now that both edges are ruled anyway. */
+.wall-veil { background: rgba(0, 15, 8, 0.82); }
+
+.typewriter-link {
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red);
+  padding: 18px 20px 16px;
+}
+
+.typewriter-link:hover,
+.typewriter-link:focus-visible,
+.typewriter-link:active {
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
+}
+
+/* ── City index ───────────────────────────────────────────────────────────
+   The rows already wipe to a solid fill on hover; the rules between them
+   just need the weight to match. */
+.city-list { border-top: var(--br-rule) solid var(--br-ink); }
+.city-row { border-bottom: var(--br-rule) solid var(--br-ink); }
+
+.city-number {
+  padding: 5px 7px 4px;
+  background: var(--br-red);
+  color: var(--br-ink);
+  text-align: center;
+}
+
+.pin-cta { border-bottom: var(--br-rule-heavy) solid var(--br-ink); }
+
+.button { box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink); }
+
+.button-light:hover,
+.button-light:focus-visible,
+.button-light:active {
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
+}
+
+/* The mark was a hairline construction drawing; at this weight it reads as
+   a printed plate instead. */
+.pin-mark { border-width: var(--br-rule-heavy); }
+.pin-mark::before { width: var(--br-rule); }
+.pin-mark::after { height: var(--br-rule); }
+
+.footer-logo { border-bottom: var(--br-rule) solid var(--br-ink); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   DROP A PIN
+   ══════════════════════════════════════════════════════════════════════════ */
+
+.nav { border-bottom: var(--br-rule) solid var(--br-paper); background: var(--br-ink); }
+.nav-current { padding: 10px 14px 9px; border: var(--br-rule) solid var(--br-paper); }
+
+.pin-progress {
+  background: var(--br-paper);
+  border-bottom: var(--br-rule) solid var(--br-ink);
+}
+
+/* Was a 4px hairline track. Now five declared cells that fill in — the
+   progress is a count you can read, not a bar that slides. */
+.pin-step-dot {
+  height: 14px;
+  border: var(--br-rule) solid var(--br-ink);
+  background: transparent;
+}
+
+.pin-step-dot.done { background: var(--br-red); }
+
+.pin-hero { border-bottom: var(--br-rule-heavy) solid var(--br-paper); }
+.pin-hero-meta { border-bottom: var(--br-rule) solid var(--br-paper); padding-bottom: 14px; }
+.pin-hero-copy a { border-bottom-width: var(--br-rule); padding-bottom: 11px; }
+
+.q { border-bottom: var(--br-rule) solid var(--br-ink); }
+
+.q-num {
+  width: max-content;
+  padding: 7px 11px 6px;
+  background: var(--br-red);
+  color: var(--br-ink);
+}
+
+/* ── Fields ───────────────────────────────────────────────────────────────
+   Inputs sit on their own plate. Focus swaps the plate to red rather than
+   adding a ring, so the focused field is the only red object on screen —
+   a stronger signal than the 3px halo it replaces, and it survives being
+   printed in one colour. */
+.pin-input,
+.pin-textarea {
+  border: var(--br-rule) solid var(--br-ink);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 rgba(0, 15, 8, 0.18);
+}
+
+.pin-input:hover,
+.pin-textarea:hover { border-color: var(--br-ink); }
+
+.pin-input:focus,
+.pin-textarea:focus,
+.pin-input.err,
+.pin-textarea.err {
+  border-color: var(--br-red);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red);
+}
+
+.city-choices { border-top: var(--br-rule) solid var(--br-ink); }
+
+.city-choice span {
+  border-right: var(--br-rule) solid var(--br-ink);
+  border-bottom: var(--br-rule) solid var(--br-ink);
+}
+
+.city-choice:nth-child(odd) span,
+.city-choice-new span { border-left: var(--br-rule) solid var(--br-ink); }
+
+/* Square markers throughout: the radio/checkbox distinction is already
+   carried by the choice groups' behaviour, and nothing else on the page
+   is round any more. */
+.city-choice span::after {
+  width: 18px;
+  height: 18px;
+  border: var(--br-rule) solid var(--br-ink);
+}
+
+.city-choice input:checked + span::after {
+  background: var(--br-red);
+  border-color: var(--br-ink);
+  box-shadow: none;
+}
+
+.chip span { border: var(--br-rule) solid var(--br-ink); }
+.chip:hover span { box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink); }
+
+.chip input:checked + span {
+  border-color: var(--br-ink);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink);
+}
+
+.chip input:focus-visible + span { outline-width: var(--br-rule); }
+
+.volume {
+  border: var(--br-rule) solid var(--br-ink);
+  box-shadow: var(--br-off) var(--br-off) 0 var(--br-ink);
+}
+
+.volume input[type="range"]::-webkit-slider-runnable-track {
+  height: 20px;
+  border: var(--br-rule) solid var(--br-ink);
+}
+
+.volume input[type="range"]::-webkit-slider-thumb {
+  width: 26px;
+  height: 26px;
+  /* (20px track box − 26px thumb) ÷ 2, so the thumb straddles the track. */
+  margin-top: -3px;
+  border: var(--br-rule) solid var(--br-ink);
+  border-radius: 0;
+  background: var(--br-red);
+  box-shadow: none;
+}
+
+.volume input[type="range"]::-moz-range-track { height: 20px; border: var(--br-rule) solid var(--br-ink); }
+.volume input[type="range"]::-moz-range-progress { height: 20px; }
+
+.volume input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 26px;
+  border: var(--br-rule) solid var(--br-ink);
+  border-radius: 0;
+  background: var(--br-red);
+  box-shadow: none;
+}
+
+.consent-box { width: 26px; height: 26px; border: var(--br-rule) solid var(--br-ink); }
+.consent { grid-template-columns: 26px 1fr; }
+
+.pin-submit { border-top: var(--br-rule-heavy) solid var(--br-ink); }
+
+.btn { box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink); }
+
+.btn:hover,
+.btn:focus-visible { box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink); }
+
+.btn-ghost { border-color: var(--br-ink); }
+
+.pin-receipt {
+  border: var(--br-rule) solid var(--br-ink);
+  box-shadow: var(--br-off) var(--br-off) 0 var(--br-red);
+}
+
+.pin-footer { border-top: var(--br-rule-heavy) solid var(--br-ink); }
+.pin-footer-meta { border-top: var(--br-rule) solid var(--br-paper); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   CITY PAGES
+
+   city-brand.css already flattens the seven cities onto one brand system,
+   and it does so with !important. Where a declaration below collides with
+   one of those, it has to match — every !important in this block exists for
+   that reason and for no other.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+/* The nav was a floating inset glass pill. It becomes a bar clamped to the
+   top edge, which is also what city-brand.css was already pulling it towards. */
+.nav.glass {
+  background: var(--br-ink);
+  border-bottom: var(--br-rule) solid var(--br-paper);
+}
+
+.back { padding: 10px 0; }
+
+/* A bordered tag rather than an outlined caption. */
+.stamp {
+  padding: 9px 14px 8px;
+  border: var(--br-rule) solid var(--br-red);
+  background: var(--br-red);
+  color: var(--br-ink) !important;
+  letter-spacing: 0.24em;
+}
+
+.glass {
+  border: var(--br-rule) solid rgba(243, 230, 208, 0.5);
+  background: var(--br-ink);
+}
+
+.card {
+  border: var(--br-rule) solid rgba(243, 230, 208, 0.5) !important;
+  background: var(--br-ink) !important;
+  box-shadow: var(--br-off) var(--br-off) 0 var(--br-red) !important;
+  overflow: hidden;
+}
+
+.ph { border-bottom: var(--br-rule) solid rgba(243, 230, 208, 0.5); }
+
+.cta,
+.tw-cta {
+  border: var(--br-rule) solid var(--br-red);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
+}
+
+.cta:hover,
+.cta:focus-visible,
+.tw-cta:hover,
+.tw-cta:focus-visible {
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
+}
+
+.drop-view-button {
+  border: var(--br-rule) solid var(--br-paper);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red);
+}
+
+.drop-view-button.is-active {
+  border-color: var(--br-red);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
+}
+
+.drop-stage {
+  border: var(--br-rule) solid rgba(243, 230, 208, 0.5) !important;
+  background: var(--br-ink) !important;
+}
+
+/* This flipped the chip's plate from drop.css's translucent white to ink but
+   left drop.css's `color: #1a1a1a` in place — near-black type on a near-black
+   plate, 1.13:1. The FRONT/BACK chip on every product plate, on both live shop
+   pages, was invisible. */
+.drop-face-tag {
+  padding: 7px 10px 6px;
+  border: var(--br-rule) solid var(--br-paper);
+  background: var(--br-ink);
+  color: var(--br-paper);
+}
+
+/* Colourway swatches: square, hard-edged, and outlined at the same weight
+   as everything else, so the selected one reads at a glance. */
+.way {
+  border: var(--br-rule) solid var(--br-paper);
+  outline-offset: 3px;
+}
+
+.way.is-on {
+  outline: var(--br-rule) solid var(--br-red) !important;
+}
+
+/* Prints stay tilted — a stack of paper, not a grid — but each one now sits
+   on a plate instead of a soft shadow. */
+.street-print { box-shadow: var(--br-off) var(--br-off) 0 var(--br-red); }
+.street-frame { border: var(--br-rule) solid var(--br-paper); }
+.street-cap { border-top: var(--br-rule) solid var(--br-paper); padding-top: 12px; }
+.face-shot { border: var(--br-rule) solid var(--br-paper); }
+
+.streets,
+.faces { border-top: var(--br-rule-heavy) solid var(--br-paper); }
+
+/* The transit displays keep their LED matrix — that is the object being
+   drawn, not decoration — but the housing gets the site's rule weight. */
+.led-board,
+.train-board,
+.metro-board {
+  border: var(--br-rule) solid var(--br-paper);
+  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red);
+}
+
+.footer { border-top: var(--br-rule-heavy) solid var(--br-ink); }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   NARROW VIEWPORTS
+
+   The rules and plates scale down together. Left at desktop weight, a 6px
+   rule on a 360px column reads as a border for its own sake.
+   ══════════════════════════════════════════════════════════════════════════ */
+@media (max-width: 820px) {
+  :root {
+    --br-rule: 2px;
+    --br-rule-heavy: 4px;
+    --br-off: 7px;
+    --br-off-sm: 5px;
+  }
+
+  .site-header,
+  .site-header.is-scrolled { height: 68px; }
+
+  /* The menu panel's own links carry the weight at this width. */
+  .site-nav a { border-bottom-width: var(--br-rule); }
+  .site-nav .nav-cta { box-shadow: none; }
+}
+
+@media (max-width: 560px) {
+  /* 0.55rem is 8.8px, and these tags carry the page's own numbering — the
+     thing a reader uses to know where they are. --label-sm floors them at
+     10.5px; the fallback keeps this sheet usable on its own. */
+  .hero-kicker,
+  .section-index { padding: 10px 12px 8px; font-size: var(--label-sm, max(10.5px, 0.6rem)); }
+  .q-num { padding: 6px 9px 5px; }
+  .pin-step-dot { height: 10px; }
+  .volume { box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-ink); }
+}
+
+/* Reduced motion: the press travel is the only movement this layer adds,
+   and it is a direct response to a press rather than ambient motion, so it
+   stays. Everything else here is static by construction. */
