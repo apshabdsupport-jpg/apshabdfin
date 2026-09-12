@@ -133,3 +133,16 @@ AddDefaultCharset UTF-8
   RewriteCond %{HTTP_REFERER} !^https?://localhost(:[0-9]+)? [NC]
   RewriteRule \.(mp4|jpg|jpeg|png|gif|webp|avif)$ - [F,NC]
 </IfModule>
+
+# ── RETIRED PRE-LAUNCH PAGES ──────────────────────────────
+# The pin form and the cart/checkout flow are gone until the shop opens, and
+# drop-a-pin.html was in the sitemap long enough to have been indexed. A 301
+# to the homepage keeps those links, and any share of them, from 404ing.
+#
+# This is the Apache half only. If the site is served from Cloudflare Pages or
+# Netlify instead, the same two rules belong in a `_redirects` file next to
+# `_headers`, or they will not run.
+<IfModule mod_rewrite.c>
+  RewriteRule ^drop-a-pin\.html$ / [R=301,L]
+  RewriteRule ^checkout\.html$ / [R=301,L]
+</IfModule>

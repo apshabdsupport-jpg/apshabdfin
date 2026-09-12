@@ -25,9 +25,9 @@
   --br-off-sm: 6px;
 
   /* The brand's own values, restated under this layer's own names rather
-     than read off the base sheets. The three page families spell the same
-     palette differently — styles.css and pin-form.css say --cream/--night,
-     the city pages say --ap-cream/--ap-night — and an unresolvable var()
+     than read off the base sheets. The two page families spell the same
+     palette differently — styles.css says --cream/--night and the city
+     pages say --ap-cream/--ap-night — and an unresolvable var()
      silently voids the whole declaration it sits in, so a rule shared
      between them cannot safely name either set. These always resolve. */
   --br-ink: #000f08;
@@ -641,3 +641,99 @@ body.menu-open .site-header.is-scrolled {
 /* Reduced motion: the press travel is the only movement this layer adds,
    and it is a direct response to a press rather than ambient motion, so it
    stays. Everything else here is static by construction. */
+
+
+/* ══════════════════════════════════════════════════════════════════════════
+   PRE-LAUNCH NOTICE
+
+   The shop is not open. There are no prices, no cart and no checkout on the
+   site, so nothing else on a page says so — this bar does, on every page.
+
+   It is fixed rather than sticky because both page families already fix
+   something to the top edge (.site-header on the index, .nav.glass on the
+   city pages) and a sticky bar would slide under them. The bar owns
+   top: 0 and the two headers are pushed down by its height; body carries a
+   matching top pad so the first section still starts below the header, and
+   the full-height heroes give the same amount back so they still fit one
+   screen. --prelaunch-h is the single number all of that reads.
+
+   To revert on launch day: delete this block, the .prelaunch-bar div at the
+   top of each page, and the .prelaunch-note paragraph under each drop grid.
+   ══════════════════════════════════════════════════════════════════════════ */
+:root { --prelaunch-h: 40px; }
+
+.prelaunch-bar {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 300;
+  height: var(--prelaunch-h);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 calc(14px + env(safe-area-inset-right))
+           0 calc(14px + env(safe-area-inset-left));
+  border-bottom: var(--br-rule) solid var(--br-ink);
+  background: var(--br-red);
+  color: var(--br-ink);
+  text-align: center;
+}
+
+.prelaunch-bar p {
+  margin: 0;
+  font-family: var(--br-mono);
+  font-size: max(10.5px, 0.66rem);
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.prelaunch-bar b { font-weight: 700; }
+
+body { padding-top: var(--prelaunch-h); }
+
+.site-header,
+.site-header.is-scrolled,
+.nav,
+.nav.glass { top: var(--prelaunch-h); }
+
+/* The index's scroll indicator hangs off the same top edge. */
+.scroll-route { top: calc(88px + var(--prelaunch-h)); }
+
+/* Heroes that claim a whole screen give the bar its height back, so the
+   first fold still ends where it used to. */
+.hero { min-height: calc(100svh - var(--prelaunch-h)); }
+
+/* The in-page note under a drop grid. Same red as the bar, but as a rule
+   and a line of type rather than a plate — the grid above it is the thing
+   worth looking at. */
+.prelaunch-note {
+  margin: 34px auto 0;
+  max-width: 62ch;
+  padding-top: 18px;
+  border-top: var(--br-rule) solid var(--br-red);
+  color: var(--br-paper);
+  font-family: var(--br-mono);
+  font-size: max(11px, 0.72rem);
+  line-height: 1.7;
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+@media (max-width: 820px) {
+  :root { --prelaunch-h: 36px; }
+  .scroll-route { top: calc(78px + var(--prelaunch-h)); }
+}
+
+@media (max-width: 560px) {
+  /* Two lines beat a truncated one at this width, so the bar is told to be
+     exactly two lines tall rather than to grow: everything else offsets
+     itself by --prelaunch-h, and a bar that sizes to its own content would
+     leave those offsets guessing. */
+  :root { --prelaunch-h: 54px; }
+  .prelaunch-bar { padding-block: 6px; }
+  .prelaunch-bar p { white-space: normal; letter-spacing: 0.1em; line-height: 1.45; }
+  .prelaunch-note { margin-top: 26px; }
+}

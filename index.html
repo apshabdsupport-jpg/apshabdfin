@@ -88,13 +88,19 @@
        key and stops. -->
   <script src="trailer.js?v=1"></script>
 
-  <link rel="stylesheet" href="styles.css?v=38" />
-  <link rel="stylesheet" href="brutal.css?v=4" />
+  <link rel="stylesheet" href="styles.css?v=39" />
+  <link rel="stylesheet" href="brutal.css?v=5" />
   <link rel="stylesheet" href="trailer.css?v=1" />
-  <link rel="stylesheet" href="cart.css?v=1" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Pre-launch notice. The shop is not open yet: no prices, no cart and no
+       checkout exist anywhere on the site until drop 001 actually lands. This
+       bar is fixed, so it rides above the header on every page. -->
+  <div class="prelaunch-bar">
+    <p><b>Pre-launch</b> — nothing is on sale yet. Drop 001 lands soon.</p>
+  </div>
 
   <header class="site-header" id="top">
     <a class="brand" href="#top" aria-label="अPSHABD home">
@@ -110,7 +116,6 @@
       <a href="#story">Our story</a>
       <a href="#craft">The craft</a>
       <a href="#cities">Cities</a>
-      <a class="nav-cta" href="drop-a-pin.html">Drop a pin <span aria-hidden="true">↗</span></a>
     </nav>
   </header>
 
@@ -185,7 +190,6 @@
           <p class="lead">The label began with one question: why should Indian streetwear borrow someone else's street?</p>
           <p>So we started closer to home. With the station you missed, the road you grew up on, the corner that still knows your name. Every piece is a record of a neighbourhood — set in its own script, carried in its own rhythm.</p>
           <p>Western silhouettes. Indian coordinates. No costume. No souvenir. Just the places that made you, cut into something worth keeping.</p>
-          <a class="text-link dark" href="drop-a-pin.html">Put your street on the map <span aria-hidden="true">↗</span></a>
         </div>
       </div>
 
@@ -352,7 +356,6 @@
 
         <div class="typewriter-action">
           <p>To your city wardrobe. Your lane, your language, your call.</p>
-          <a class="typewriter-link" href="drop-a-pin.html">Drop a pin <span aria-hidden="true">↗</span></a>
         </div>
       </div>
     </section>
@@ -360,12 +363,12 @@
     <section class="city-index" id="cities" aria-labelledby="cities-title">
       <div class="section-index reveal">
         <span>03 / City index</span>
-        <span>7 cities + yours</span>
+        <span>7 cities</span>
       </div>
 
       <div class="cities-heading reveal">
         <h2 id="cities-title">Choose your<br />coordinates.</h2>
-        <p>Start with the city. Get closer by neighbourhood. Chennai and Mumbai are live; the rest are taking shape.</p>
+        <p>Start with the city. Get closer by neighbourhood. Chennai and Mumbai are up first; the rest are taking shape. Nothing is on sale yet — this is drop 001 before it opens.</p>
       </div>
 
       <div class="cities-layout">
@@ -401,10 +404,10 @@
              that city's real photography the day it exists. -->
         <div class="city-list reveal">
           <a class="city-row is-active" href="chennai.html?v=3" data-code="MAA / 01" data-pin="chennai" data-px="622.1" data-py="1213.2" data-city="CHENNAI" data-image="assets/campaign/web/01-chennai-adyar-fisherman.jpg">
-            <span class="city-number">01</span><span class="city-native tamil" lang="ta">சென்னை</span><strong>Chennai</strong><span class="city-status live">Shop live</span><span class="city-arrow" aria-hidden="true">↗</span>
+            <span class="city-number">01</span><span class="city-native tamil" lang="ta">சென்னை</span><strong>Chennai</strong><span class="city-status live">See the drop</span><span class="city-arrow" aria-hidden="true">↗</span>
           </a>
           <a class="city-row" href="mumbai.html?v=3" data-code="BOM / 02" data-pin="mumbai" data-px="275.5" data-py="915.4" data-city="MUMBAI" data-image="assets/campaign/web/mumbai-bandra-fruit-stall.jpg">
-            <span class="city-number">02</span><span class="city-native devanagari" lang="mr">मुंबई</span><strong>Mumbai</strong><span class="city-status live">Shop live</span><span class="city-arrow" aria-hidden="true">↗</span>
+            <span class="city-number">02</span><span class="city-native devanagari" lang="mr">मुंबई</span><strong>Mumbai</strong><span class="city-status live">See the drop</span><span class="city-arrow" aria-hidden="true">↗</span>
           </a>
           <a class="city-row" href="delhi.html?v=3" data-code="DEL / 03" data-pin="delhi" data-px="473.6" data-py="437.0" data-city="DELHI" data-image="assets/campaign/plates/delhi.jpg">
             <span class="city-number">03</span><span class="city-native devanagari" lang="hi">दिल्ली</span><strong>Delhi</strong><span class="city-status">In the works</span><span class="city-arrow" aria-hidden="true">↗</span>
@@ -421,23 +424,7 @@
           <a class="city-row" href="pune.html?v=3" data-code="PNQ / 07" data-pin="pune" data-px="321.4" data-py="943.0" data-city="PUNE" data-image="assets/campaign/plates/pune.jpg">
             <span class="city-number">07</span><span class="city-native devanagari" lang="mr">पुणे</span><strong>Pune</strong><span class="city-status">Last in line</span><span class="city-arrow" aria-hidden="true">↗</span>
           </a>
-          <a class="city-row city-row-yours" href="drop-a-pin.html" data-code="YOU / 08" data-city="YOUR CITY" data-image="assets/campaign/plates/your-city.jpg">
-            <span class="city-number">08</span><span class="city-native">+</span><strong>Your city</strong><span class="city-status">Make the call</span><span class="city-arrow" aria-hidden="true">↗</span>
-          </a>
         </div>
-      </div>
-    </section>
-
-    <section class="pin-cta" aria-labelledby="pin-title">
-      <div class="pin-copy reveal">
-        <span class="eyebrow">Not on the map?</span>
-        <h2 id="pin-title">Your area.<br />Your call.</h2>
-        <p>Tell us the neighbourhood, phrase, or piece of local history that deserves a drop. The next coordinate could be yours.</p>
-        <a class="button button-light" href="drop-a-pin.html">Drop a pin <span aria-hidden="true">↗</span></a>
-      </div>
-      <div class="pin-mark reveal" aria-hidden="true">
-        <span>अ</span>
-        <i>✱</i>
       </div>
     </section>
 
@@ -454,13 +441,11 @@
       </div>
       <div>
         <a href="https://www.instagram.com/ap.shabd/" target="_blank" rel="noopener">Instagram ↗</a>
-        <a href="drop-a-pin.html">Drop a pin ↗</a>
       </div>
       <p>© 2026. Built from where we are.</p>
     </div>
   </footer>
 
-  <script src="cart.js?v=1"></script>
   <script src="script.js?v=27"></script>
 </body>
 </html>

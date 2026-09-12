@@ -416,8 +416,8 @@ body {
 
 /* The city pages had no skip link at all — a keyboard visitor had to tab the
    whole nav on every one of the seven. brutal.css only decorates .skip-link;
-   the positioning lives in styles.css and pin-form.css, neither of which load
-   here, so without this the link would simply sit at the top of the page. */
+   the positioning lives in styles.css, which does not load here, so without
+   this the link would simply sit at the top of the page. */
 .skip-link {
   position: fixed;
   z-index: 1000;

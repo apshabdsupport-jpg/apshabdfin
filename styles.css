@@ -1,5 +1,5 @@
 /* Cross-document view transitions, index -> city pages. Needs the same opt-in on
-   the destination stylesheet (city-brand.css, pin-form.css) to fire. Browsers
+   the destination stylesheet (city-brand.css) to fire. Browsers
    without support simply hard-cut the way they always did — no fallback needed. */
 @view-transition { navigation: auto; }
 
