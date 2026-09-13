@@ -20,13 +20,6 @@
   ],
   "shortcuts": [
     {
-      "name": "Drop a pin",
-      "short_name": "Drop a pin",
-      "description": "Put your neighbourhood on the map",
-      "url": "/drop-a-pin.html",
-      "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
-    },
-    {
       "name": "Chennai",
       "short_name": "Chennai",
       "url": "/chennai.html",
