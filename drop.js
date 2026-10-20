@@ -33,7 +33,7 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function shot(card, colourway, side) {
-    return 'assets/' + card.dataset.city + '/' + card.dataset.loc + '/' + colourway + '-' + side + '.jpg';
+    return 'assets/' + card.dataset.city + '/' + card.dataset.loc + '/' + colourway + '-' + side + '.jpg' + (card.dataset.version ? '?v=' + encodeURIComponent(card.dataset.version) : '');
   }
 
   function wayName(button) {
