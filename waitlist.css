@@ -1,0 +1,504 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   WAITLIST LAYER — अPSHABD
+
+   Styles for waitlist.js (the sign-up form, the "Want this" toggles and the
+   tee details panel), the shared footer links, and the under-wraps plates.
+   Loaded after brutal.css on every page, and written against its own tokens
+   so it reads the same on the home page's cream/night sections and on the
+   city pages' dark grounds. Same language as brutal.css: hard rules, flat
+   slabs, offset shadows, no radius.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@font-face {
+  font-family: "Trench Slab";
+  src: url("assets/fonts/trench-slab/TrenchSlab-Regular.woff2") format("woff2"),
+       url("assets/fonts/trench-slab/TrenchSlab-Regular.woff") format("woff");
+  font-display: swap;
+}
+
+:root {
+  --wl-ink: #000f08;
+  --wl-paper: #f3e6d0;
+  --wl-red: #fb3640;
+  --wl-muted: rgba(243, 230, 208, 0.66);
+  --wl-line: rgba(243, 230, 208, 0.34);
+  --wl-slab: "Trench Slab", "Arial Narrow", Impact, sans-serif;
+  --wl-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas, "Liberation Mono", monospace;
+  --wl-tap: 44px;
+}
+
+/* The pre-launch bar now carries the one action the site has. */
+.prelaunch-bar a {
+  color: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+}
+.prelaunch-bar a:hover,
+.prelaunch-bar a:focus-visible { background: var(--wl-ink); color: var(--wl-red); text-decoration: none; outline: none; }
+
+/* ── The join section (home) and the city-page slot ─────────────────────── */
+.join {
+  position: relative;
+  z-index: 3;
+  padding: clamp(64px, 9vw, 128px) var(--page, clamp(20px, 3.4vw, 58px));
+  background: var(--wl-ink);
+  color: var(--wl-paper);
+  border-top: 6px solid var(--wl-red);
+  scroll-margin-top: calc(80px + var(--prelaunch-h, 40px));
+}
+
+.join-inner {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
+  gap: clamp(32px, 6vw, 96px);
+  max-width: 1380px;
+  margin: 0 auto;
+  align-items: start;
+}
+
+.join-kicker {
+  display: inline-block;
+  margin: 0 0 22px;
+  padding: 7px 12px;
+  background: var(--wl-red);
+  color: var(--wl-ink);
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.68rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.join-title {
+  margin: 0 0 22px;
+  font-family: var(--wl-slab);
+  font-weight: 400;
+  font-size: clamp(2.6rem, 6.4vw, 6.2rem);
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+.join-title em { font-style: normal; color: var(--wl-red); }
+
+.join-copy {
+  max-width: 44ch;
+  margin: 0 0 28px;
+  color: var(--wl-muted);
+  font-size: clamp(1rem, 1.25vw, 1.15rem);
+  line-height: 1.6;
+}
+
+.join-perks {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 3px solid var(--wl-line);
+  font-family: var(--wl-mono);
+  font-size: max(12px, 0.78rem);
+  letter-spacing: 0.04em;
+}
+.join-perks li {
+  display: grid;
+  grid-template-columns: 3.2em 1fr;
+  padding: 13px 0;
+  border-bottom: 1px solid var(--wl-line);
+}
+.join-perks b { color: var(--wl-red); font-weight: 700; }
+
+/* City pages: the slot sits inside the existing .wait plate. */
+.wait .wl-slot { max-width: 760px; margin: 34px auto 0; text-align: left; }
+.wait .wl-slot + .cta { margin-top: 34px; }
+
+/* ── The form ───────────────────────────────────────────────────────────── */
+.wl-slot { color: var(--wl-paper); }
+/* The city sheets style every ".wait p" (faded, loose, spaced); none of
+   that belongs inside the form or its done state. */
+.wl-slot p { opacity: 1; margin: 0; line-height: 1.5; }
+
+.wl-form {
+  padding: clamp(20px, 3vw, 36px);
+  background: var(--wl-ink);
+  border: 3px solid var(--wl-paper);
+  box-shadow: 10px 10px 0 var(--wl-red);
+  font-family: var(--wl-slab);
+}
+
+.wl-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px 22px;
+}
+.wl-field--email,
+.wl-field--wide,
+.wl-field--sizes { grid-column: 1 / -1; }
+
+.wl-field { display: grid; align-content: start; gap: 8px; min-width: 0; margin: 0; padding: 0; border: 0; }
+
+.wl-field > label,
+.wl-field > legend {
+  padding: 0;
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.7rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wl-paper);
+}
+.wl-field em {
+  margin-left: 6px;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  color: var(--wl-muted);
+  text-transform: lowercase;
+}
+.wl-field--sizes legend { margin-bottom: 8px; }
+
+.wl-form input[type="email"],
+.wl-form input[type="text"],
+.wl-form input[type="tel"],
+.wl-form select {
+  width: 100%;
+  height: 54px;
+  padding: 0 14px;
+  border: 3px solid var(--wl-line);
+  background: #071810;
+  color: var(--wl-paper);
+  font: inherit;
+  font-size: 1.05rem;
+  appearance: none;
+  -webkit-appearance: none;
+}
+.wl-form select {
+  padding-right: 42px;
+  background-image: linear-gradient(45deg, transparent 50%, var(--wl-paper) 50%),
+                    linear-gradient(-45deg, transparent 50%, var(--wl-paper) 50%);
+  background-position: calc(100% - 22px) 52%, calc(100% - 15px) 52%;
+  background-size: 7px 7px;
+  background-repeat: no-repeat;
+}
+.wl-form select option { background: var(--wl-ink); color: var(--wl-paper); }
+.wl-form input::placeholder { color: rgba(243, 230, 208, 0.38); }
+
+.wl-form input:focus-visible,
+.wl-form select:focus-visible {
+  outline: none;
+  border-color: var(--wl-paper);
+  box-shadow: 5px 5px 0 var(--wl-red);
+}
+.wl-form input[aria-invalid="true"],
+.wl-form select[aria-invalid="true"] { border-color: var(--wl-red); }
+
+.wl-tel { position: relative; }
+.wl-tel > span {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--wl-muted);
+  font-family: var(--wl-mono);
+  font-size: 0.95rem;
+  pointer-events: none;
+}
+.wl-tel input { padding-left: 52px !important; }
+
+.wl-field small {
+  color: var(--wl-muted);
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.68rem);
+  letter-spacing: 0.04em;
+}
+
+.wl-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.wl-chip { position: relative; cursor: pointer; }
+.wl-chip input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+.wl-chip span {
+  display: grid;
+  place-items: center;
+  min-width: var(--wl-tap);
+  min-height: var(--wl-tap);
+  padding: 0 14px;
+  border: 3px solid var(--wl-line);
+  font-family: var(--wl-mono);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+}
+.wl-chip input:checked + span {
+  background: var(--wl-paper);
+  border-color: var(--wl-paper);
+  color: var(--wl-ink);
+  box-shadow: 4px 4px 0 var(--wl-red);
+}
+.wl-chip input:focus-visible + span { border-color: var(--wl-paper); outline: 2px solid var(--wl-red); outline-offset: 2px; }
+
+.wl-wants {
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 3px dashed var(--wl-line);
+}
+.wl-wants-label {
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.68rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--wl-red);
+}
+.wl-wants ul { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.wl-wants li {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 12px;
+  background: var(--wl-paper);
+  color: var(--wl-ink);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+}
+.wl-wants li i { font-style: normal; font-family: var(--wl-mono); font-size: 0.72rem; text-transform: none; opacity: 0.72; }
+.wl-wants li b { font-family: var(--wl-mono); font-size: 0.66rem; letter-spacing: 0.1em; opacity: 0.6; }
+.wl-wants li button {
+  min-width: 36px;
+  min-height: 36px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+.wl-wants li button:hover,
+.wl-wants li button:focus-visible { background: var(--wl-red); outline: none; }
+
+.wl-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+
+.wl-consent {
+  display: grid;
+  grid-template-columns: 26px 1fr;
+  gap: 12px;
+  align-items: start;
+  margin-top: 24px;
+  color: var(--wl-muted);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+.wl-consent input {
+  width: 24px;
+  height: 24px;
+  margin: 1px 0 0;
+  accent-color: var(--wl-red);
+  cursor: pointer;
+}
+.wl-consent a { color: var(--wl-paper); text-underline-offset: 3px; }
+.wl-consent .wl-error { grid-column: 2; }
+
+.wl-submit-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px 22px;
+  margin-top: 26px;
+}
+
+.wl-submit {
+  min-height: 56px;
+  padding: 0 28px;
+  border: 3px solid var(--wl-red);
+  background: var(--wl-red);
+  color: var(--wl-ink);
+  font-family: var(--wl-mono);
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  box-shadow: 6px 6px 0 var(--wl-paper);
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+.wl-submit:hover,
+.wl-submit:focus-visible { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 var(--wl-paper); outline: none; }
+.wl-submit:active { transform: translate(6px, 6px); box-shadow: 0 0 0 var(--wl-paper); }
+.wl-submit:disabled { opacity: 0.6; cursor: progress; }
+
+.wl-status {
+  margin: 0;
+  flex: 1 1 220px;
+  color: var(--wl-paper);
+  font-family: var(--wl-mono);
+  font-size: max(12px, 0.76rem);
+  line-height: 1.5;
+}
+.wl-status:empty { display: none; }
+
+.wl-error {
+  margin: 0;
+  color: #ff7a80;
+  font-family: var(--wl-mono);
+  font-size: max(12px, 0.74rem);
+  font-weight: 700;
+}
+
+/* Done state */
+.wl-done {
+  padding: clamp(24px, 3.4vw, 44px);
+  background: var(--wl-paper);
+  color: var(--wl-ink);
+  border: 3px solid var(--wl-paper);
+  box-shadow: 10px 10px 0 var(--wl-red);
+  outline: none;
+}
+.wl-done-stamp {
+  display: inline-block;
+  padding: 6px 11px;
+  background: var(--wl-ink);
+  color: var(--wl-paper);
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.68rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+.wl-done .wl-done-title {
+  margin: 18px 0 14px;
+  font-family: var(--wl-slab);
+  font-size: clamp(2rem, 4.4vw, 3.6rem);
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+.wl-done p:not(.wl-done-title) { max-width: 52ch; line-height: 1.6; }
+.wl-done-actions { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 24px; }
+.wl-share,
+.wl-again {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--wl-tap);
+  padding: 0 18px;
+  border: 3px solid var(--wl-ink);
+  font-family: var(--wl-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+.wl-share { background: var(--wl-ink); color: var(--wl-paper); box-shadow: 5px 5px 0 var(--wl-red); }
+.wl-again { background: transparent; color: var(--wl-ink); }
+.wl-share:hover, .wl-share:focus-visible,
+.wl-again:hover, .wl-again:focus-visible { background: var(--wl-red); color: var(--wl-ink); outline: none; }
+
+/* ── "Want this" ─────────────────────────────────────────────────────────
+   The base toggle. drop.css sizes it for the quick view and shrinks it to a
+   corner chip on each product plate; the details list lives in the quick
+   view too. */
+.want-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: var(--wl-tap);
+  padding: 0 18px;
+  border: 3px solid var(--wl-paper);
+  background: transparent;
+  color: var(--wl-paper);
+  font-family: var(--wl-mono);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.12s;
+}
+.want-toggle:hover,
+.want-toggle:focus-visible { box-shadow: 5px 5px 0 var(--wl-red); transform: translate(-2px, -2px); outline: none; }
+.want-toggle[aria-pressed="true"] { background: var(--wl-red); border-color: var(--wl-red); color: var(--wl-ink); }
+.want-mark { font-size: 1rem; line-height: 1; }
+
+/* ── Under-wraps plates (cities still in the works) ─────────────────────── */
+.card .ph {
+  background:
+    repeating-linear-gradient(-45deg, transparent 0 14px, rgba(243, 230, 208, 0.05) 14px 28px),
+    #071810;
+}
+.card .ph span {
+  display: inline-block;
+  padding: 8px 12px;
+  background: var(--wl-paper);
+  color: var(--wl-ink);
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.7rem) !important;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.5;
+  box-shadow: 5px 5px 0 var(--wl-red);
+  transform: rotate(-3deg);
+  opacity: 1; /* the city sheets fade this to 0.3, which read as broken */
+}
+.card .want-toggle { margin-top: 14px; }
+
+/* ── Shared footer links (home and city pages) ──────────────────────────── */
+.footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.footer-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--wl-tap);
+  color: inherit;
+  font-family: var(--wl-mono);
+  font-size: max(11px, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+}
+.footer-links a:hover,
+.footer-links a:focus-visible { border-bottom-color: var(--wl-red); outline: none; }
+
+.footer .footer-links { color: var(--ap-night, var(--wl-ink)); justify-content: flex-end; }
+
+/* City-page typewriter prompt now ends in a link to the form. */
+.tw-cta-link {
+  display: inline-block;
+  margin-top: 26px;
+  padding: 12px 20px;
+  border: 3px solid var(--wl-red);
+  color: var(--wl-paper);
+  font-family: var(--wl-mono);
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  text-decoration: none;
+  box-shadow: 6px 6px 0 var(--wl-paper);
+}
+.tw-cta-link:hover,
+.tw-cta-link:focus-visible { background: var(--wl-red); color: var(--wl-ink); outline: none; }
+
+@media (max-width: 900px) {
+  .join-inner { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 620px) {
+  .wl-grid { grid-template-columns: 1fr; }
+  .wl-form { box-shadow: 6px 6px 0 var(--wl-red); }
+  .wl-submit { width: 100%; }
+  .footer .footer-links { justify-content: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-submit, .want-toggle, .wl-chip span { transition: none; }
+}

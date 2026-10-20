@@ -34,19 +34,26 @@
   <meta name="twitter:description" content="APSHABD Chennai — Filter coffee at dawn, auto horns at noon, silence after midnight." />
   <meta name="twitter:image" content="https://apshabd.com/assets/social/og-chennai.jpg" />
 
+  <!-- Sets .motion-ready on <html> before first paint, so scroll reveals
+       never flash in their final state first. See motion.js. -->
+  <script src="motion.js?v=2"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <!-- DotGothic16 is a dot-matrix face and Silkscreen a 5x7 bitmap one: together
        they carry the LED route board above the faces section. -->
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Tamil:wght@400;700&family=DotGothic16&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href=".//chennai.css?v=3" />
-  <link rel="stylesheet" href=".//drop.css?v=4" />
-  <link rel="stylesheet" href=".//streets.css?v=5" />
-  <link rel="stylesheet" href=".//city-brand.css?v=11" />
+  <link rel="stylesheet" href="motion.css?v=1" />
+  <link rel="stylesheet" href=".//drop.css?v=9" />
+  <link rel="stylesheet" href=".//streets.css?v=7" />
+  <link rel="stylesheet" href=".//city-brand.css?v=12" />
   <!-- Last: city-brand.css hides .marquee, and the board has to win. -->
   <link rel="stylesheet" href=".//bus-board.css?v=2" />
-  <link rel="stylesheet" href=".//brutal.css?v=5" />
+  <link rel="stylesheet" href=".//brutal.css?v=6" />
+  <link rel="stylesheet" href=".//waitlist.css?v=2" />
+  <link rel="stylesheet" href="studio-motion.css?v=1" />
 </head>
-<body>
+<body class="city-shop">
 
   <div class="bg-word" aria-hidden="true">அமைதி</div>
   <div class="grain" aria-hidden="true"></div>
@@ -57,7 +64,7 @@
        checkout exist anywhere on the site until drop 001 actually lands. This
        bar is fixed, so it rides above the nav on every page. -->
   <div class="prelaunch-bar">
-    <p><b>Pre-launch</b> — nothing is on sale yet. Drop 001 lands soon.</p>
+    <p><b>Pre-launch</b> — nothing is on sale yet. <a href="#join">Get first access →</a></p>
   </div>
 
   <nav class="nav glass">
@@ -68,15 +75,119 @@
     <span class="nav-city">CHENNAI · 01</span>
   </nav>
 
-  <header class="hero" style="transform-style:preserve-3d;perspective:1200px;">
-    <p class="eyebrow reveal">MARINA NIGHTS · நம்ம ஊரு</p>
+  <header class="hero" data-motion>
+    <p class="eyebrow" data-reveal="up">MARINA NIGHTS · நம்ம ஊரு</p>
     <h1 class="hero-title">
-      <span class="reveal depth-layer" data-depth="0.8">CHEN</span>
-      <span class="reveal outline depth-layer" data-depth="1.2">NAI</span>
+      <span data-reveal="up">CHEN</span>
+      <span class="outline" data-reveal="up" data-reveal-delay="80">NAI</span>
     </h1>
-    <p class="hero-sub reveal">Filter coffee at dawn, auto horns at noon,<br />and silence after midnight.</p>
-    <a href="#drop" class="cta reveal">SEE THE DROP ↓</a>
+    <p class="hero-sub" data-reveal="up" data-reveal-delay="160">Filter coffee at dawn, auto horns at noon, and silence after midnight.</p>
+    <a href="#drop" class="cta" data-reveal="up" data-reveal-delay="220">SEE THE DROP ↓</a>
   </header>
+
+  <!-- ── THE DROP ──
+       The shop comes first, straight under the title: small plates, two to a
+       row on a phone and four on a laptop, so the tees can be compared side
+       by side. Each one opens a quick view with both sides at full size, the
+       story and every colour (drop.css / drop.js). The portraits and the
+       street photography follow further down. -->
+  <section class="section shop-section" id="drop" tabindex="-1" data-motion>
+    <header class="shop-head">
+      <div data-reveal="up">
+        <span class="stamp">CHENNAI DROP 001</span>
+        <h2>Madras on your back</h2>
+      </div>
+      <p data-reveal="up">Three neighbourhoods, three stories, set in Tamil type. Hover a tee to turn it over, or open it for the story and every colour.<span class="shop-count">3 tees · 5 colours each</span></p>
+    </header>
+
+    <ul class="pgrid" role="list">
+      <li>
+        <article class="pcard" data-city="chennai" data-loc="marina" data-reveal="card">
+          <button class="pcard-media" type="button" aria-label="Marina tee — open quick view">
+            <img class="pcard-front" src="assets/chennai/marina/seafoam-teal-front.jpg" alt="Marina tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="pcard-back" src="assets/chennai/marina/seafoam-teal-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <span class="pcard-peek" aria-hidden="true">Quick view</span>
+          </button>
+          <div class="pcard-info">
+            <div class="pcard-meta">
+              <h3 class="pcard-name">Marina</h3>
+              <span class="pcard-script" lang="ta">மெரினா</span>
+            </div>
+            <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-colour">Seafoam teal</span></p>
+            <div class="pcard-ways" role="group" aria-label="Marina colourways">
+              <button type="button" class="pcard-way" data-cw="white" style="--sw:#ebebed" aria-label="White"></button>
+              <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#ebd9bd" aria-label="Vintage cream"></button>
+              <button type="button" class="pcard-way is-on" data-cw="seafoam-teal" style="--sw:#92b2ad" aria-label="Seafoam teal"></button>
+              <button type="button" class="pcard-way" data-cw="faded-navy" style="--sw:#252c3c" aria-label="Faded navy"></button>
+              <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#161616" aria-label="Washed black"></button>
+            </div>
+            <p class="pcard-line">Sundal in a paper cone, the lighthouse at dusk, and the longest walk in the country.</p>
+          </div>
+        </article>
+      </li>
+
+      <li>
+        <article class="pcard" data-city="chennai" data-loc="anna-nagar" data-reveal="card">
+          <button class="pcard-media" type="button" aria-label="Anna Nagar tee — open quick view">
+            <img class="pcard-front" src="assets/chennai/anna-nagar/vintage-cream-front.jpg" alt="Anna Nagar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="pcard-back" src="assets/chennai/anna-nagar/vintage-cream-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <span class="pcard-peek" aria-hidden="true">Quick view</span>
+          </button>
+          <div class="pcard-info">
+            <div class="pcard-meta">
+              <h3 class="pcard-name">Anna Nagar</h3>
+              <span class="pcard-script" lang="ta">அண்ணா நகர்</span>
+            </div>
+            <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-colour">Vintage cream</span></p>
+            <div class="pcard-ways" role="group" aria-label="Anna Nagar colourways">
+              <button type="button" class="pcard-way" data-cw="white" style="--sw:#f1f1f1" aria-label="White"></button>
+              <button type="button" class="pcard-way is-on" data-cw="vintage-cream" style="--sw:#eddbbb" aria-label="Vintage cream"></button>
+              <button type="button" class="pcard-way" data-cw="faded-charcoal-grey" style="--sw:#424244" aria-label="Faded charcoal grey"></button>
+              <button type="button" class="pcard-way" data-cw="deep-forest-green" style="--sw:#1d3125" aria-label="Deep forest green"></button>
+              <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#141414" aria-label="Washed black"></button>
+            </div>
+            <p class="pcard-line">Tower Park evenings, roads wide enough to breathe, and a bakery on every second corner.</p>
+          </div>
+        </article>
+      </li>
+
+      <li>
+        <article class="pcard" data-city="chennai" data-loc="mylapore" data-reveal="card">
+          <button class="pcard-media" type="button" aria-label="Mylapore tee — open quick view">
+            <img class="pcard-front" src="assets/chennai/mylapore/dusty-lavender-front.jpg" alt="Mylapore tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="pcard-back" src="assets/chennai/mylapore/dusty-lavender-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <span class="pcard-peek" aria-hidden="true">Quick view</span>
+          </button>
+          <div class="pcard-info">
+            <div class="pcard-meta">
+              <h3 class="pcard-name">Mylapore</h3>
+              <span class="pcard-script" lang="ta">மயிலாப்பூர்</span>
+            </div>
+            <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-colour">Dusty lavender</span></p>
+            <div class="pcard-ways" role="group" aria-label="Mylapore colourways">
+              <button type="button" class="pcard-way" data-cw="white" style="--sw:#ececec" aria-label="White"></button>
+              <button type="button" class="pcard-way" data-cw="cool-stone-grey" style="--sw:#babbbd" aria-label="Cool stone grey"></button>
+              <button type="button" class="pcard-way is-on" data-cw="dusty-lavender" style="--sw:#b3a4ba" aria-label="Dusty lavender"></button>
+              <button type="button" class="pcard-way" data-cw="deep-indigo" style="--sw:#14192d" aria-label="Deep indigo"></button>
+              <button type="button" class="pcard-way" data-cw="dark-bottle-green" style="--sw:#0c2b25" aria-label="Dark bottle green"></button>
+            </div>
+            <p class="pcard-line">Kapaleeshwarar's gopuram, the tank at dusk, and filter coffee in a steel tumbler.</p>
+          </div>
+        </article>
+      </li>
+
+      <li>
+        <a class="pnext" href="#join" data-reveal="up">
+          <span class="pnext-kicker">Next stop?</span>
+          <strong>Your neighbourhood, here.</strong>
+          <span class="pnext-cta">Tell us which one <span aria-hidden="true">→</span></span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="prelaunch-note">Look, don't buy — not yet. These are the pieces as
+       they'll ship; sizes, prices and checkout arrive the day drop 001 opens.</p>
+  </section>
 
   <!-- The MTC route board. Both halves of the track are identical: the
        scroll keyframes travel -50%, so the loop only closes if they match. -->
@@ -93,162 +204,55 @@
   </div>
 
   <!-- ── THE FACES ── -->
-  <section class="faces" id="faces">
-    <div class="faces-head reveal">
+  <section class="faces" id="faces" data-motion>
+    <div class="faces-head" data-reveal="up">
       <h2>THE FACES OF DROP 001</h2>
       <span>CAMPAIGN 001 · CHENNAI</span>
     </div>
 
-    <article class="face reveal">
-      <div class="face-shot">
-        <img src=".//assets/campaign/web/chennai-t-nagar-newspaper.jpg"
-             alt="Man reading the morning paper on temple steps in the T. Nagar tee"
-             loading="lazy" width="1122" height="1402" />
-      </div>
-      <div class="face-copy">
-        <span class="face-code">CHENNAI 001</span>
-        <h3 class="face-name">T. NAGAR</h3>
-        <span class="face-script rg">தி. நகர்</span>
-        <p class="face-line">Morning paper, pressed whites, sunglasses on before the sun
-          is. The one hour Ranganathan Street still belongs to the people who live on it.</p>
-        <span class="face-role">THE SIX AM READER</span>
-      </div>
-    </article>
+    <div class="faces-row">
+      <article class="face" data-reveal="frame">
+        <div class="face-shot">
+          <img src=".//assets/campaign/web/chennai-t-nagar-newspaper.jpg"
+               alt="Man reading the morning paper on temple steps in the T. Nagar tee"
+               loading="lazy" width="1122" height="1402" />
+        </div>
+        <div class="face-copy">
+          <span class="face-code">CHENNAI 001</span>
+          <h3 class="face-name">T. NAGAR</h3>
+          <span class="face-script rg">தி. நகர்</span>
+          <p class="face-line">Morning paper, pressed whites, sunglasses on before the sun
+            is. The one hour Ranganathan Street still belongs to the people who live on it.</p>
+          <span class="face-role">THE SIX AM READER</span>
+        </div>
+      </article>
 
-    <article class="face reveal">
-      <div class="face-shot">
-        <img src=".//assets/campaign/web/chennai-marina-chai.jpg"
-             alt="Chai vendor holding a rack of glasses, wearing the Marina tee"
-             loading="lazy" width="1003" height="1568" />
-      </div>
-      <div class="face-copy">
-        <span class="face-code">CHENNAI 002</span>
-        <h3 class="face-name">MARINA</h3>
-        <span class="face-script rg">மெரினா</span>
-        <p class="face-line">Six glasses in one hand and not a drop spilled. The stall
-          opens before the sea does, and closes long after it's stopped watching.</p>
-        <span class="face-role">THE CHAIWALA</span>
-      </div>
-    </article>
+      <article class="face" data-reveal="frame">
+        <div class="face-shot">
+          <img src=".//assets/campaign/web/chennai-marina-chai.jpg"
+               alt="Chai vendor holding a rack of glasses, wearing the Marina tee"
+               loading="lazy" width="1003" height="1568" />
+        </div>
+        <div class="face-copy">
+          <span class="face-code">CHENNAI 002</span>
+          <h3 class="face-name">MARINA</h3>
+          <span class="face-script rg">மெரினா</span>
+          <p class="face-line">Six glasses in one hand and not a drop spilled. The stall
+            opens before the sea does, and closes long after it's stopped watching.</p>
+          <span class="face-role">THE CHAIWALA</span>
+        </div>
+      </article>
+    </div>
   </section>
 
-  <section class="section" id="drop" tabindex="-1">
-    <div class="section-head reveal">
-      <span class="stamp">CHENNAI DROP 001</span>
-      <h2>MADRAS ON YOUR BACK</h2>
-      <p>Five neighbourhoods, five stories, set in Tamil type. Tap a tee to turn it over.</p>
-    </div>
-
-    <div class="drop-grid" data-city="chennai">
-
-      <!-- 002 · MARINA -->
-      <article class="drop reveal" data-loc="marina">
-        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
-             aria-label="Marina tee — activate to see the back" data-cursor="FLIP">
-          <div class="drop-flip">
-            <div class="drop-face drop-face--front">
-              <img src=".//assets/chennai/marina/seafoam-teal-front.jpg" alt="Marina tee, front" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">FRONT</span>
-            </div>
-            <div class="drop-face drop-face--back">
-              <img src=".//assets/chennai/marina/seafoam-teal-back.jpg" alt="Marina tee, back" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">BACK</span>
-            </div>
-          </div>
-          <span class="drop-hint">TAP TO FLIP</span>
-        </div>
-        <div class="drop-info">
-          <div class="drop-head">
-            <h3>MARINA</h3>
-            <span class="rg">மெரினா</span>
-          </div>
-          <p>Sundal in a paper cone, the lighthouse at dusk, and the longest walk in the country.</p>
-          <div class="drop-ways" role="group" aria-label="Marina colourways">
-            <button type="button" class="way" data-cw="white"              style="--sw:#ebebed" aria-label="White"></button>
-            <button type="button" class="way" data-cw="vintage-cream"      style="--sw:#ebd9bd" aria-label="Vintage cream"></button>
-            <button type="button" class="way is-on" data-cw="seafoam-teal" style="--sw:#92b2ad" aria-label="Seafoam teal"></button>
-            <button type="button" class="way" data-cw="faded-navy"         style="--sw:#252c3c" aria-label="Faded navy"></button>
-            <button type="button" class="way" data-cw="washed-black"       style="--sw:#161616" aria-label="Washed black"></button>
-          </div>
-        </div>
-      </article>
-
-      <!-- 003 · ANNA NAGAR -->
-      <article class="drop reveal" data-loc="anna-nagar">
-        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
-             aria-label="Anna Nagar tee — activate to see the back" data-cursor="FLIP">
-          <div class="drop-flip">
-            <div class="drop-face drop-face--front">
-              <img src=".//assets/chennai/anna-nagar/vintage-cream-front.jpg" alt="Anna Nagar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">FRONT</span>
-            </div>
-            <div class="drop-face drop-face--back">
-              <img src=".//assets/chennai/anna-nagar/vintage-cream-back.jpg" alt="Anna Nagar tee, back" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">BACK</span>
-            </div>
-          </div>
-          <span class="drop-hint">TAP TO FLIP</span>
-        </div>
-        <div class="drop-info">
-          <div class="drop-head">
-            <h3>ANNA NAGAR</h3>
-            <span class="rg">அண்ணா நகர்</span>
-          </div>
-          <p>Tower Park evenings, roads wide enough to breathe, and a bakery on every second corner.</p>
-          <div class="drop-ways" role="group" aria-label="Anna Nagar colourways">
-            <button type="button" class="way" data-cw="white"                style="--sw:#f1f1f1" aria-label="White"></button>
-            <button type="button" class="way is-on" data-cw="vintage-cream"  style="--sw:#eddbbb" aria-label="Vintage cream"></button>
-            <button type="button" class="way" data-cw="faded-charcoal-grey"  style="--sw:#424244" aria-label="Faded charcoal grey"></button>
-            <button type="button" class="way" data-cw="deep-forest-green"    style="--sw:#1d3125" aria-label="Deep forest green"></button>
-            <button type="button" class="way" data-cw="washed-black"         style="--sw:#141414" aria-label="Washed black"></button>
-          </div>
-        </div>
-      </article>
-
-      <!-- 004 · MYLAPORE -->
-      <article class="drop reveal" data-loc="mylapore">
-        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
-             aria-label="Mylapore tee — activate to see the back" data-cursor="FLIP">
-          <div class="drop-flip">
-            <div class="drop-face drop-face--front">
-              <img src=".//assets/chennai/mylapore/dusty-lavender-front.jpg" alt="Mylapore tee, front" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">FRONT</span>
-            </div>
-            <div class="drop-face drop-face--back">
-              <img src=".//assets/chennai/mylapore/dusty-lavender-back.jpg" alt="Mylapore tee, back" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">BACK</span>
-            </div>
-          </div>
-          <span class="drop-hint">TAP TO FLIP</span>
-        </div>
-        <div class="drop-info">
-          <div class="drop-head">
-            <h3>MYLAPORE</h3>
-            <span class="rg">மயிலாப்பூர்</span>
-          </div>
-          <p>Kapaleeshwarar's gopuram, the tank at dusk, and filter coffee in a steel tumbler.</p>
-          <div class="drop-ways" role="group" aria-label="Mylapore colourways">
-            <button type="button" class="way" data-cw="white"                 style="--sw:#ececec" aria-label="White"></button>
-            <button type="button" class="way" data-cw="cool-stone-grey"       style="--sw:#babbbd" aria-label="Cool stone grey"></button>
-            <button type="button" class="way is-on" data-cw="dusty-lavender"  style="--sw:#b3a4ba" aria-label="Dusty lavender"></button>
-            <button type="button" class="way" data-cw="deep-indigo"           style="--sw:#14192d" aria-label="Deep indigo"></button>
-            <button type="button" class="way" data-cw="dark-bottle-green"     style="--sw:#0c2b25" aria-label="Dark bottle green"></button>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-    <p class="prelaunch-note">Look, don't buy — not yet. These are the pieces as
-       they'll ship; sizes, prices and checkout arrive the day drop 001 opens.</p>
-
-  </section>
-
-  <section class="section">
+  <section class="section" id="join">
     <div class="wait glass reveal">
       <span class="stamp">LAUNCHING SOON</span>
       <h2>அமைதி. THEN THE DROP.</h2>
       <p>Chennai hears it first. Always.</p>
+      <div class="wl-slot" data-waitlist data-city="chennai" data-compact>
+        <noscript><p>Email <a href="mailto:apshabdsupport@gmail.com?subject=Waitlist">apshabdsupport@gmail.com</a> and we'll add you.</p></noscript>
+      </div>
       <a href="index.html#cities" class="cta">BACK TO THE MAP</a>
     </div>
   </section>
@@ -342,17 +346,26 @@
   <!-- ── TYPEWRITER PROMPT ── -->
   <section class="typewriter-section" data-words="location|இடம்">
     <p class="typewriter-text">
-      Which <span class="tw-quote">'</span><span class="tw-word-wrap"><span class="tw-word" lang="ta">இடம்</span></span><span class="tw-quote">'</span> would you like for us to add in your city wardrobe, do let us know.
+      Which <span class="tw-quote">'</span><span class="tw-word-wrap"><span class="tw-word" lang="ta">இடம்</span></span><span class="tw-quote">'</span> should we add to your city wardrobe?
     </p>
+    <a class="tw-cta-link" href="#join">Tell us yours →</a>
   </section>
 
   <footer class="footer">
     <a class="city-footer-brand" href="index.html" aria-label="APSHABD home"><img src="assets/brand/apshabd-wordmark-night.png" alt="" /></a>
     <p>APSHABD — CHENNAI · <span class="rg">அமைதியா இரு</span></p>
+    <ul class="footer-links" aria-label="More">
+      <li><a href="index.html#cities">All cities</a></li>
+      <li><a href="help.html">Help &amp; FAQ</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="https://www.instagram.com/ap.shabd/" target="_blank" rel="noopener">Instagram ↗</a></li>
+    </ul>
   </footer>
 
 
   <script src=".//chennai.js"></script>
-  <script src=".//drop.js?v=6"></script>
+  <script src=".//drop.js?v=8"></script>
+  <script src=".//waitlist.js?v=2"></script>
+  <script src="studio-motion.js?v=1"></script>
 </body>
 </html>

@@ -1,0 +1,37 @@
+/* Last in the cascade; all visual tokens come from the existing brand. */
+.studio-frame { position: relative; overflow: hidden; }
+.studio-curtain {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: var(--p-paper, #f3e6d0);
+  pointer-events: none;
+  visibility: hidden;
+}
+.pcard-media .studio-curtain { background: var(--p-plate, #eeece9); }
+.studio-rule { position: relative; }
+.studio-rule-ink {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: var(--p-red, #fb3640);
+  transform-origin: left;
+  opacity: 0;
+  pointer-events: none;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .city-row .city-arrow {
+    display: inline-block;
+    transition: translate .55s cubic-bezier(.16,1,.3,1) !important;
+  }
+  .city-row:hover .city-arrow, .city-row:focus-visible .city-arrow { translate: 5px -5px; }
+  .pcard-media .pcard-peek {
+    transition: opacity .35s ease, transform .55s cubic-bezier(.16,1,.3,1), letter-spacing .55s ease;
+  }
+  .pcard-media:hover .pcard-peek { letter-spacing: .2em; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .studio-curtain, .studio-rule-ink { display: none; }
+}

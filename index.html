@@ -12,7 +12,7 @@
        .htaccess instead. Note that .htaccess is Apache-only - on Netlify, Vercel or
        GitHub Pages these three need re-declaring in that host's own headers config. -->
   <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src 'none'; frame-src 'none'; object-src 'none';" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; script-src 'self'; connect-src https://script.google.com https://script.googleusercontent.com; frame-src 'none'; object-src 'none';" />
   <link rel="canonical" href="https://apshabd.com/" />
 
   <!-- Icons. One square mark, every surface: browser tab, iOS home screen,
@@ -65,7 +65,7 @@
         "description": "Indian streetwear built from neighbourhood memory, local scripts, and the streets that made us.",
         "foundingDate": "2026",
         "areaServed": { "@type": "Country", "name": "India" },
-        "sameAs": ["https://www.instagram.com/pd.silence/"]
+        "sameAs": ["https://www.instagram.com/ap.shabd/"]
       },
       {
         "@type": "WebSite",
@@ -87,10 +87,18 @@
        locked-out visit — which is most of them — it reads one localStorage
        key and stops. -->
   <script src="trailer.js?v=1"></script>
+  <!-- Same reasoning, smaller job: sets .motion-ready on <html> before the
+       first paint so scroll reveals never flash in their final state.
+       Also eases the mouse wheel. See motion.js. -->
+  <script src="motion.js?v=2"></script>
 
-  <link rel="stylesheet" href="styles.css?v=39" />
-  <link rel="stylesheet" href="brutal.css?v=5" />
+  <link rel="stylesheet" href="styles.css?v=40" />
+  <link rel="stylesheet" href="brutal.css?v=6" />
   <link rel="stylesheet" href="trailer.css?v=1" />
+  <link rel="stylesheet" href="waitlist.css?v=2" />
+  <link rel="stylesheet" href="motion.css?v=1" />
+  <link rel="stylesheet" href="drop.css?v=9" />
+  <link rel="stylesheet" href="studio-motion.css?v=1" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -99,7 +107,7 @@
        checkout exist anywhere on the site until drop 001 actually lands. This
        bar is fixed, so it rides above the header on every page. -->
   <div class="prelaunch-bar">
-    <p><b>Pre-launch</b> — nothing is on sale yet. Drop 001 lands soon.</p>
+    <p><b>Pre-launch</b> — nothing is on sale yet. <a href="#join">Get first access →</a></p>
   </div>
 
   <header class="site-header" id="top">
@@ -113,9 +121,11 @@
     </button>
 
     <nav class="site-nav" id="site-nav" aria-label="Main navigation">
+      <a href="#drop">The drop</a>
       <a href="#story">Our story</a>
       <a href="#craft">The craft</a>
       <a href="#cities">Cities</a>
+      <a class="nav-cta" href="#join">Get on the list</a>
     </nav>
   </header>
 
@@ -153,7 +163,7 @@
 
         <div class="hero-footer reveal">
           <p>Built from neighbourhood memory, local scripts, and the places that raised us.</p>
-          <a class="text-link" href="#cities">Find your city <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="#drop">See the drop <span aria-hidden="true">↓</span></a>
         </div>
       </div>
 
@@ -178,9 +188,214 @@
       </div>
     </section>
 
+    <!-- The drop: all seven tees on one grid, the way a shop shows them —
+         small plates, four to a row on a laptop and two on a phone, each
+         opening a quick view with both sides at full size (drop.css /
+         drop.js). It sits straight under the hero so the first scroll lands
+         on the clothes. -->
+    <section class="shop" id="drop" aria-labelledby="drop-title">
+      <div class="section-index light reveal">
+        <span>01 / The drop</span>
+        <span>7 tees · 3 cities</span>
+      </div>
+
+      <header class="shop-head">
+        <h2 id="drop-title" data-reveal="up">Drop 001</h2>
+        <p data-reveal="up">Seven neighbourhoods, each set in its own script. Hover a tee to turn it over, or open it for the story and every colour.<span class="shop-count">Chennai · Mumbai · Delhi</span></p>
+      </header>
+
+      <ul class="pgrid" role="list">
+        <li>
+          <article class="pcard" data-city="chennai" data-loc="marina" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Marina tee — open quick view">
+              <img class="pcard-front" src="assets/chennai/marina/seafoam-teal-front.jpg" alt="Marina tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/chennai/marina/seafoam-teal-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Marina</h3>
+                <span class="pcard-script" lang="ta">மெரினா</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Chennai</span><span class="pcard-colour">Seafoam teal</span></p>
+              <div class="pcard-ways" role="group" aria-label="Marina colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#ebebed" aria-label="White"></button>
+                <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#ebd9bd" aria-label="Vintage cream"></button>
+                <button type="button" class="pcard-way is-on" data-cw="seafoam-teal" style="--sw:#92b2ad" aria-label="Seafoam teal"></button>
+                <button type="button" class="pcard-way" data-cw="faded-navy" style="--sw:#252c3c" aria-label="Faded navy"></button>
+                <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#161616" aria-label="Washed black"></button>
+              </div>
+              <p class="pcard-line">Sundal in a paper cone, the lighthouse at dusk, and the longest walk in the country.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <article class="pcard" data-city="chennai" data-loc="anna-nagar" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Anna Nagar tee — open quick view">
+              <img class="pcard-front" src="assets/chennai/anna-nagar/vintage-cream-front.jpg" alt="Anna Nagar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/chennai/anna-nagar/vintage-cream-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Anna Nagar</h3>
+                <span class="pcard-script" lang="ta">அண்ணா நகர்</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Chennai</span><span class="pcard-colour">Vintage cream</span></p>
+              <div class="pcard-ways" role="group" aria-label="Anna Nagar colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#f1f1f1" aria-label="White"></button>
+                <button type="button" class="pcard-way is-on" data-cw="vintage-cream" style="--sw:#eddbbb" aria-label="Vintage cream"></button>
+                <button type="button" class="pcard-way" data-cw="faded-charcoal-grey" style="--sw:#424244" aria-label="Faded charcoal grey"></button>
+                <button type="button" class="pcard-way" data-cw="deep-forest-green" style="--sw:#1d3125" aria-label="Deep forest green"></button>
+                <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#141414" aria-label="Washed black"></button>
+              </div>
+              <p class="pcard-line">Tower Park evenings, roads wide enough to breathe, and a bakery on every second corner.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <article class="pcard" data-city="chennai" data-loc="mylapore" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Mylapore tee — open quick view">
+              <img class="pcard-front" src="assets/chennai/mylapore/dusty-lavender-front.jpg" alt="Mylapore tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/chennai/mylapore/dusty-lavender-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Mylapore</h3>
+                <span class="pcard-script" lang="ta">மயிலாப்பூர்</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Chennai</span><span class="pcard-colour">Dusty lavender</span></p>
+              <div class="pcard-ways" role="group" aria-label="Mylapore colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#ececec" aria-label="White"></button>
+                <button type="button" class="pcard-way" data-cw="cool-stone-grey" style="--sw:#babbbd" aria-label="Cool stone grey"></button>
+                <button type="button" class="pcard-way is-on" data-cw="dusty-lavender" style="--sw:#b3a4ba" aria-label="Dusty lavender"></button>
+                <button type="button" class="pcard-way" data-cw="deep-indigo" style="--sw:#14192d" aria-label="Deep indigo"></button>
+                <button type="button" class="pcard-way" data-cw="dark-bottle-green" style="--sw:#0c2b25" aria-label="Dark bottle green"></button>
+              </div>
+              <p class="pcard-line">Kapaleeshwarar's gopuram, the tank at dusk, and filter coffee in a steel tumbler.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <article class="pcard" data-city="mumbai" data-loc="bandra" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Bandra tee — open quick view">
+              <img class="pcard-front" src="assets/mumbai/bandra/faded-navy-front.jpg" alt="Bandra tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/mumbai/bandra/faded-navy-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Bandra</h3>
+                <span class="pcard-script" lang="mr">वांद्रे</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Mumbai</span><span class="pcard-colour">Faded navy</span></p>
+              <div class="pcard-ways" role="group" aria-label="Bandra colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#f4f2ee" aria-label="White"></button>
+                <button type="button" class="pcard-way" data-cw="charcoal-grey" style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
+                <button type="button" class="pcard-way is-on" data-cw="faded-navy" style="--sw:#2f3b52" aria-label="Faded navy"></button>
+                <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+                <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#2b2b2d" aria-label="Washed black"></button>
+              </div>
+              <p class="pcard-line">Station arches, a momo sign with an attitude, and the last train home.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <article class="pcard" data-city="mumbai" data-loc="colaba" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Colaba tee — open quick view">
+              <img class="pcard-front" src="assets/mumbai/colaba/muted-teal-front.jpg" alt="Colaba tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/mumbai/colaba/muted-teal-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Colaba</h3>
+                <span class="pcard-script" lang="mr">कुलाबा</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Mumbai</span><span class="pcard-colour">Muted teal</span></p>
+              <div class="pcard-ways" role="group" aria-label="Colaba colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#f4f2ee" aria-label="White"></button>
+                <button type="button" class="pcard-way" data-cw="charcoal-grey" style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
+                <button type="button" class="pcard-way" data-cw="faded-navy" style="--sw:#2f3b52" aria-label="Faded navy"></button>
+                <button type="button" class="pcard-way is-on" data-cw="muted-teal" style="--sw:#3d6b6a" aria-label="Muted teal"></button>
+                <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+              </div>
+              <p class="pcard-line">Leopold's, Mondegar, Metro House — and jhumkas hanging off the causeway.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <article class="pcard" data-city="mumbai" data-loc="dadar" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Dadar tee — open quick view">
+              <img class="pcard-front" src="assets/mumbai/dadar/deep-maroon-front.jpg" alt="Dadar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/mumbai/dadar/deep-maroon-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Dadar</h3>
+                <span class="pcard-script" lang="mr">दादर</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Mumbai</span><span class="pcard-colour">Deep maroon</span></p>
+              <div class="pcard-ways" role="group" aria-label="Dadar colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#f4f2ee" aria-label="White"></button>
+                <button type="button" class="pcard-way is-on" data-cw="deep-maroon" style="--sw:#5c2029" aria-label="Deep maroon"></button>
+                <button type="button" class="pcard-way" data-cw="forest-green" style="--sw:#2c4433" aria-label="Forest green"></button>
+                <button type="button" class="pcard-way" data-cw="jet-black" style="--sw:#1c1c1e" aria-label="Jet black"></button>
+                <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+              </div>
+              <p class="pcard-line">Shivaji Park, Siddhivinayak, and the flower market before sunrise.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <article class="pcard" data-city="delhi" data-loc="hauz-khas" data-reveal="card">
+            <button class="pcard-media" type="button" aria-label="Hauz Khas tee — open quick view">
+              <img class="pcard-front" src="assets/delhi/hauz-khas/faded-charcoal-front.jpg" alt="Hauz Khas tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+              <img class="pcard-back" src="assets/delhi/hauz-khas/faded-charcoal-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+              <span class="pcard-peek" aria-hidden="true">Quick view</span>
+            </button>
+            <div class="pcard-info">
+              <div class="pcard-meta">
+                <h3 class="pcard-name">Hauz Khas</h3>
+                <span class="pcard-script" lang="hi">हौज़ ख़ास</span>
+              </div>
+              <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-city">Delhi</span><span class="pcard-colour">Faded charcoal</span></p>
+              <div class="pcard-ways" role="group" aria-label="Hauz Khas colourways">
+                <button type="button" class="pcard-way" data-cw="white" style="--sw:#eff1f1" aria-label="White"></button>
+                <button type="button" class="pcard-way is-on" data-cw="faded-charcoal" style="--sw:#363735" aria-label="Faded charcoal"></button>
+                <button type="button" class="pcard-way" data-cw="muted-olive" style="--sw:#55583a" aria-label="Muted olive"></button>
+                <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e7dabd" aria-label="Vintage cream"></button>
+                <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#212322" aria-label="Washed black"></button>
+              </div>
+              <p class="pcard-line">Ruins by the lake, fits by the fort, and a deer park nobody expects.</p>
+            </div>
+          </article>
+        </li>
+
+        <li>
+          <a class="pnext" href="#join" data-reveal="up">
+            <span class="pnext-kicker">Next stop?</span>
+            <strong>Your neighbourhood, here.</strong>
+            <span class="pnext-cta">Tell us which one <span aria-hidden="true">→</span></span>
+          </a>
+        </li>
+      </ul>
+
+      <p class="prelaunch-note">Look, don't buy — not yet. These are the pieces as
+         they'll ship; sizes, prices and checkout arrive the day drop 001 opens.</p>
+    </section>
+
     <section class="manifesto" id="story" aria-labelledby="manifesto-title" data-reveal-sequence data-reveal-step="130">
       <div class="section-index reveal">
-        <span>01 / The idea</span>
+        <span>02 / The idea</span>
         <span>Made in India</span>
       </div>
 
@@ -203,7 +418,7 @@
 
     <section class="campaign" aria-labelledby="campaign-title">
       <div class="section-index light reveal">
-        <span>02 / In the wild</span>
+        <span>03 / In the wild</span>
         <span>Campaign 001</span>
       </div>
       <div class="campaign-heading reveal">
@@ -240,7 +455,7 @@
 
       <div class="wall-body">
       <div class="section-index light reveal">
-        <span>02.5 / The craft</span>
+        <span>03.5 / The craft</span>
         <span>19 frames · 4 cities</span>
       </div>
 
@@ -249,93 +464,87 @@
         <p>Every frame is somebody in their own postcode. Nobody here is a model borrowed from another city.</p>
       </div>
 
-      <!-- Columns drift at different speeds on scroll; each frame wipes in the
-           way the hero headline does, so the page shares one reveal language. -->
+      <!-- One flat list: script.js deals the frames into balanced columns
+           (two on a phone, up to four on a laptop) that drift past each
+           other on scroll, and each frame wipes in the way the hero headline
+           does. Without the script they sit in a plain grid. -->
       <div class="wall-grid" data-wall>
-        <div class="wall-col" data-wall-speed="-0.06">
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-01-chennai-marina-beach.jpg" alt="A woman on Marina beach wearing the Marina Chennai tee" loading="lazy" width="1066" height="1476" />
-            <figcaption><span>Marina, Chennai</span><i>13°03′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-01-mumbai-dadar.jpg" alt="A flower seller at Dadar market in the Dadar tee" loading="lazy" width="1023" height="1538" />
-            <figcaption><span>Dadar, Mumbai</span><i>19°01′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-07-delhi-chandni-chowk-field.jpg" alt="A worker in a field wearing the Chandni Chowk tee" loading="lazy" width="1086" height="1448" />
-            <figcaption><span>Chandni Chowk, Delhi</span><i>28°39′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-08-chennai-t-nagar-blurred.jpg" alt="A street scene in T Nagar with the T Nagar tee" loading="lazy" width="991" height="1588" />
-            <figcaption><span>T Nagar, Chennai</span><i>13°02′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-10-mumbai-colaba-wall.jpg" alt="A person against a painted wall in the Colaba tee" loading="lazy" width="1086" height="1448" />
-            <figcaption><span>Colaba, Mumbai</span><i>18°55′ N</i></figcaption>
-          </figure>
-        </div>
-
-        <div class="wall-col" data-wall-speed="0.08">
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-03-delhi-chandni-chowk-vendor.jpg" alt="A vegetable seller in the Chandni Chowk tee" loading="lazy" width="1024" height="1536" />
-            <figcaption><span>Chandni Chowk, Delhi</span><i>28°39′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-05-mumbai-barbershop-trio.jpg" alt="Three people in a barbershop wearing Thane and Bandra tees" loading="lazy" width="1122" height="1402" />
-            <figcaption><span>Bandra × Thane, Mumbai</span><i>19°03′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-02-chennai-mylapore-musician.jpg" alt="A musician in Mylapore wearing the Mylapore tee" loading="lazy" width="1023" height="1538" />
-            <figcaption><span>Mylapore, Chennai</span><i>13°02′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-04-delhi-connaught-place-blurred.jpg" alt="A metro commuter in the Connaught Place tee" loading="lazy" width="1023" height="1538" />
-            <figcaption><span>Connaught Place, Delhi</span><i>28°37′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-06-chennai-mylapore-wall.jpg" alt="A wall in Mylapore with the neighbourhood tee" loading="lazy" width="1200" height="822" />
-            <figcaption><span>Mylapore, Chennai</span><i>13°02′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-05-mumbai-bandra-delhi-cp-blurred.jpg" alt="Two people wearing the Bandra and Connaught Place tees" loading="lazy" width="1024" height="1536" />
-            <figcaption><span>Bandra × CP</span><i>Two cities</i></figcaption>
-          </figure>
-        </div>
-
-        <div class="wall-col" data-wall-speed="-0.11">
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-11-delhi-hauz-khas-back.jpg" alt="Back view of the Hauz Khas tee against a green wall" loading="lazy" width="1092" height="1440" />
-            <figcaption><span>Hauz Khas, Delhi</span><i>28°33′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-09-mumbai-colaba.jpg" alt="A man seated in a room wearing the Colaba tee" loading="lazy" width="1123" height="1402" />
-            <figcaption><span>Colaba, Mumbai</span><i>18°55′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-09-chennai-anna-nagar-flash.jpg" alt="A flash-lit portrait in the Anna Nagar tee" loading="lazy" width="1023" height="1538" />
-            <figcaption><span>Anna Nagar, Chennai</span><i>13°05′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-08-mumbai-andheri-portrait.jpg" alt="A portrait in the Andheri tee" loading="lazy" width="1122" height="1402" />
-            <figcaption><span>Andheri, Mumbai</span><i>19°07′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-07-delhi-hauz-khas-blurred.jpg" alt="A late-night kitchen scene in the Hauz Khas tee" loading="lazy" width="1122" height="1402" />
-            <figcaption><span>Hauz Khas, Delhi</span><i>28°33′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set2-04-delhi-connaught-place-coffee-house.jpg" alt="A regular at a coffee house table in the Connaught Place tee" loading="lazy" width="1023" height="1538" />
-            <figcaption><span>Connaught Place, Delhi</span><i>28°37′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-02-mumbai-colaba-dadar-blurred.jpg" alt="Two people wearing the Colaba and Dadar tees" loading="lazy" width="1023" height="1538" />
-            <figcaption><span>Colaba × Dadar</span><i>18°55′ N</i></figcaption>
-          </figure>
-          <figure class="wall-frame" data-wall-item>
-            <img src="assets/campaign/models/set1-03-chennai-mylapore-blurred.jpg" alt="A street portrait in the Mylapore tee" loading="lazy" width="1131" height="1392" />
-            <figcaption><span>Mylapore, Chennai</span><i>13°02′ N</i></figcaption>
-          </figure>
-        </div>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-01-chennai-marina-beach.jpg" alt="A woman on Marina beach wearing the Marina Chennai tee" loading="lazy" width="1066" height="1476" />
+          <figcaption><span>Marina, Chennai</span><i>13°03′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-03-delhi-chandni-chowk-vendor.jpg" alt="A vegetable seller in the Chandni Chowk tee" loading="lazy" width="1024" height="1536" />
+          <figcaption><span>Chandni Chowk, Delhi</span><i>28°39′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-11-delhi-hauz-khas-back.jpg" alt="Back view of the Hauz Khas tee against a green wall" loading="lazy" width="1092" height="1440" />
+          <figcaption><span>Hauz Khas, Delhi</span><i>28°33′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-01-mumbai-dadar.jpg" alt="A flower seller at Dadar market in the Dadar tee" loading="lazy" width="1023" height="1538" />
+          <figcaption><span>Dadar, Mumbai</span><i>19°01′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-05-mumbai-barbershop-trio.jpg" alt="Three people in a barbershop wearing Thane and Bandra tees" loading="lazy" width="1122" height="1402" />
+          <figcaption><span>Bandra × Thane, Mumbai</span><i>19°03′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-09-mumbai-colaba.jpg" alt="A man seated in a room wearing the Colaba tee" loading="lazy" width="1123" height="1402" />
+          <figcaption><span>Colaba, Mumbai</span><i>18°55′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-07-delhi-chandni-chowk-field.jpg" alt="A worker in a field wearing the Chandni Chowk tee" loading="lazy" width="1086" height="1448" />
+          <figcaption><span>Chandni Chowk, Delhi</span><i>28°39′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-02-chennai-mylapore-musician.jpg" alt="A musician in Mylapore wearing the Mylapore tee" loading="lazy" width="1023" height="1538" />
+          <figcaption><span>Mylapore, Chennai</span><i>13°02′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-09-chennai-anna-nagar-flash.jpg" alt="A flash-lit portrait in the Anna Nagar tee" loading="lazy" width="1023" height="1538" />
+          <figcaption><span>Anna Nagar, Chennai</span><i>13°05′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-08-chennai-t-nagar-blurred.jpg" alt="A street scene in T Nagar with the T Nagar tee" loading="lazy" width="991" height="1588" />
+          <figcaption><span>T Nagar, Chennai</span><i>13°02′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-04-delhi-connaught-place-blurred.jpg" alt="A metro commuter in the Connaught Place tee" loading="lazy" width="1023" height="1538" />
+          <figcaption><span>Connaught Place, Delhi</span><i>28°37′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-08-mumbai-andheri-portrait.jpg" alt="A portrait in the Andheri tee" loading="lazy" width="1122" height="1402" />
+          <figcaption><span>Andheri, Mumbai</span><i>19°07′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-10-mumbai-colaba-wall.jpg" alt="A person against a painted wall in the Colaba tee" loading="lazy" width="1086" height="1448" />
+          <figcaption><span>Colaba, Mumbai</span><i>18°55′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-06-chennai-mylapore-wall.jpg" alt="A wall in Mylapore with the neighbourhood tee" loading="lazy" width="1200" height="822" />
+          <figcaption><span>Mylapore, Chennai</span><i>13°02′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-07-delhi-hauz-khas-blurred.jpg" alt="A late-night kitchen scene in the Hauz Khas tee" loading="lazy" width="1122" height="1402" />
+          <figcaption><span>Hauz Khas, Delhi</span><i>28°33′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-05-mumbai-bandra-delhi-cp-blurred.jpg" alt="Two people wearing the Bandra and Connaught Place tees" loading="lazy" width="1024" height="1536" />
+          <figcaption><span>Bandra × CP</span><i>Two cities</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set2-04-delhi-connaught-place-coffee-house.jpg" alt="A regular at a coffee house table in the Connaught Place tee" loading="lazy" width="1023" height="1538" />
+          <figcaption><span>Connaught Place, Delhi</span><i>28°37′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-02-mumbai-colaba-dadar-blurred.jpg" alt="Two people wearing the Colaba and Dadar tees" loading="lazy" width="1023" height="1538" />
+          <figcaption><span>Colaba × Dadar</span><i>18°55′ N</i></figcaption>
+        </figure>
+        <figure class="wall-frame" data-wall-item>
+          <img src="assets/campaign/models/set1-03-chennai-mylapore-blurred.jpg" alt="A street portrait in the Mylapore tee" loading="lazy" width="1131" height="1392" />
+          <figcaption><span>Mylapore, Chennai</span><i>13°02′ N</i></figcaption>
+        </figure>
       </div>
       </div>
     </section>
@@ -356,19 +565,20 @@
 
         <div class="typewriter-action">
           <p>To your city wardrobe. Your lane, your language, your call.</p>
+          <a class="text-link" href="#join">Tell us yours <span aria-hidden="true">↓</span></a>
         </div>
       </div>
     </section>
 
     <section class="city-index" id="cities" aria-labelledby="cities-title">
       <div class="section-index reveal">
-        <span>03 / City index</span>
+        <span>04 / City index</span>
         <span>7 cities</span>
       </div>
 
       <div class="cities-heading reveal">
         <h2 id="cities-title">Choose your<br />coordinates.</h2>
-        <p>Start with the city. Get closer by neighbourhood. Chennai and Mumbai are up first; the rest are taking shape. Nothing is on sale yet — this is drop 001 before it opens.</p>
+        <p>Chennai and Mumbai are up first; the rest are taking shape. Nothing is on sale yet. <a href="#join">Get on the list</a> and we'll tell you the day your city drops, before anyone else.</p>
       </div>
 
       <div class="cities-layout">
@@ -428,6 +638,26 @@
       </div>
     </section>
 
+    <!-- The one conversion a pre-launch site has. waitlist.js renders the
+         form into [data-waitlist]; the copy around it lives here. -->
+    <section class="join" id="join" aria-labelledby="join-title">
+      <div class="join-inner">
+        <div>
+          <p class="join-kicker">Drop 001 / The list</p>
+          <h2 class="join-title" id="join-title">Hear it<br />before your<br /><em>street does.</em></h2>
+          <p class="join-copy">Drops are small runs cut to what the list asks for. Tell us your city, your size and the tees you want, and we'll cut the run to match. You hear the day it opens, before it goes public.</p>
+          <ul class="join-perks">
+            <li><b>01</b><span>First access, before the public drop</span></li>
+            <li><b>02</b><span>Your size, counted before we cut the run</span></li>
+            <li><b>03</b><span>Name the next neighbourhood we print</span></li>
+          </ul>
+        </div>
+        <div class="wl-slot" data-waitlist>
+          <noscript><p>Email <a href="mailto:apshabdsupport@gmail.com?subject=Waitlist">apshabdsupport@gmail.com</a> with your city and we'll add you.</p></noscript>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <footer class="site-footer">
@@ -439,13 +669,19 @@
         <span>Indian streetwear</span>
         <span>Est. 2026</span>
       </div>
-      <div>
-        <a href="https://www.instagram.com/ap.shabd/" target="_blank" rel="noopener">Instagram ↗</a>
-      </div>
+      <ul class="footer-links" aria-label="More">
+        <li><a href="#join">Get on the list</a></li>
+        <li><a href="help.html">Help &amp; FAQ</a></li>
+        <li><a href="privacy.html">Privacy</a></li>
+        <li><a href="https://www.instagram.com/ap.shabd/" target="_blank" rel="noopener">Instagram ↗</a></li>
+      </ul>
       <p>© 2026. Built from where we are.</p>
     </div>
   </footer>
 
-  <script src="script.js?v=27"></script>
+  <script src="script.js?v=28"></script>
+  <script src="drop.js?v=8"></script>
+  <script src="waitlist.js?v=2"></script>
+  <script src="studio-motion.js?v=1"></script>
 </body>
 </html>

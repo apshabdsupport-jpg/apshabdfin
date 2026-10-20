@@ -246,13 +246,52 @@
     });
   }
 
-  // The wall: columns drift past each other on scroll, and each frame wipes in
-  // as it arrives. Armed from JS so every photo stays visible without the script.
+  // The wall: the frames are dealt into balanced columns, the columns drift
+  // past each other on scroll, and each frame wipes in as it arrives. Without
+  // the script the frames sit in a plain grid and every photo stays visible.
   const wall = document.querySelector('[data-wall]');
+  const wallFrames = wall ? [...wall.querySelectorAll('[data-wall-item]')] : [];
+  const wallSpeeds = [-0.05, 0.07, -0.09, 0.05];
+  let wallColumns = [];
+
+  // Shortest column first, measured off each photo's own width/height
+  // attributes, so the columns come out level without waiting on a single
+  // image. Re-dealt only when the column count actually changes.
+  const layWall = () => {
+    const width = wall.clientWidth;
+    const count = width >= 1000 ? 4 : width >= 640 ? 3 : 2;
+    if (count === wallColumns.length) return;
+
+    const heights = new Array(count).fill(0);
+    wallColumns = Array.from({ length: count }, (_, index) => {
+      const column = document.createElement('div');
+      column.className = 'wall-col';
+      column.dataset.wallSpeed = String(wallSpeeds[index % wallSpeeds.length]);
+      return column;
+    });
+
+    wallFrames.forEach((frame) => {
+      const img = frame.querySelector('img');
+      const ratio = img
+        ? (Number(img.getAttribute('height')) || 4) / (Number(img.getAttribute('width')) || 3)
+        : 1.33;
+      const shortest = heights.indexOf(Math.min(...heights));
+      wallColumns[shortest].appendChild(frame);
+      heights[shortest] += ratio;
+    });
+
+    wall.replaceChildren(...wallColumns);
+    wall.style.setProperty('--wall-cols', String(count));
+    wall.classList.add('is-laid');
+  };
+
+  if (wall) {
+    layWall();
+    window.addEventListener('resize', layWall);
+  }
 
   if (wall && !prefersReducedMotion.matches) {
-    const columns = [...wall.querySelectorAll('[data-wall-speed]')];
-    const frames = [...wall.querySelectorAll('[data-wall-item]')];
+    const frames = wallFrames;
     let wallFrame = 0;
 
     const drawWall = () => {
@@ -262,7 +301,7 @@
 
       // 0 as the wall enters the viewport, 1 as it leaves.
       const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-      columns.forEach((column) => {
+      wallColumns.forEach((column) => {
         const speed = parseFloat(column.dataset.wallSpeed) || 0;
         column.style.setProperty('--wall-shift', `${(progress * speed * rect.height).toFixed(2)}px`);
       });

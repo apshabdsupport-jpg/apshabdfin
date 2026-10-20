@@ -122,8 +122,6 @@
 .face-role,
 .street-loc,
 .street-role,
-.drop-face-tag,
-.drop-ways-label,
 .footer > p {
   font-family: var(--br-mono);
   font-weight: 700;
@@ -145,7 +143,6 @@
 .btn,
 .cta,
 .tw-cta,
-.drop-view-button,
 .skip-link {
   border-width: var(--br-rule);
   border-style: solid;
@@ -158,8 +155,7 @@
 .button:active,
 .btn:not(:disabled):active,
 .cta:active,
-.tw-cta:active,
-.drop-view-button:active {
+.tw-cta:active {
   transform: translate(var(--br-off-sm), var(--br-off-sm));
   box-shadow: 0 0 0 transparent !important;
 }
@@ -547,49 +543,16 @@ body.menu-open .site-header.is-scrolled {
   box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
 }
 
-.drop-view-button {
-  border: var(--br-rule) solid var(--br-paper);
-  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-red);
-}
-
-.drop-view-button.is-active {
-  border-color: var(--br-red);
-  box-shadow: var(--br-off-sm) var(--br-off-sm) 0 var(--br-paper);
-}
-
-.drop-stage {
-  border: var(--br-rule) solid rgba(243, 230, 208, 0.5) !important;
-  background: var(--br-ink) !important;
-}
-
-/* This flipped the chip's plate from drop.css's translucent white to ink but
-   left drop.css's `color: #1a1a1a` in place — near-black type on a near-black
-   plate, 1.13:1. The FRONT/BACK chip on every product plate, on both live shop
-   pages, was invisible. */
-.drop-face-tag {
-  padding: 7px 10px 6px;
-  border: var(--br-rule) solid var(--br-paper);
-  background: var(--br-ink);
-  color: var(--br-paper);
-}
-
-/* Colourway swatches: square, hard-edged, and outlined at the same weight
-   as everything else, so the selected one reads at a glance. */
-.way {
-  border: var(--br-rule) solid var(--br-paper);
-  outline-offset: 3px;
-}
-
-.way.is-on {
-  outline: var(--br-rule) solid var(--br-red) !important;
-}
+/* Product cards (drop.css) deliberately skip this layer's rules and offset
+   plates: small plates in a dense grid read as clutter once every one of
+   them carries a frame. The quick view and the section rules carry the
+   weight instead. */
 
 /* Prints stay tilted — a stack of paper, not a grid — but each one now sits
    on a plate instead of a soft shadow. */
 .street-print { box-shadow: var(--br-off) var(--br-off) 0 var(--br-red); }
 .street-frame { border: var(--br-rule) solid var(--br-paper); }
 .street-cap { border-top: var(--br-rule) solid var(--br-paper); padding-top: 12px; }
-.face-shot { border: var(--br-rule) solid var(--br-paper); }
 
 .streets,
 .faces { border-top: var(--br-rule-heavy) solid var(--br-paper); }

@@ -20,10 +20,10 @@
   ],
   "shortcuts": [
     {
-      "name": "Drop a pin",
-      "short_name": "Drop a pin",
-      "description": "Put your neighbourhood on the map",
-      "url": "/drop-a-pin.html",
+      "name": "Get on the list",
+      "short_name": "The list",
+      "description": "Hear about drop 001 before it goes public",
+      "url": "/index.html#join",
       "icons": [{ "src": "assets/icons/icon-192.png", "sizes": "192x192" }]
     },
     {

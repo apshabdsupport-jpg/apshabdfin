@@ -34,20 +34,27 @@
   <meta name="twitter:description" content="APSHABD Mumbai - Local trains at dawn, the sea at dusk, and the silence between two stops." />
   <meta name="twitter:image" content="https://apshabd.com/assets/social/og-mumbai.jpg" />
 
+  <!-- Sets .motion-ready on <html> before first paint, so scroll reveals
+       never flash in their final state first. See motion.js. -->
+  <script src="motion.js?v=2"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <!-- DotGothic16 is a dot-matrix face and Silkscreen a bitmap one: together
        they carry the green carriage indicators below the masthead. -->
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=DM+Serif+Display&family=Space+Grotesk:wght@400;500;700&family=Noto+Sans+Devanagari:wght@400;700&family=DotGothic16&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href=".//mumbai.css?v=3" />
-  <link rel="stylesheet" href=".//drop.css?v=4" />
-  <link rel="stylesheet" href=".//streets.css?v=5" />
-  <link rel="stylesheet" href=".//city-brand.css?v=11" />
+  <link rel="stylesheet" href="motion.css?v=1" />
+  <link rel="stylesheet" href=".//drop.css?v=9" />
+  <link rel="stylesheet" href=".//streets.css?v=7" />
+  <link rel="stylesheet" href=".//city-brand.css?v=12" />
   <!-- Last: city-brand.css hides .marquee and kills animation, and the
        carriage indicators have to win. -->
   <link rel="stylesheet" href=".//train-board.css?v=1" />
-  <link rel="stylesheet" href=".//brutal.css?v=5" />
+  <link rel="stylesheet" href=".//brutal.css?v=6" />
+  <link rel="stylesheet" href=".//waitlist.css?v=2" />
+  <link rel="stylesheet" href="studio-motion.css?v=1" />
 </head>
-<body>
+<body class="city-shop">
   <div class="rails" aria-hidden="true"></div>
   <div class="bg-word" aria-hidden="true">शांतता</div>
   <div class="grain" aria-hidden="true"></div>
@@ -58,7 +65,7 @@
        checkout exist anywhere on the site until drop 001 actually lands. This
        bar is fixed, so it rides above the nav on every page. -->
   <div class="prelaunch-bar">
-    <p><b>Pre-launch</b> — nothing is on sale yet. Drop 001 lands soon.</p>
+    <p><b>Pre-launch</b> — nothing is on sale yet. <a href="#join">Get first access →</a></p>
   </div>
 
   <nav class="nav glass">
@@ -67,15 +74,119 @@
     <span class="nav-city">MUMBAI · 02</span>
   </nav>
 
-  <header class="hero" style="transform-style:preserve-3d;perspective:1200px;">
-    <p class="eyebrow reveal">MAXIMUM CITY · कधीही न झोपणारं शहर</p>
+  <header class="hero" data-motion>
+    <p class="eyebrow" data-reveal="up">MAXIMUM CITY · कधीही न झोपणारं शहर</p>
     <h1 class="hero-title">
-      <span class="reveal depth-layer" data-depth="0.8">MUM</span>
-      <span class="reveal outline depth-layer" data-depth="1.2">BAI</span>
+      <span data-reveal="up">MUM</span>
+      <span class="outline" data-reveal="up" data-reveal-delay="80">BAI</span>
     </h1>
-    <p class="hero-sub reveal">Seven islands, zero pauses. The only silence here<br />is the second before the local doors open.</p>
-    <a href="#drop" class="cta reveal">CATCH THE DROP ↓</a>
+    <p class="hero-sub" data-reveal="up" data-reveal-delay="160">Seven islands, zero pauses. The only silence here is the second before the local doors open.</p>
+    <a href="#drop" class="cta" data-reveal="up" data-reveal-delay="220">CATCH THE DROP ↓</a>
   </header>
+
+  <!-- ── THE DROP ──
+       The shop comes first, straight under the title: small plates, two to a
+       row on a phone and four on a laptop, so the tees can be compared side
+       by side. Each one opens a quick view with both sides at full size, the
+       story and every colour (drop.css / drop.js). The portraits and the
+       street photography follow further down. -->
+  <section class="section shop-section" id="drop" tabindex="-1" data-motion>
+    <header class="shop-head">
+      <div data-reveal="up">
+        <span class="stamp">MUMBAI DROP 001</span>
+        <h2>Island city uniform</h2>
+      </div>
+      <p data-reveal="up">Three neighbourhoods, three stories. Hover a tee to turn it over, or open it for the story and every colour.<span class="shop-count">3 tees · 5 colours each</span></p>
+    </header>
+
+    <ul class="pgrid" role="list">
+      <li>
+        <article class="pcard" data-city="mumbai" data-loc="bandra" data-reveal="card">
+          <button class="pcard-media" type="button" aria-label="Bandra tee — open quick view">
+            <img class="pcard-front" src="assets/mumbai/bandra/faded-navy-front.jpg" alt="Bandra tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="pcard-back" src="assets/mumbai/bandra/faded-navy-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <span class="pcard-peek" aria-hidden="true">Quick view</span>
+          </button>
+          <div class="pcard-info">
+            <div class="pcard-meta">
+              <h3 class="pcard-name">Bandra</h3>
+              <span class="pcard-script" lang="mr">वांद्रे</span>
+            </div>
+            <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-colour">Faded navy</span></p>
+            <div class="pcard-ways" role="group" aria-label="Bandra colourways">
+              <button type="button" class="pcard-way" data-cw="white" style="--sw:#f4f2ee" aria-label="White"></button>
+              <button type="button" class="pcard-way" data-cw="charcoal-grey" style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
+              <button type="button" class="pcard-way is-on" data-cw="faded-navy" style="--sw:#2f3b52" aria-label="Faded navy"></button>
+              <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+              <button type="button" class="pcard-way" data-cw="washed-black" style="--sw:#2b2b2d" aria-label="Washed black"></button>
+            </div>
+            <p class="pcard-line">Station arches, a momo sign with an attitude, and the last train home.</p>
+          </div>
+        </article>
+      </li>
+
+      <li>
+        <article class="pcard" data-city="mumbai" data-loc="colaba" data-reveal="card">
+          <button class="pcard-media" type="button" aria-label="Colaba tee — open quick view">
+            <img class="pcard-front" src="assets/mumbai/colaba/muted-teal-front.jpg" alt="Colaba tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="pcard-back" src="assets/mumbai/colaba/muted-teal-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <span class="pcard-peek" aria-hidden="true">Quick view</span>
+          </button>
+          <div class="pcard-info">
+            <div class="pcard-meta">
+              <h3 class="pcard-name">Colaba</h3>
+              <span class="pcard-script" lang="mr">कुलाबा</span>
+            </div>
+            <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-colour">Muted teal</span></p>
+            <div class="pcard-ways" role="group" aria-label="Colaba colourways">
+              <button type="button" class="pcard-way" data-cw="white" style="--sw:#f4f2ee" aria-label="White"></button>
+              <button type="button" class="pcard-way" data-cw="charcoal-grey" style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
+              <button type="button" class="pcard-way" data-cw="faded-navy" style="--sw:#2f3b52" aria-label="Faded navy"></button>
+              <button type="button" class="pcard-way is-on" data-cw="muted-teal" style="--sw:#3d6b6a" aria-label="Muted teal"></button>
+              <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+            </div>
+            <p class="pcard-line">Leopold's, Mondegar, Metro House — and jhumkas hanging off the causeway.</p>
+          </div>
+        </article>
+      </li>
+
+      <li>
+        <article class="pcard" data-city="mumbai" data-loc="dadar" data-reveal="card">
+          <button class="pcard-media" type="button" aria-label="Dadar tee — open quick view">
+            <img class="pcard-front" src="assets/mumbai/dadar/deep-maroon-front.jpg" alt="Dadar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
+            <img class="pcard-back" src="assets/mumbai/dadar/deep-maroon-back.jpg" alt="" width="900" height="1200" loading="lazy" decoding="async" />
+            <span class="pcard-peek" aria-hidden="true">Quick view</span>
+          </button>
+          <div class="pcard-info">
+            <div class="pcard-meta">
+              <h3 class="pcard-name">Dadar</h3>
+              <span class="pcard-script" lang="mr">दादर</span>
+            </div>
+            <p class="pcard-sub"><i aria-hidden="true"></i><span class="pcard-colour">Deep maroon</span></p>
+            <div class="pcard-ways" role="group" aria-label="Dadar colourways">
+              <button type="button" class="pcard-way" data-cw="white" style="--sw:#f4f2ee" aria-label="White"></button>
+              <button type="button" class="pcard-way is-on" data-cw="deep-maroon" style="--sw:#5c2029" aria-label="Deep maroon"></button>
+              <button type="button" class="pcard-way" data-cw="forest-green" style="--sw:#2c4433" aria-label="Forest green"></button>
+              <button type="button" class="pcard-way" data-cw="jet-black" style="--sw:#1c1c1e" aria-label="Jet black"></button>
+              <button type="button" class="pcard-way" data-cw="vintage-cream" style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
+            </div>
+            <p class="pcard-line">Shivaji Park, Siddhivinayak, and the flower market before sunrise.</p>
+          </div>
+        </article>
+      </li>
+
+      <li>
+        <a class="pnext" href="#join" data-reveal="up">
+          <span class="pnext-kicker">Next stop?</span>
+          <strong>Your neighbourhood, here.</strong>
+          <span class="pnext-cta">Tell us which one <span aria-hidden="true">→</span></span>
+        </a>
+      </li>
+    </ul>
+
+    <p class="prelaunch-note">Look, don't buy — not yet. These are the pieces as
+       they'll ship; sizes, prices and checkout arrive the day drop 001 opens.</p>
+  </section>
 
   <!-- Twin carriage indicators running opposite ways — two locals passing,
        one fast, one slow. Both halves of each track are identical: the
@@ -105,178 +216,71 @@
   </div>
 
   <!-- ── THE FACES ── -->
-  <section class="faces" id="faces">
-    <div class="faces-head reveal">
+  <section class="faces" id="faces" data-motion>
+    <div class="faces-head" data-reveal="up">
       <h2>THE FACES OF DROP 001</h2>
       <span>CAMPAIGN 001 · MUMBAI</span>
     </div>
 
-    <article class="face reveal">
-      <div class="face-shot">
-        <img src=".//assets/campaign/web/mumbai-bandra-fruit-stall.jpg"
-             alt="Man drinking fresh juice outside a fruit stall in the Bandra tee"
-             loading="lazy" width="1122" height="1402" />
-      </div>
-      <div class="face-copy">
-        <span class="face-code">MUMBAI DROP 001</span>
-        <h3 class="face-name">BANDRA</h3>
-        <span class="face-script rg">वांद्रे</span>
-        <p class="face-line">A fresh mosambi at the stall by the station. Cap on, shades
-          down, nowhere urgent to be — which in this city is the real flex.</p>
-        <span class="face-role">THE REGULAR</span>
-      </div>
-    </article>
+    <div class="faces-row">
+      <article class="face" data-reveal="frame">
+        <div class="face-shot">
+          <img src=".//assets/campaign/web/mumbai-bandra-fruit-stall.jpg"
+               alt="Man drinking fresh juice outside a fruit stall in the Bandra tee"
+               loading="lazy" width="1122" height="1402" />
+        </div>
+        <div class="face-copy">
+          <span class="face-code">MUMBAI DROP 001</span>
+          <h3 class="face-name">BANDRA</h3>
+          <span class="face-script rg">वांद्रे</span>
+          <p class="face-line">A fresh mosambi at the stall by the station. Cap on, shades
+            down, nowhere urgent to be — which in this city is the real flex.</p>
+          <span class="face-role">THE REGULAR</span>
+        </div>
+      </article>
 
-    <article class="face reveal">
-      <div class="face-shot">
-        <img src=".//assets/campaign/web/mumbai-dadar-skateboard.jpg"
-             alt="Sadhu balancing on a skateboard under an archway in the Dadar tee"
-             loading="lazy" width="1122" height="1402" />
-      </div>
-      <div class="face-copy">
-        <span class="face-code">MUMBAI DROP 001</span>
-        <h3 class="face-name">DADAR</h3>
-        <span class="face-script rg">दादर</span>
-        <p class="face-line">Balance is balance, whichever century you learned it in.
-          The board is new. The stance is not.</p>
-        <span class="face-role">THE BALANCE</span>
-      </div>
-    </article>
+      <article class="face" data-reveal="frame">
+        <div class="face-shot">
+          <img src=".//assets/campaign/web/mumbai-dadar-skateboard.jpg"
+               alt="Sadhu balancing on a skateboard under an archway in the Dadar tee"
+               loading="lazy" width="1122" height="1402" />
+        </div>
+        <div class="face-copy">
+          <span class="face-code">MUMBAI DROP 001</span>
+          <h3 class="face-name">DADAR</h3>
+          <span class="face-script rg">दादर</span>
+          <p class="face-line">Balance is balance, whichever century you learned it in.
+            The board is new. The stance is not.</p>
+          <span class="face-role">THE BALANCE</span>
+        </div>
+      </article>
 
-    <article class="face reveal">
-      <div class="face-shot">
-        <img src=".//assets/campaign/web/mumbai-colaba-balloons.jpg"
-             alt="Balloon seller against a blue shutter wearing the Colaba tee"
-             loading="lazy" width="1003" height="1568" />
-      </div>
-      <div class="face-copy">
-        <span class="face-code">MUMBAI DROP 001</span>
-        <h3 class="face-name">COLABA</h3>
-        <span class="face-script rg">कुलाबा</span>
-        <p class="face-line">Heart-shaped and helium-light, against a shutter that's been
-          that exact blue since long before the causeway got expensive.</p>
-        <span class="face-role">THE BALLOON SELLER</span>
-      </div>
-    </article>
+      <article class="face" data-reveal="frame">
+        <div class="face-shot">
+          <img src=".//assets/campaign/web/mumbai-colaba-balloons.jpg"
+               alt="Balloon seller against a blue shutter wearing the Colaba tee"
+               loading="lazy" width="1003" height="1568" />
+        </div>
+        <div class="face-copy">
+          <span class="face-code">MUMBAI DROP 001</span>
+          <h3 class="face-name">COLABA</h3>
+          <span class="face-script rg">कुलाबा</span>
+          <p class="face-line">Heart-shaped and helium-light, against a shutter that's been
+            that exact blue since long before the causeway got expensive.</p>
+          <span class="face-role">THE BALLOON SELLER</span>
+        </div>
+      </article>
+    </div>
   </section>
 
-  <section class="section" id="drop" tabindex="-1">
-    <div class="section-head reveal">
-      <span class="stamp">MUMBAI DROP 001</span>
-      <h2>ISLAND CITY UNIFORM</h2>
-      <p>Five neighbourhoods, five stories. Tap a tee to turn it over.</p>
-    </div>
-
-    <div class="drop-grid" data-city="mumbai">
-
-      <!-- 01 · BANDRA -->
-      <article class="drop reveal" data-loc="bandra">
-        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
-             aria-label="Bandra tee — activate to see the back" data-cursor="FLIP">
-          <div class="drop-flip">
-            <div class="drop-face drop-face--front">
-              <img src=".//assets/mumbai/bandra/faded-navy-front.jpg" alt="Bandra tee, front" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">FRONT</span>
-            </div>
-            <div class="drop-face drop-face--back">
-              <img src=".//assets/mumbai/bandra/faded-navy-back.jpg" alt="Bandra tee, back" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">BACK</span>
-            </div>
-          </div>
-          <span class="drop-hint">TAP TO FLIP</span>
-        </div>
-        <div class="drop-info">
-          <div class="drop-head">
-            <h3>BANDRA</h3>
-            <span class="rg">वांद्रे</span>
-          </div>
-          <p>Station arches, a momo sign with an attitude, and the last train home.</p>
-          <div class="drop-ways" role="group" aria-label="Bandra colourways">
-            <button type="button" class="way" data-cw="white"              style="--sw:#f4f2ee" aria-label="White"></button>
-            <button type="button" class="way" data-cw="charcoal-grey"      style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
-            <button type="button" class="way is-on" data-cw="faded-navy"   style="--sw:#2f3b52" aria-label="Faded navy"></button>
-            <button type="button" class="way" data-cw="vintage-cream"      style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
-            <button type="button" class="way" data-cw="washed-black"       style="--sw:#2b2b2d" aria-label="Washed black"></button>
-          </div>
-        </div>
-      </article>
-
-      <!-- 02 · COLABA -->
-      <article class="drop reveal" data-loc="colaba">
-        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
-             aria-label="Colaba tee — activate to see the back" data-cursor="FLIP">
-          <div class="drop-flip">
-            <div class="drop-face drop-face--front">
-              <img src=".//assets/mumbai/colaba/muted-teal-front.jpg" alt="Colaba tee, front" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">FRONT</span>
-            </div>
-            <div class="drop-face drop-face--back">
-              <img src=".//assets/mumbai/colaba/muted-teal-back.jpg" alt="Colaba tee, back" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">BACK</span>
-            </div>
-          </div>
-          <span class="drop-hint">TAP TO FLIP</span>
-        </div>
-        <div class="drop-info">
-          <div class="drop-head">
-            <h3>COLABA</h3>
-            <span class="rg">कुलाबा</span>
-          </div>
-          <p>Leopold's, Mondegar, Metro House — and jhumkas hanging off the causeway.</p>
-          <div class="drop-ways" role="group" aria-label="Colaba colourways">
-            <button type="button" class="way" data-cw="white"             style="--sw:#f4f2ee" aria-label="White"></button>
-            <button type="button" class="way" data-cw="charcoal-grey"     style="--sw:#4a4a4d" aria-label="Charcoal grey"></button>
-            <button type="button" class="way" data-cw="faded-navy"        style="--sw:#2f3b52" aria-label="Faded navy"></button>
-            <button type="button" class="way is-on" data-cw="muted-teal"  style="--sw:#3d6b6a" aria-label="Muted teal"></button>
-            <button type="button" class="way" data-cw="vintage-cream"     style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
-          </div>
-        </div>
-      </article>
-
-      <!-- 03 · DADAR -->
-      <article class="drop reveal" data-loc="dadar">
-        <div class="drop-stage" tabindex="0" role="button" aria-pressed="false"
-             aria-label="Dadar tee — activate to see the back" data-cursor="FLIP">
-          <div class="drop-flip">
-            <div class="drop-face drop-face--front">
-              <img src=".//assets/mumbai/dadar/deep-maroon-front.jpg" alt="Dadar tee, front" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">FRONT</span>
-            </div>
-            <div class="drop-face drop-face--back">
-              <img src=".//assets/mumbai/dadar/deep-maroon-back.jpg" alt="Dadar tee, back" width="900" height="1200" loading="lazy" decoding="async" />
-              <span class="drop-face-tag">BACK</span>
-            </div>
-          </div>
-          <span class="drop-hint">TAP TO FLIP</span>
-        </div>
-        <div class="drop-info">
-          <div class="drop-head">
-            <h3>DADAR</h3>
-            <span class="rg">दादर</span>
-          </div>
-          <p>Shivaji Park, Siddhivinayak, and the flower market before sunrise.</p>
-          <div class="drop-ways" role="group" aria-label="Dadar colourways">
-            <button type="button" class="way" data-cw="white"              style="--sw:#f4f2ee" aria-label="White"></button>
-            <button type="button" class="way is-on" data-cw="deep-maroon"  style="--sw:#5c2029" aria-label="Deep maroon"></button>
-            <button type="button" class="way" data-cw="forest-green"       style="--sw:#2c4433" aria-label="Forest green"></button>
-            <button type="button" class="way" data-cw="jet-black"          style="--sw:#1c1c1e" aria-label="Jet black"></button>
-            <button type="button" class="way" data-cw="vintage-cream"      style="--sw:#e2d7c1" aria-label="Vintage cream"></button>
-          </div>
-        </div>
-      </article>
-
-    </div>
-
-    <p class="prelaunch-note">Look, don't buy — not yet. These are the pieces as
-       they'll ship; sizes, prices and checkout arrive the day drop 001 opens.</p>
-
-  </section>
-
-  <section class="section">
+  <section class="section" id="join">
     <div class="wait glass reveal">
       <span class="stamp">LAUNCHING SOON</span>
       <h2>शांतता. THEN THE DROP.</h2>
       <p>The city that never sleeps will wake up to this.</p>
+      <div class="wl-slot" data-waitlist data-city="mumbai" data-compact>
+        <noscript><p>Email <a href="mailto:apshabdsupport@gmail.com?subject=Waitlist">apshabdsupport@gmail.com</a> and we'll add you.</p></noscript>
+      </div>
       <a href="index.html#cities" class="cta">BACK TO THE MAP</a>
     </div>
   </section>
@@ -334,17 +338,26 @@
   <!-- ── TYPEWRITER PROMPT ── -->
   <section class="typewriter-section" data-words="location|जगह">
     <p class="typewriter-text">
-      Which <span class="tw-quote">'</span><span class="tw-word-wrap"><span class="tw-word" lang="hi">जगह</span></span><span class="tw-quote">'</span> would you like for us to add in your city wardrobe, do let us know.
+      Which <span class="tw-quote">'</span><span class="tw-word-wrap"><span class="tw-word" lang="hi">जगह</span></span><span class="tw-quote">'</span> should we add to your city wardrobe?
     </p>
+    <a class="tw-cta-link" href="#join">Tell us yours →</a>
   </section>
 
   <footer class="footer">
     <a class="city-footer-brand" href="index.html" aria-label="APSHABD home"><img src="assets/brand/apshabd-wordmark-night.png" alt="" /></a>
     <p>APSHABD — MUMBAI · <span class="rg">शांत रहा</span></p>
+    <ul class="footer-links" aria-label="More">
+      <li><a href="index.html#cities">All cities</a></li>
+      <li><a href="help.html">Help &amp; FAQ</a></li>
+      <li><a href="privacy.html">Privacy</a></li>
+      <li><a href="https://www.instagram.com/ap.shabd/" target="_blank" rel="noopener">Instagram ↗</a></li>
+    </ul>
   </footer>
 
 
   <script src=".//mumbai.js"></script>
-  <script src=".//drop.js?v=6"></script>
+  <script src=".//drop.js?v=8"></script>
+  <script src=".//waitlist.js?v=2"></script>
+  <script src="studio-motion.js?v=1"></script>
 </body>
 </html>

@@ -1,216 +1,933 @@
-/* ═══════════════════════════════════════════════════════
-   PDS — DROP GRID
-   Garment plates that flip front↔back, with colourway
-   swatches. Shared across city pages; colours come from
-   each page's --acc / --bone / --ink.
-═══════════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════════════════════════════════════
+   अPSHABD — THE DROP
 
-.drop-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
-  gap: 30px;
-  perspective: 1600px;
-}
+   Product grid, product cards and the quick view. Shared by the index (all
+   seven tees) and the three city pages that have a drop.
 
-.drop {
-  display: flex; flex-direction: column;
-  transform-style: preserve-3d;
-}
+   The shape is a shop's, not a lookbook's: small plates, many to a row —
+   two on a phone, three on a tablet, four on a laptop — so a visitor
+   compares tees side by side instead of scrolling past one at a time. The
+   big picture is still one tap away: every card opens a quick view with
+   both sides of the tee at full size, the story behind it and the colours.
 
-/* ── PLATE ─────────────────────────────────────────────
-   Fixed 3:4 box matching the exported 900×1200 assets, so
-   the grid never reflows as images load. */
-/* The hover tilt is driven by JS on this element. Do NOT add a
-   transform transition here — JS writes it every frame, and a
-   transition would make the plate chase the pointer instead of
-   tracking it. */
-.drop-stage {
-  position: relative;
-  aspect-ratio: 3 / 4;
-  perspective: 1500px;
-  border-radius: 6px;
-  outline: none;
-  cursor: pointer;
-  transform-style: preserve-3d;
-  will-change: transform;
-  touch-action: manipulation;   /* no 300ms double-tap-zoom wait */
-}
-.drop-stage:focus-visible {
-  box-shadow: 0 0 0 2px var(--acc, #f5b301), 0 0 0 6px rgba(0,0,0,.4);
-}
+   Motion, all of it on the same two curves:
+   · arrival — the plate wipes in from the left while the tee settles from a
+     slight zoom, then the name and colours rise in under it;
+   · hover  — the back of the tee wipes across the front from the left,
+     coming out of a bright flash, the way the reference shop swaps shots.
 
-.drop-flip {
-  position: absolute; inset: 0;
-  transform-style: preserve-3d;
-  transition: transform .78s cubic-bezier(.2,.8,.2,1);
-  will-change: transform;
-}
-.drop.is-flipped .drop-flip { transform: rotateY(180deg); }
+   Tokens are restated here rather than read off the page sheets: the index
+   says --cream/--night and the city pages --ap-cream/--ap-night, and an
+   unresolvable var() voids its whole declaration. These always resolve.
+   ══════════════════════════════════════════════════════════════════════════ */
 
-.drop-face {
-  position: absolute; inset: 0;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-  border-radius: 6px;
-  overflow: hidden;
-  background: #f4f2ee;
-  box-shadow: 0 18px 44px rgba(0,0,0,.42), 0 2px 0 rgba(255,255,255,.05) inset;
-}
-.drop-face--back { transform: rotateY(180deg); }
-
-.drop-face img {
-  display: block;
-  width: 100%; height: 100%;
-  object-fit: cover;
-  transition: opacity .28s ease;
-}
-.drop-face img.is-swapping { opacity: 0; }
-
-/* FRONT / BACK chip */
-.drop-face-tag {
-  position: absolute; top: 12px; left: 12px;
-  font-family: var(--body, sans-serif);
-  font-size: .55rem; letter-spacing: .28em; font-weight: 700;
-  color: #1a1a1a;
-  background: rgba(255,255,255,.82);
-  border: 1px solid rgba(0,0,0,.14);
-  border-radius: 40px;
-  padding: 5px 11px;
-  backdrop-filter: blur(4px);
+:root {
+  --p-ink: #000f08;
+  --p-paper: #f3e6d0;
+  --p-heritage: #c4ac90;
+  --p-red: #fb3640;
+  /* The studio-white the garment shots were photographed on, so a plate that
+     is still loading reads as the same sheet of paper the tee lands on. */
+  --p-plate: #eeece9;
+  --p-line: rgba(243, 230, 208, 0.18);
+  --p-mono: ui-monospace, "Cascadia Mono", "Segoe UI Mono", Consolas,
+            "Liberation Mono", "Courier New", monospace;
+  --p-display: "Trench Slab", "Arial Narrow", Impact, sans-serif;
+  /* Expo in-out: slow off the mark, fast through the middle, slow to land.
+     The hover swap and every wipe use it. */
+  --p-swap: cubic-bezier(0.87, 0, 0.13, 1);
+  --p-ease: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Flip prompt — always on, so touch users know the plate turns. */
-.drop-hint {
-  position: absolute; bottom: 14px; left: 50%;
-  display: inline-flex; align-items: center; gap: 7px;
-  font-size: .62rem; letter-spacing: .22em; font-weight: 700;
-  white-space: nowrap;
-  color: #0c0f18;
-  background: var(--acc, #f5b301);
-  border-radius: 40px;
-  padding: 9px 17px;
-  box-shadow: 0 8px 20px rgba(0,0,0,.45), 0 0 0 1px rgba(0,0,0,.3);
-  pointer-events: none;
-  transform: translateX(-50%);
-  transition: box-shadow .3s;
-  animation: dropHintPulse 2.8s ease-in-out infinite;
-}
-.drop-hint::before {
-  content: '⟳';
-  font-size: .95rem; line-height: 0;
-  animation: dropHintSpin 2.8s ease-in-out infinite;
-}
-.drop-stage:hover .drop-hint,
-.drop-stage:focus-visible .drop-hint {
-  box-shadow: 0 10px 26px rgba(0,0,0,.55), 0 0 0 3px rgba(255,255,255,.35);
-}
-@keyframes dropHintPulse {
-  0%, 72%, 100% { transform: translateX(-50%) scale(1); }
-  82%           { transform: translateX(-50%) scale(1.06); }
-}
-@keyframes dropHintSpin {
-  0%, 68%, 100% { transform: rotate(0); }
-  86%           { transform: rotate(180deg); }
+/* ── Index section shell ───────────────────────────────────────────────────
+   The city pages already wrap the grid in their own .section. */
+.shop {
+  padding: 88px var(--page, 20px) clamp(72px, 8vw, 120px);
+  background: var(--p-ink);
+  color: var(--p-paper);
 }
 
-/* ── INFO ──────────────────────────────────────────────── */
-.drop-info { padding: 18px 2px 0; }
-.drop-head {
-  display: flex; align-items: baseline; gap: 10px;
-  flex-wrap: wrap;
-}
-.drop-head h3 {
-  font-family: var(--display, sans-serif);
-  font-size: 1.35rem; letter-spacing: .06em;
-}
-.drop-head .rg { color: var(--acc); font-size: .95rem; }
-.drop-info > p {
-  margin-top: 7px;
-  font-size: .88rem; line-height: 1.6; opacity: .74;
-}
+.shop > .section-index + .shop-head { margin-top: clamp(36px, 5vw, 72px); }
 
-/* ── COLOURWAYS ────────────────────────────────────────
-   Labelled and read out by name — a ring alone doesn't
-   survive a small phone screen. */
-.drop-ways-bar {
-  display: flex; align-items: center; gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 18px;
-}
-.drop-ways-label {
-  font-size: .58rem; letter-spacing: .3em; font-weight: 700;
-  color: var(--acc);
-}
-.drop-ways-name {
-  font-size: .68rem; letter-spacing: .16em; font-weight: 700;
-  text-transform: uppercase;
-  padding: 5px 11px;
-  border-radius: 40px;
-  border: 1px solid rgba(255,255,255,.22);
-  background: rgba(255,255,255,.07);
-}
-.drop-ways {
-  display: flex; gap: 16px; flex-wrap: wrap;
-  margin-top: 12px;
-}
-/* 44px — the smallest reliable thumb target. */
-.way {
-  width: 44px; height: 44px;
-  border-radius: 50%;
-  background: var(--sw, #888);
-  border: 2px solid rgba(255,255,255,.62);
-  box-shadow: 0 0 0 1px rgba(0,0,0,.55), 0 4px 12px rgba(0,0,0,.45);
-  padding: 0;
-  cursor: pointer;
-  position: relative;
-  opacity: .72;
-  touch-action: manipulation;   /* no 300ms double-tap-zoom wait */
-  -webkit-tap-highlight-color: transparent;
-  transition: transform .28s cubic-bezier(.2,.8,.2,1),
-              opacity .28s, box-shadow .28s, border-color .28s;
-}
-.way::after {
-  content: '';
-  position: absolute; inset: -7px;
-  border-radius: 50%;
-  border: 2px solid var(--acc);
-  opacity: 0;
-  transform: scale(.72);
-  transition: opacity .28s, transform .28s cubic-bezier(.2,.8,.2,1);
-}
-/* Hover only where hover is real. On touch, :hover sticks after
-   a tap — the swatch you poked stays lifted and fully opaque,
-   so two swatches read as selected at once. */
-@media (hover: hover) and (pointer: fine) {
-  .way:hover { opacity: 1; transform: translateY(-3px) scale(1.08); }
-}
-.way.is-on {
-  opacity: 1;
-  transform: scale(1.06);
-  border-color: #fff;
-  box-shadow: 0 0 0 1px rgba(0,0,0,.6), 0 6px 16px rgba(0,0,0,.5);
-}
-.way.is-on::after { opacity: 1; transform: scale(1); }
-.way:focus-visible { outline: none; opacity: 1; }
-.way:focus-visible::after { opacity: 1; transform: scale(1); }
-
-/* ── REDUCED MOTION ────────────────────────────────────── */
-@media (prefers-reduced-motion: reduce) {
-  .drop { transform: none !important; }
-  .drop-flip { transition: none; }
-  .way { transition: none; }
-  .drop-hint {
-    transition: none;
-    animation: none;
-    transform: translateX(-50%);
-  }
-  .drop-hint::before { animation: none; }
-}
-
-/* ── MOBILE ────────────────────────────────────────────── */
 @media (max-width: 560px) {
-  .drop-grid { grid-template-columns: 1fr; gap: 26px; }
-  .drop-head h3 { font-size: 1.2rem; }
-  .way { width: 48px; height: 48px; }           /* easier tap target */
-  .drop-ways { gap: 18px; }
+  .shop { padding-top: 58px; }
+}
+
+/* ── Head ──────────────────────────────────────────────────────────────────
+   One compact row instead of a stacked title block: name of the drop on the
+   left, the one line of instruction on the right, a hairline under both. */
+.shop-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 36ch);
+  align-items: end;
+  gap: 18px clamp(24px, 4vw, 64px);
+  margin: 0 0 clamp(24px, 3vw, 40px);
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--p-line);
+}
+
+.shop-head h2 {
+  margin: 14px 0 0;
+  color: var(--p-paper);
+  font-family: var(--p-display);
+  font-size: clamp(2rem, 4vw, 3.4rem);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+}
+
+.shop-head p {
+  margin: 0;
+  color: var(--p-heritage);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  opacity: 1;
+}
+
+.shop-count {
+  display: block;
+  margin-top: 10px;
+  color: var(--p-paper);
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.66rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+@media (max-width: 640px) {
+  .shop-head { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+}
+
+/* ── Grid ──────────────────────────────────────────────────────────────── */
+.pgrid {
+  --pg-cols: 2;
+  display: grid;
+  grid-template-columns: repeat(var(--pg-cols), minmax(0, 1fr));
+  gap: 34px 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pgrid > li { min-width: 0; display: flex; }
+
+/* Columns step up early on purpose: a plate wider than ~300px is back to
+   the one-tee-per-glance problem this grid exists to fix. */
+@media (min-width: 600px) {
+  .pgrid { --pg-cols: 3; gap: 46px 18px; }
+}
+
+@media (min-width: 1000px) {
+  .pgrid { --pg-cols: 4; gap: 56px 24px; }
+}
+
+/* ── Card ──────────────────────────────────────────────────────────────── */
+.pcard {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+/* The plate. A button: it opens the quick view, and on a fine pointer its
+   hover (or keyboard focus) shows the back of the tee. */
+.pcard-media {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: var(--p-plate);
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.pcard-media img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pcard-front { transition: opacity 0.35s ease; }
+
+.pcard-back {
+  clip-path: inset(0 100% 0 0);
+  transform: scale(1.18);
+  filter: brightness(1.9) contrast(1.25);
+  transition:
+    clip-path 0.7s var(--p-swap),
+    transform 0.7s var(--p-swap),
+    filter 0.7s var(--p-swap),
+    opacity 0.35s ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pcard-media:hover .pcard-back {
+    clip-path: inset(0 0 0 0);
+    transform: none;
+    filter: none;
+  }
+}
+
+.pcard-media:focus-visible .pcard-back {
+  clip-path: inset(0 0 0 0);
+  transform: none;
+  filter: none;
+}
+
+.pcard-media:focus-visible {
+  outline: 2px solid var(--p-red);
+  outline-offset: 4px;
+}
+
+/* A colour change dims both faces while the new pair decodes, then brings
+   them straight back — the plate never flashes empty. */
+.pcard-media img.is-swapping { opacity: 0.3; }
+
+/* The cue: tucked in the corner, only where hover exists, and only once the
+   pointer is on the plate. */
+.pcard-peek {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  z-index: 2;
+  padding: 5px 8px 4px;
+  background: var(--p-ink);
+  color: var(--p-paper);
+  font-family: var(--p-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s var(--p-ease), transform 0.5s var(--p-ease);
+  pointer-events: none;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pcard-media:hover .pcard-peek { opacity: 1; transform: none; transition-delay: 0.25s; }
+}
+
+/* "Want" — waitlist.js's pick toggle, shrunk to a chip in the plate's top
+   corner, where a shop would put its wishlist heart. A sibling of the plate
+   rather than inside it: a button cannot sit inside another button. */
+.pcard .want-toggle--chip {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  gap: 6px;
+  min-height: 28px;
+  padding: 0 9px;
+  border: 0;
+  background: rgba(0, 15, 8, 0.86);
+  color: var(--p-paper);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  box-shadow: none;
+  transform: none;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.pcard .want-toggle--chip .want-mark { font-size: 0.8rem; }
+
+.pcard .want-toggle--chip:hover,
+.pcard .want-toggle--chip:focus-visible {
+  background: var(--p-ink);
+  box-shadow: none;
+  transform: none;
+  outline: 2px solid var(--p-red);
+  outline-offset: 0;
+}
+
+.pcard .want-toggle--chip[aria-pressed="true"] {
+  background: var(--p-red);
+  color: var(--p-ink);
+}
+
+/* ── Meta ────────────────────────────────────────────────────────────────
+   Name and script on one line, colour on the next, swatches under that.
+   Prices go where the script sits the day the shop opens. */
+.pcard-info { padding-top: 12px; }
+
+/* Wraps rather than squeezes: on a two-up phone column a long name and its
+   script (Mylapore / மயிலாப்பூர்) do not fit one line, and the script drops
+   under the name instead of running into it. */
+.pcard-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 2px 10px;
+}
+
+.pcard-name {
+  margin: 0;
+  min-width: 0;
+  color: var(--p-paper);
+  font-family: var(--p-display);
+  font-size: clamp(0.98rem, 1.15vw, 1.14rem);
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.pcard-script {
+  flex: none;
+  color: var(--p-red);
+  font-size: 0.86rem;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pcard-script:lang(ta) { font-family: "Noto Sans Tamil", sans-serif; }
+.pcard-script:lang(hi),
+.pcard-script:lang(mr) { font-family: "Noto Sans Devanagari", sans-serif; }
+
+.pcard-sub {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+  margin-top: 6px;
+  color: var(--p-heritage);
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.64rem);
+  letter-spacing: 0.1em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+/* The dot is the selected colour itself, ringed so the darkest washes still
+   read against the night ground. */
+.pcard-sub i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  background: var(--p-dot, var(--p-heritage));
+  box-shadow: 0 0 0 1px rgba(243, 230, 208, 0.42);
+  transition: background-color 0.3s ease;
+}
+
+.pcard-sub span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* The city never truncates; the colour name gives way first. */
+.pcard-sub .pcard-city { flex: none; }
+.pcard-city::after { content: " ·"; }
+
+/* Swatches: a 13px chip on a 24px target — the WCAG 2.2 minimum, and five of
+   them still fit a two-up phone column. The quick view carries the full-size
+   ones. */
+.pcard-ways {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 7px 0 0 -5.5px;
+}
+
+.pcard-way {
+  position: relative;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.pcard-way::before {
+  content: "";
+  width: 13px;
+  height: 13px;
+  background: var(--sw, #888);
+  box-shadow: 0 0 0 1px rgba(243, 230, 208, 0.3);
+  transition: box-shadow 0.3s var(--p-ease), transform 0.3s var(--p-ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .pcard-way:hover::before { transform: scale(1.18); }
+}
+
+.pcard-way.is-on::before {
+  box-shadow: 0 0 0 2px var(--p-ink), 0 0 0 3.5px var(--p-paper);
+}
+
+.pcard-way:focus-visible { outline: 2px solid var(--p-red); outline-offset: 0; }
+
+/* Read by screen readers in the grid; shown in the quick view. */
+.pcard-line {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ── "Next stop" tile ──────────────────────────────────────────────────────
+   Fills the last cell of a row with the one thing a pre-launch shop can
+   offer: a say in what gets printed next. Same plate size as a tee. */
+.pnext {
+  align-self: flex-start;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 12px;
+  padding: clamp(14px, 1.8vw, 22px);
+  border: 1px dashed rgba(243, 230, 208, 0.36);
+  color: var(--p-paper);
+  text-decoration: none;
+  /* The headline sizes off the tile, not the viewport: NEIGHBOURHOOD is one
+     unbreakable word and has to fit a 166px phone column and a 300px
+     laptop one alike. */
+  container-type: inline-size;
+  transition:
+    background-color 0.5s var(--p-ease),
+    border-color 0.5s var(--p-ease),
+    color 0.5s var(--p-ease);
+}
+
+.pnext-kicker {
+  color: var(--p-red);
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transition: color 0.5s var(--p-ease);
+}
+
+.pnext strong {
+  font-family: var(--p-display);
+  font-size: clamp(0.9rem, 9.5cqi, 1.9rem);
+  font-weight: 400;
+  line-height: 0.95;
+  text-transform: uppercase;
+}
+
+.pnext-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.66rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.pnext-cta span { transition: transform 0.5s var(--p-ease); }
+
+.pnext:hover,
+.pnext:focus-visible {
+  border-style: solid;
+  border-color: var(--p-red);
+  background: var(--p-red);
+  color: var(--p-ink);
+  outline: none;
+}
+
+.pnext:hover .pnext-kicker,
+.pnext:focus-visible .pnext-kicker { color: var(--p-ink); }
+
+.pnext:hover .pnext-cta span,
+.pnext:focus-visible .pnext-cta span { transform: translateX(6px); }
+
+/* ── Arrival ───────────────────────────────────────────────────────────────
+   Gated on .motion-ready (motion.js), so without the script every card is
+   simply there. */
+.motion-ready .pcard[data-reveal="card"] .pcard-media {
+  transition: clip-path 1.15s var(--p-swap) var(--reveal-delay, 0ms);
+}
+
+.motion-ready .pcard[data-reveal="card"] .pcard-front {
+  transition:
+    transform 1.5s var(--p-ease) var(--reveal-delay, 0ms),
+    opacity 0.35s ease;
+}
+
+.motion-ready .pcard[data-reveal="card"] .pcard-info {
+  transition:
+    opacity 0.8s var(--p-ease) calc(var(--reveal-delay, 0ms) + 0.32s),
+    transform 1s var(--p-ease) calc(var(--reveal-delay, 0ms) + 0.32s);
+}
+
+.motion-ready .pcard[data-reveal="card"]:not(.is-in) .pcard-media { clip-path: inset(0 100% 0 0); }
+.motion-ready .pcard[data-reveal="card"]:not(.is-in) .pcard-front { transform: scale(1.22); }
+.motion-ready .pcard[data-reveal="card"]:not(.is-in) .pcard-info {
+  opacity: 0;
+  transform: translate3d(0, 14px, 0);
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   QUICK VIEW
+   A modal <dialog>: the browser handles focus, Escape and the inert page
+   behind it. The dialog itself is a transparent full-viewport layer so the
+   scrim and the panel can animate — ::backdrop cannot be transitioned out.
+   ══════════════════════════════════════════════════════════════════════════ */
+.qv {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  background: transparent;
+  color: var(--p-paper);
+}
+
+.qv::backdrop { background: transparent; }
+
+/* The sheet hides parts of itself per tee (the "see the city" link on that
+   city's own page). Author display rules below would otherwise beat the
+   browser's own [hidden] rule and show them anyway. */
+.qv [hidden] { display: none !important; }
+
+.qv-scrim {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 15, 8, 0.8);
+  opacity: 0;
+  transition: opacity 0.45s var(--p-ease);
+}
+
+.qv.is-open .qv-scrim { opacity: 1; }
+
+.qv-panel {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(1120px, calc(100% - 48px));
+  max-height: calc(100% - 48px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+  overflow: hidden;
+  border: 1px solid var(--p-line);
+  background: var(--p-ink);
+  opacity: 0;
+  transform: translate(-50%, calc(-50% + 30px));
+  transition: transform 0.7s var(--p-ease), opacity 0.45s ease;
+}
+
+.qv.is-open .qv-panel {
+  opacity: 1;
+  transform: translate(-50%, -50%);
+}
+
+.qv-media {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2px;
+  align-self: start;
+}
+
+.qv-shot {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 3 / 4;
+  max-height: calc(100svh - 48px);
+  overflow: hidden;
+  background: var(--p-plate);
+}
+
+.qv-shot img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    clip-path 1.05s var(--p-swap) 0.12s,
+    transform 1.4s var(--p-ease) 0.12s,
+    opacity 0.35s ease;
+}
+
+.qv-shot + .qv-shot img { transition-delay: 0.24s, 0.24s, 0s; }
+
+.qv:not(.is-open) .qv-shot img {
+  clip-path: inset(0 100% 0 0);
+  transform: scale(1.16);
+}
+
+.qv-shot img.is-swapping { opacity: 0.3; }
+
+.qv-shot figcaption {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  padding: 5px 8px 4px;
+  background: var(--p-ink);
+  color: var(--p-paper);
+  font-family: var(--p-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+/* contain: size keeps the copy column from setting the row height: the two
+   shots decide how tall the sheet is, and the copy scrolls inside that. */
+.qv-info {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 0;
+  padding: clamp(24px, 2.6vw, 36px) clamp(22px, 2.4vw, 34px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  contain: size;
+}
+
+.qv-info > * {
+  transition: opacity 0.6s ease, transform 0.8s var(--p-ease);
+}
+
+.qv:not(.is-open) .qv-info > * {
+  opacity: 0;
+  transform: translate3d(0, 16px, 0);
+}
+
+.qv.is-open .qv-info > :nth-child(2) { transition-delay: 0.06s; }
+.qv.is-open .qv-info > :nth-child(3) { transition-delay: 0.12s; }
+.qv.is-open .qv-info > :nth-child(4) { transition-delay: 0.18s; }
+.qv.is-open .qv-info > :nth-child(5) { transition-delay: 0.24s; }
+.qv.is-open .qv-info > :nth-child(n + 6) { transition-delay: 0.3s; }
+
+.qv-kicker {
+  margin: 0;
+  padding-right: 44px;
+  color: var(--p-red);
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.66rem);
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.qv-title {
+  margin: 0;
+  color: var(--p-paper);
+  font-family: var(--p-display);
+  font-size: clamp(2.1rem, 3.2vw, 2.9rem);
+  font-weight: 400;
+  line-height: 0.92;
+  text-transform: uppercase;
+}
+
+.qv-script {
+  display: block;
+  margin-top: 8px;
+  color: var(--p-red);
+  font-size: 1.1rem;
+  line-height: 1.3;
+  text-transform: none;
+}
+
+.qv-script:lang(ta) { font-family: "Noto Sans Tamil", sans-serif; }
+.qv-script:lang(hi),
+.qv-script:lang(mr) { font-family: "Noto Sans Devanagari", sans-serif; }
+
+.qv-line {
+  margin: 0;
+  color: var(--p-heritage);
+  font-size: 0.98rem;
+  line-height: 1.65;
+}
+
+.qv-colour {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  padding-top: 14px;
+  border-top: 1px solid var(--p-line);
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.66rem);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.qv-colour span:first-child { color: var(--p-heritage); }
+.qv-colour span:last-child { color: var(--p-paper); font-weight: 700; }
+
+.qv-ways {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: -6px;
+}
+
+.qv-way {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.qv-way::before {
+  content: "";
+  width: 30px;
+  height: 30px;
+  background: var(--sw, #888);
+  box-shadow: 0 0 0 1px rgba(243, 230, 208, 0.3);
+  transition: box-shadow 0.3s var(--p-ease);
+}
+
+.qv-way.is-on::before {
+  box-shadow: 0 0 0 3px var(--p-ink), 0 0 0 5px var(--p-paper);
+}
+
+.qv-way:focus-visible { outline: 2px solid var(--p-red); outline-offset: -2px; }
+
+.qv-actions {
+  display: grid;
+  gap: 10px;
+}
+
+/* waitlist.js's "Want this", at the sheet's width. Its base look (a ruled
+   outline that fills red once picked) comes from waitlist.css. */
+.qv .want-toggle {
+  width: 100%;
+  min-height: 52px;
+  justify-content: center;
+}
+
+.qv-specs {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 8px 16px;
+  margin: 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--p-line);
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.qv-specs dt {
+  padding-top: 3px;
+  color: var(--p-heritage);
+  font-family: var(--p-mono);
+  font-size: max(10.5px, 0.64rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.qv-specs dd { margin: 0; color: var(--p-paper); }
+
+.qv-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 52px;
+  padding: 0 18px;
+  background: var(--p-red);
+  color: var(--p-ink);
+  font-family: var(--p-mono);
+  font-size: max(11px, 0.72rem);
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: background-color 0.35s ease, color 0.35s ease;
+}
+
+.qv-cta span { transition: transform 0.5s var(--p-ease); }
+
+.qv-cta:hover,
+.qv-cta:focus-visible {
+  background: var(--p-paper);
+  color: var(--p-ink);
+  outline: none;
+}
+
+.qv-cta:hover span,
+.qv-cta:focus-visible span { transform: translateX(6px); }
+
+.qv-city {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--p-paper);
+  font-family: var(--p-mono);
+  font-size: max(11px, 0.68rem);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  text-decoration: underline;
+  text-underline-offset: 5px;
+}
+
+.qv-city:hover,
+.qv-city:focus-visible { color: var(--p-red); }
+
+.qv-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--p-line);
+  background: var(--p-ink);
+  color: var(--p-paper);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease, transform 0.5s var(--p-ease);
+}
+
+.qv-close:hover,
+.qv-close:focus-visible {
+  background: var(--p-red);
+  color: var(--p-ink);
+  transform: rotate(90deg);
+  outline: none;
+}
+
+.qv-grab { display: none; }
+
+/* Closing runs the same moves back, faster: out is never the moment. */
+.qv.is-closing .qv-panel { transition-duration: 0.38s, 0.3s; }
+.qv.is-closing .qv-scrim { transition-duration: 0.35s; }
+.qv.is-closing .qv-shot img,
+.qv.is-closing .qv-info > * { transition: none; }
+
+/* Page behind the sheet holds still. The gutter keeps the layout from
+   jumping sideways when the scrollbar goes away. */
+html.qv-lock { overflow: hidden; }
+html.qv-lock body { padding-right: var(--qv-gutter, 0px); }
+
+/* ── Quick view on a phone or tablet: a bottom sheet ───────────────────────
+   Below 900px the side-by-side layout leaves each shot under 230px wide,
+   smaller than the plate it was opened from. */
+@media (max-width: 900px) {
+  .qv-panel {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 92svh;
+    grid-template-columns: minmax(0, 1fr);
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    border-width: 1px 0 0;
+    opacity: 1;
+    transform: translate3d(0, 104%, 0);
+    transition: transform 0.6s var(--p-ease);
+  }
+
+  .qv.is-open .qv-panel { transform: none; }
+  .qv.is-closing .qv-panel { transition-duration: 0.36s; }
+
+  .qv-grab {
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    display: block;
+    height: 0;
+  }
+
+  .qv-grab::before {
+    content: "";
+    position: absolute;
+    top: 8px;
+    left: 50%;
+    width: 38px;
+    height: 4px;
+    margin-left: -19px;
+    background: rgba(243, 230, 208, 0.55);
+  }
+
+  /* Front first, the back peeking in from the right with its own label, so
+     the swipe explains itself. */
+  .qv-media {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    padding-top: 22px;
+  }
+
+  .qv-media::-webkit-scrollbar { display: none; }
+
+  .qv-shot {
+    flex: 0 0 80%;
+    max-height: none;
+    scroll-snap-align: start;
+  }
+
+  /* Labels drop to the bottom corner here: the close button owns the top
+     right, which is exactly where the peeking back shot's label would sit. */
+  .qv-shot figcaption { top: auto; bottom: 10px; }
+
+  /* A tablet has room for both sides at once, so nothing to swipe. */
+  @media (min-width: 641px) {
+    .qv-shot { flex-basis: calc(50% - 3px); }
+  }
+
+  .qv-info {
+    overflow: visible;
+    contain: none;
+    padding: 22px 18px calc(24px + env(safe-area-inset-bottom));
+  }
+
+  .qv-close { top: 30px; right: 12px; }
+  .qv-kicker { padding-right: 0; }
+}
+
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .pcard-back,
+  .pcard-way::before,
+  .pnext,
+  .pnext-cta span,
+  .qv-scrim,
+  .qv-panel,
+  .qv-shot img,
+  .qv-info > *,
+  .qv-close { transition: none !important; }
+
+  .pcard-back { transform: none; filter: none; }
+  .qv:not(.is-open) .qv-shot img { clip-path: none; transform: none; }
+  .qv:not(.is-open) .qv-info > * { opacity: 1; transform: none; }
 }
