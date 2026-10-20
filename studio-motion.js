@@ -23,8 +23,8 @@
   function onArrival(el, fn) { tasks.set(el, fn); observer.observe(el); }
 
   // Animate whole lines: local scripts retain their natural shaping and spacing.
-  document.querySelectorAll('.manifesto-title, .campaign-heading h2, .join-title, .shop-head h2, .city-shop .hero-title').forEach(heading => {
-    if (heading.matches('.city-shop .hero-title')) {
+  document.querySelectorAll('.manifesto-title, .campaign-heading h2, .join-title, .shop-head h2, header.hero .hero-title').forEach(heading => {
+    if (heading.matches('header.hero .hero-title')) {
       onArrival(heading, () => {
         heading.querySelectorAll(':scope > span').forEach((line, i) => {
           play(line, [
