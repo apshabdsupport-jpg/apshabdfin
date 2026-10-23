@@ -18,7 +18,7 @@
        </div>
      </article>
 
-   Shots live at assets/<city>/<loc>/<colourway>-front.jpg and -back.jpg, so a
+   Shots live at assets/ghost-mannequin/<city>/<loc>/<colourway>-front.jpg and -back.jpg, so a
    colourway is just a data-cw value. The quick view is built once, on first
    open, and refilled from whichever card opened it.
    ══════════════════════════════════════════════════════════════════════════ */
@@ -33,7 +33,7 @@
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
   function shot(card, colourway, side) {
-    return 'assets/' + card.dataset.city + '/' + card.dataset.loc + '/' + colourway + '-' + side + '.jpg' + (card.dataset.version ? '?v=' + encodeURIComponent(card.dataset.version) : '');
+    return 'assets/ghost-mannequin/' + card.dataset.city + '/' + card.dataset.loc + '/' + colourway + '-' + side + '.jpg' + (card.dataset.version ? '?v=' + encodeURIComponent(card.dataset.version) : '');
   }
 
   function wayName(button) {
