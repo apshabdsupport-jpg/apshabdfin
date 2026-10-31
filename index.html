@@ -99,6 +99,7 @@
   <link rel="stylesheet" href="motion.css?v=1" />
   <link rel="stylesheet" href="drop.css?v=9" />
   <link rel="stylesheet" href="studio-motion.css?v=1" />
+  <link rel="stylesheet" href="scroll-fx.css?v=1" />
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
@@ -426,9 +427,9 @@
       <div class="manifesto-grid">
         <h2 id="manifesto-title" class="manifesto-title reveal">Not merch.<br />Memory you<br />can wear.</h2>
         <div class="manifesto-copy reveal">
-          <p class="lead">The label began with one question: why should Indian streetwear borrow someone else's street?</p>
-          <p>So we started closer to home. With the station you missed, the road you grew up on, the corner that still knows your name. Every piece is a record of a neighbourhood — set in its own script, carried in its own rhythm.</p>
-          <p>Western silhouettes. Indian coordinates. No costume. No souvenir. Just the places that made you, cut into something worth keeping.</p>
+          <p class="lead" data-scrub-words>The label began with one question: why should Indian streetwear borrow someone else's street?</p>
+          <p data-scrub-words>So we started closer to home. With the station you missed, the road you grew up on, the corner that still knows your name. Every piece is a record of a neighbourhood — set in its own script, carried in its own rhythm.</p>
+          <p data-scrub-words>Western silhouettes. Indian coordinates. No costume. No souvenir. Just the places that made you, cut into something worth keeping.</p>
         </div>
       </div>
 
@@ -573,6 +574,19 @@
       </div>
     </section>
 
+    <section class="tapes" aria-hidden="true" data-tapes>
+      <div class="tape tape-red" data-tape-direction="-1">
+        <div class="tape-track">
+          <span>Thane</span><i>✱</i><span>Adyar</span><i>✱</i><span>Bandra</span><i>✱</i><span>Mylapore</span><i>✱</i><span>Dadar</span><i>✱</i><span>T Nagar</span><i>✱</i><span>Colaba</span><i>✱</i><span>Anna Nagar</span><i>✱</i><span>Andheri</span><i>✱</i><span>Marina</span><i>✱</i><span>Hauz Khas</span><i>✱</i><span>Chandni Chowk</span><i>✱</i>
+        </div>
+      </div>
+      <div class="tape tape-cream" data-tape-direction="1">
+        <div class="tape-track">
+          <span lang="mr">ठाणे</span><i>✱</i><span lang="ta">அடையாறு</span><i>✱</i><span lang="mr">वांद्रे</span><i>✱</i><span lang="ta">மயிலாப்பூர்</span><i>✱</i><span lang="mr">दादर</span><i>✱</i><span lang="ta">தி. நகர்</span><i>✱</i><span lang="mr">कुलाबा</span><i>✱</i><span lang="ta">அண்ணா நகர்</span><i>✱</i><span lang="mr">अंधेरी</span><i>✱</i><span lang="ta">மெரினா</span><i>✱</i><span lang="hi">हौज़ ख़ास</span><i>✱</i><span lang="hi">चाँदनी चौक</span><i>✱</i>
+        </div>
+      </div>
+    </section>
+
     <section class="typewriter-section route-question" data-words="location|இடம்|जगह|ಸ್ಥಳ|স্থান|స్థలం" aria-labelledby="route-question-title">
       <div class="section-index light reveal">
         <span>Interlude / Your turn</span>
@@ -662,6 +676,31 @@
       </div>
     </section>
 
+    <!-- Outro: a lattice draws itself, fills with the neighbourhoods from the
+         page, then turns over tile by tile into the line the page opened on,
+         set on cream so it hands straight off to the waitlist. Without the
+         motion layer only the finished poster shows. -->
+    <section class="lattice-outro" aria-labelledby="outro-title" data-lattice
+             data-lattice-photos="assets/campaign/web/01-chennai-adyar-fisherman.jpg=Adyar|assets/campaign/web/02-mumbai-thane-fisherman.jpg=Thane|assets/campaign/web/03-chennai-mylapore-musician.jpg=Mylapore|assets/campaign/web/04-chennai-anna-nagar-drummer.jpg=Anna Nagar|assets/campaign/web/05-chennai-marina-water-carrier.jpg=Marina|assets/campaign/web/06-mumbai-andheri-dadar-colaba-train.jpg=Andheri|assets/campaign/web/07-mumbai-bandra-thane-barber.jpg=Bandra|assets/campaign/web/08-chennai-t-nagar-craftsman.jpg=T Nagar|assets/campaign/web/09-chennai-mylapore-train.jpg=Mylapore|assets/campaign/web/chennai-marina-chai.jpg=Marina|assets/campaign/web/chennai-t-nagar-newspaper.jpg=T Nagar|assets/campaign/web/mumbai-bandra-fruit-stall.jpg=Bandra|assets/campaign/web/mumbai-colaba-balloons.jpg=Colaba|assets/campaign/web/mumbai-dadar-skateboard.jpg=Dadar|assets/campaign/models/set2-01-chennai-marina-beach.jpg=Marina|assets/campaign/models/set2-05-mumbai-barbershop-trio.jpg=Bandra × Thane|assets/campaign/models/set2-09-chennai-anna-nagar-flash.jpg=Anna Nagar|assets/campaign/models/set2-10-mumbai-colaba-wall.jpg=Colaba|assets/campaign/models/set2-07-delhi-chandni-chowk-field.jpg=Chandni Chowk">
+      <h2 id="outro-title" class="sr-only">Wear where you're from.</h2>
+      <div class="lattice-stage">
+        <div class="lattice-art" aria-hidden="true">
+          <div class="lattice-art-row"><span>Indian streetwear</span><span>Est. MMXXVI</span></div>
+          <p class="lattice-art-title"><span>Wear</span><span>where you're</span><span class="accent">from.</span></p>
+        </div>
+
+        <div class="lattice-hud" aria-hidden="true">
+          <span>Outro / End of the line</span>
+          <span><b data-lattice-count>00</b> / <b data-lattice-total>00</b> frames</span>
+        </div>
+
+        <div class="lattice-end">
+          <span>Campaign 001 ✱ 7 cities, one line</span>
+          <a class="text-link dark" href="#join">Get on the list <span aria-hidden="true">↓</span></a>
+        </div>
+      </div>
+    </section>
+
     <!-- The one conversion a pre-launch site has. waitlist.js renders the
          form into [data-waitlist]; the copy around it lives here. -->
     <section class="join" id="join" aria-labelledby="join-title">
@@ -707,5 +746,6 @@
   <script src="drop.js?v=10"></script>
   <script src="waitlist.js?v=2"></script>
   <script src="studio-motion.js?v=2"></script>
+  <script src="scroll-fx.js?v=1"></script>
 </body>
 </html>
