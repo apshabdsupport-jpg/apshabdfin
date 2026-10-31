@@ -350,7 +350,10 @@
   });
 
   document.querySelectorAll('.city-map-link').forEach((link) => {
-    link.addEventListener('focus', () => activateCity(cityRows.find((row) => row.dataset.pin === link.dataset.mapCity)));
+    link.addEventListener('focus', () => {
+      // Keep pointer targets still until their click navigates.
+      if (link.matches(':focus-visible')) activateCity(cityRows.find((row) => row.dataset.pin === link.dataset.mapCity));
+    });
   });
   window.addEventListener('resize', () => {
     const active = cityRows.find((row) => row.classList.contains('is-active'));
