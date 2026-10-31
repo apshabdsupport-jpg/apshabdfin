@@ -1,5 +1,5 @@
 /* Cross-document view transitions, index -> city pages. Needs the same opt-in on
-   the destination stylesheet (city-brand.css) to fire. Browsers
+   the destination stylesheet (city-brand.css, pin-form.css) to fire. Browsers
    without support simply hard-cut the way they always did — no fallback needed. */
 @view-transition { navigation: auto; }
 
@@ -24,30 +24,12 @@
   --cream: #f3e6d0;
   --heritage: #c4ac90;
   --red: #fb3640;
-  /* The brand red reads at 5.3:1 on --night but only 2.99:1 on --cream, so on
-     light grounds it fails AA for anything that is actually meant to be read.
-     --red-ink is the same red pulled down to 4.8:1 on cream. Rule of thumb:
-     --red on dark and on display type, --red-ink for red *text* on cream. */
-  --red-ink: #c8101e;
   --ink: #06110b;
   --line-dark: rgba(0, 15, 8, 0.22);
   --line-light: rgba(243, 230, 208, 0.23);
   --font: "Trench Slab", "Arial Narrow", Impact, sans-serif;
   --ease: cubic-bezier(0.22, 1, 0.36, 1);
   --page: clamp(20px, 3.4vw, 58px);
-
-  /* ── Small-label scale ──────────────────────────────────────────────────
-     Every uppercase, wide-tracked label on the site draws from these two.
-     They were plain rem values, which put the section indexes at 10.9px and
-     the frame captions at 9px — and tracking that wide costs another notch
-     of legibility on top. max() sets a hard px floor while still letting the
-     whole scale grow for anyone who has raised their browser's font size.  */
-  --label: max(11.5px, 0.68rem);
-  --label-sm: max(10.5px, 0.6rem);
-
-  /* Nothing tappable should be smaller than this. iOS asks for 44, Android
-     for 48dp; 44 with generous hit padding satisfies both. */
-  --tap: 44px;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -73,25 +55,25 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-/* ── Notch and home indicator ──────────────────────────────────────────────
-   A landscape iPhone reserves ~44px on the notch side. The page gutter is
-   20px there, so without this the section indexes, the city rows and the
-   footer all run under the cutout. Insetting the whole body rather than each
-   section keeps the full-bleed blocks aligned with the copy above them, and
-   the strip that opens up is filled by the body's own --night, so it reads
-   as letterboxing rather than as a gap. Fixed chrome is positioned against
-   the viewport, not the body, so the header and rail inset themselves. */
-@media (orientation: landscape) {
-  body {
-    padding-left: env(safe-area-inset-left);
-    padding-right: env(safe-area-inset-right);
-  }
-}
-
 body.menu-open { overflow: hidden; }
 body.menu-open .site-header { color: var(--night); }
 body.menu-open .brand-logo-cream { display: none; }
 body.menu-open .brand-logo-night { display: block; }
+
+/* Halftone print screen over the whole page. Two interleaved dot phases at one
+   pitch: ink dots read on the cream sections, cream dots on the night ones. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle at 50% 50%, rgba(0, 15, 8, 0.17) 1.05px, transparent 1.15px),
+    radial-gradient(circle at 50% 50%, rgba(243, 230, 208, 0.085) 1.05px, transparent 1.15px);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
 
 img { display: block; width: 100%; }
 a { color: inherit; }
@@ -114,8 +96,8 @@ button:active {
   position: fixed;
   z-index: 40;
   top: 88px;
-  right: calc(clamp(8px, 1.1vw, 18px) + env(safe-area-inset-right));
-  bottom: calc(22px + env(safe-area-inset-bottom));
+  right: clamp(8px, 1.1vw, 18px);
+  bottom: 22px;
   width: clamp(42px, 4.2vw, 68px);
   pointer-events: none;
   opacity: 0;
@@ -163,8 +145,8 @@ button:active {
 .skip-link {
   position: fixed;
   z-index: 1000;
-  left: calc(16px + env(safe-area-inset-left));
-  top: calc(12px + env(safe-area-inset-top));
+  left: 16px;
+  top: 12px;
   padding: 10px 14px;
   background: var(--cream);
   color: var(--ink);
@@ -179,8 +161,7 @@ button:active {
   inset: 0 0 auto;
   z-index: 100;
   height: 76px;
-  padding: 0 calc(var(--page) + env(safe-area-inset-right))
-           0 calc(var(--page) + env(safe-area-inset-left));
+  padding: 0 var(--page);
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
@@ -200,12 +181,7 @@ button:active {
   position: relative;
   z-index: 102;
   width: max-content;
-  /* The wordmark is only 38px tall. Flex-centring it inside a --tap-high box
-     keeps it exactly where it was — the header centres the row either way —
-     while giving the home link a full-size target. */
-  min-height: var(--tap);
-  display: flex;
-  align-items: center;
+  display: block;
   text-decoration: none;
   line-height: 0;
 }
@@ -257,19 +233,6 @@ button:active {
 
 .menu-toggle { display: none; }
 
-/* The wordmark and the hamburger are the first two things a keyboard visitor
-   reaches on every page, and neither had a focus treatment — the header's own
-   :focus-visible rules only ever covered the nav links. */
-.brand:focus-visible,
-.menu-toggle:focus-visible {
-  outline: 2px solid var(--red);
-  outline-offset: 6px;
-}
-
-/* Inside the open red panel a red ring would disappear. */
-body.menu-open .brand:focus-visible,
-body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
-
 .hero {
   position: relative;
   min-height: 100svh;
@@ -279,6 +242,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   grid-template-rows: minmax(650px, 1fr) auto;
   background: var(--night);
   border-bottom: 1px solid var(--line-light);
+  overflow: hidden;
 }
 
 .hero-copy {
@@ -374,7 +338,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   padding-bottom: 12px;
   border-bottom: 1px solid currentColor;
   text-transform: uppercase;
-  font-size: var(--label);
+  font-size: 0.68rem;
   letter-spacing: 0.17em;
 }
 
@@ -432,7 +396,6 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 }
 
 .text-link {
-  position: relative;
   width: max-content;
   display: inline-flex;
   align-items: center;
@@ -446,24 +409,12 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   transition: color 0.25s ease, gap 0.35s var(--ease);
 }
 
-/* These are the in-copy CTAs — "Find your city", "Put your street on the map"
-   — and the rule under them is the whole visual, so the box can only be 25px
-   tall. Padding would drag the underline off the baseline it shares with the
-   text, and a negative margin to cancel it would pull the link out of the
-   grids it sits in. An overlay costs no layout and takes the target to 44. */
-.text-link::before {
-  content: "";
-  position: absolute;
-  inset: calc((var(--tap) - 25px) / -2) -10px calc((var(--tap) - 25px) / -2 - 8px);
-}
-
 .text-link:hover,
 .text-link:focus-visible,
 .text-link:active { color: var(--red); gap: 38px; }
-/* .dark sits on cream, where the display red drops to 2.99:1. */
 .text-link.dark:hover,
 .text-link.dark:focus-visible,
-.text-link.dark:active { color: var(--red-ink); }
+.text-link.dark:active { color: var(--red); }
 
 .hero-image {
   position: relative;
@@ -509,7 +460,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   justify-content: space-between;
   gap: 20px;
   color: var(--cream);
-  font-size: var(--label);
+  font-size: 0.67rem;
   letter-spacing: 0.13em;
   text-transform: uppercase;
 }
@@ -529,7 +480,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   transform: rotate(4deg);
   text-align: center;
   text-transform: uppercase;
-  font-size: var(--label-sm);
+  font-size: 0.55rem;
   letter-spacing: 0.16em;
 }
 
@@ -561,14 +512,10 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   font-size: clamp(1.05rem, 1.6vw, 1.45rem);
 }
 
-/* Cream on the ticker's red is 2.99:1 — fine for a hairline ornament, thin for
-   a 14px glyph sitting inline with the city names. Night is what the names
-   already use and takes it to 5.3:1; the size drop keeps it reading as a
-   separator rather than as an eighth city. */
 .ticker-track i {
   font-style: normal;
-  color: var(--night);
-  font-size: 0.72em;
+  color: var(--cream);
+  font-size: 0.85em;
 }
 
 @keyframes ticker { to { transform: translateX(-50%); } }
@@ -688,11 +635,9 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   max-width: 540px;
 }
 
-/* Red on cream, and at the small end of its clamp it is well under the 24px
-   that would let it count as large text — so this is the darker red. */
 .manifesto-copy .lead {
   margin-bottom: 1.7em;
-  color: var(--red-ink);
+  color: var(--red);
   font-size: clamp(1.35rem, 2vw, 2rem);
   line-height: 1.15;
 }
@@ -774,14 +719,14 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 }
 
 .campaign {
-  padding: 88px var(--page) clamp(72px, 8vw, 120px);
+  padding: 88px var(--page) clamp(110px, 13vw, 200px);
   background: var(--night);
   color: var(--cream);
 }
 
 .campaign-heading,
 .cities-heading {
-  padding: clamp(44px, 6vw, 96px) 0 clamp(32px, 4vw, 56px);
+  padding: clamp(70px, 9vw, 140px) 0 76px;
   display: grid;
   grid-template-columns: 1.35fr minmax(280px, 0.65fr);
   align-items: end;
@@ -789,7 +734,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 }
 
 .campaign-heading h2,
-.cities-heading h2 { font-size: clamp(3.4rem, 7vw, 7.6rem); }
+.cities-heading h2 { font-size: clamp(5rem, 9.5vw, 10.5rem); }
 
 .campaign-heading p,
 .cities-heading p {
@@ -799,22 +744,23 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   font-size: clamp(1.05rem, 1.35vw, 1.28rem);
 }
 
-/* Three frames in a row at a shop's scale, not a two-storey mosaic: the
-   section used to run to 2,200px on a laptop for three photographs. On a
-   phone it becomes a swipe strip (see the 820px block). */
 .campaign-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(12px, 1.6vw, 24px);
+  grid-template-columns: 0.86fr 1.14fr;
+  grid-template-rows: minmax(430px, 49vw) minmax(400px, 43vw);
+  gap: clamp(16px, 2vw, 30px);
 }
 
 .campaign-card {
   position: relative;
-  aspect-ratio: 4 / 5;
+  min-height: 430px;
   margin: 0;
   overflow: hidden;
   background: var(--night-soft);
 }
+
+.campaign-card-tall { grid-row: 1 / 3; }
+.campaign-card-wide { grid-column: 2; }
 
 .campaign-card img {
   height: 100%;
@@ -875,11 +821,11 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 .wall-body {
   position: relative;
   z-index: 1;
-  padding: 88px var(--page) clamp(72px, 8vw, 120px);
+  padding: 88px var(--page) clamp(110px, 13vw, 190px);
 }
 
 .wall-heading {
-  padding: clamp(44px, 6vw, 96px) 0 clamp(32px, 4vw, 56px);
+  padding: clamp(70px, 9vw, 140px) 0 76px;
   display: grid;
   grid-template-columns: 1.35fr minmax(280px, 0.65fr);
   align-items: end;
@@ -902,31 +848,25 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   font-size: clamp(1rem, 1.25vw, 1.2rem);
 }
 
-/* The frames arrive as one flat list. script.js deals them into balanced
-   columns — four on a laptop, three on a tablet, two on a phone — so every
-   frame is about the size of a product plate rather than a third of the
-   screen (or, on a phone, all of it). Without the script they sit in this
-   plain grid instead. */
 .wall-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+  grid-template-columns: repeat(3, 1fr);
   align-items: start;
-  gap: clamp(12px, 1.5vw, 22px);
+  gap: clamp(14px, 1.8vw, 28px);
 }
-
-.wall-grid.is-laid { grid-template-columns: repeat(var(--wall-cols, 4), minmax(0, 1fr)); }
 
 .wall-col {
   display: flex;
   flex-direction: column;
-  gap: clamp(12px, 1.5vw, 22px);
+  gap: clamp(14px, 1.8vw, 28px);
   /* JS writes the drift into this variable rather than onto transform itself,
      so the column keeps its own transform declaration in one place. */
   transform: translate3d(0, var(--wall-shift, 0px), 0);
 }
 
-/* Offset starts so neighbouring columns never line up in a row. */
-.wall-col:nth-child(even) { margin-top: clamp(28px, 4vw, 72px); }
+/* Offset starts so the three columns never line up in a row. */
+.wall-col:nth-child(2) { margin-top: clamp(30px, 5vw, 90px); }
+.wall-col:nth-child(3) { margin-top: clamp(12px, 2vw, 36px); }
 
 .wall-frame {
   position: relative;
@@ -953,7 +893,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   color: var(--cream);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  font-size: var(--label-sm);
+  font-size: 0.56rem;
 }
 
 .wall-frame figcaption i { font-style: normal; color: var(--heritage); }
@@ -1011,51 +951,27 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 
 .tw-line { display: block; }
 
-/* Plain inline flow, not flex. Six scripts share this line, and only the
-   text baseline lines them up — flex centred each box instead, which let
-   every script float to its own height above "WHICH". Because the line box
-   is set by the h2 strut (line-height .78) and every word sits at .78em or
-   less, tall glyphs overshoot as ink without reflowing the line, so nothing
-   jumps as the word cycles. */
 .tw-language-line {
-  display: block;
+  display: flex;
+  align-items: center;
+  min-height: 0.92em;
   white-space: nowrap;
 }
 
-/* Carries the per-script size so the cursor scales with the word.
-   typewriter.js sets lang here; .tw-word inherits it. */
 .tw-word-wrap {
-  /* Plain inline, not inline-block: an inline-block contributes its own box
-     height to the line, and the Indic faces have far taller intrinsic
-     ascent/descent than the Latin heading face, which pushed line two down
-     as the word cycled. Inline keeps the heading strut in charge. */
-  display: inline;
+  display: inline-flex;
+  min-width: 0;
+  height: 0.78em;
+  align-items: center;
   color: var(--red);
-  font-size: 0.7em;
-  /* Zero, so the word contributes no height of its own and the heading strut
-     alone sets the line box. The six Noto faces have content areas of
-     1.21em-1.36em, so at any shared line-height each one sized its inline box
-     differently and shifted line two by up to 18px as the word cycled.
-     Glyphs still draw from the shared baseline; only the box is collapsed. */
-  line-height: 0;
+  line-height: 1;
 }
 
-/* Optical size per script, measured from each Noto face rather than guessed:
-   the Indic base-consonant body is matched to roughly the Latin cap height,
-   so all six read at one size. Tamil is the outlier — its body is small next
-   to tall letters like இ, so it is set to let those rise like a Latin
-   ascender instead of towering over the cap line. */
-.tw-word-wrap:lang(ta) { font-size: 0.64em; }
-.tw-word-wrap:lang(hi) { font-size: 0.79em; }
-.tw-word-wrap:lang(kn) { font-size: 0.63em; }
-.tw-word-wrap:lang(bn) { font-size: 0.72em; }
-.tw-word-wrap:lang(te) { font-size: 0.68em; }
-
-/* Inherits line-height from the wrapper on purpose: .tw-word-wrap is an
-   inline-block, so its box height comes from this line box, and a value of 1
-   here would let the taller scripts push the whole heading down mid-cycle. */
 .tw-word {
-  font-size: 1em;
+  display: inline-block;
+  color: var(--red);
+  font-size: 0.7em;
+  line-height: 1;
   letter-spacing: -0.02em;
 }
 
@@ -1066,19 +982,19 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 .tw-word:lang(te) { font-family: "Noto Sans Telugu", sans-serif; }
 
 .tw-quote {
+  display: inline-block;
   color: var(--red);
   font-size: 0.72em;
+  line-height: 1;
   opacity: 0.72;
 }
 
-/* Sits on the baseline and scales with the word, so it tracks each script
-   instead of staying at the heading's size. */
 .tw-cursor {
+  width: 0.055em;
+  height: 0.55em;
+  margin-left: 0.055em;
   display: inline-block;
-  vertical-align: baseline;
-  width: 0.07em;
-  height: 0.72em;
-  margin-left: 0.06em;
+  align-self: center;
   background: var(--red);
   animation: tw-blink 0.9s steps(1, end) infinite;
 }
@@ -1275,7 +1191,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 }
 
 .city-preview-overlay span {
-  font-size: var(--label);
+  font-size: 0.68rem;
   letter-spacing: 0.18em;
 }
 
@@ -1298,7 +1214,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   padding: 16px 4px;
   border-bottom: 1px solid var(--line-dark);
   text-decoration: none;
-  transition: color 0.2s ease, padding 0.25s var(--ease), background 0.2s ease;
+  transition: color 0.28s ease, padding 0.35s var(--ease), background 0.28s ease;
 }
 
 .city-row::before {
@@ -1307,7 +1223,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   inset: 0 100% 0 0;
   z-index: 0;
   background: var(--night);
-  transition: right 0.3s var(--ease);
+  transition: right 0.45s var(--ease);
 }
 
 .city-row > * {
@@ -1328,13 +1244,10 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 .city-row:active::before,
 .city-row.is-active::before { right: 0; }
 
-/* Floored in px, not rem: at 0.64rem these land near 10px, and "Shop live" is
-   the one label on this page that tells a visitor what they can actually buy.
-   It does not get to be the least readable thing in the section. */
 .city-number,
 .city-status {
   text-transform: uppercase;
-  font-size: clamp(11px, 0.64rem, 0.64rem);
+  font-size: 0.64rem;
   letter-spacing: 0.13em;
 }
 
@@ -1352,9 +1265,8 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   text-transform: uppercase;
 }
 
-.city-status { opacity: 0.7; text-align: right; }
-/* Idle the row sits on cream, so the darker red; the fill below swaps it back. */
-.city-status.live { color: var(--red-ink); opacity: 1; }
+.city-status { opacity: 0.58; text-align: right; }
+.city-status.live { color: var(--red); opacity: 1; }
 .city-row:hover .city-status.live,
 .city-row:focus-visible .city-status.live,
 .city-row:active .city-status.live,
@@ -1389,7 +1301,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   margin-bottom: 34px;
   text-transform: uppercase;
   letter-spacing: 0.18em;
-  font-size: var(--label);
+  font-size: 0.68rem;
 }
 
 .pin-copy { position: relative; z-index: 2; min-width: 0; }
@@ -1495,30 +1407,42 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   align-items: end;
   gap: 70px;
   text-transform: uppercase;
-  font-size: var(--label);
+  font-size: 0.65rem;
   letter-spacing: 0.12em;
 }
 
 .footer-meta > div { display: grid; gap: 6px; }
 .footer-meta a {
   width: max-content;
-  /* Text is ~14px tall; the padding takes the real tap target to the 44px
-     minimum without shifting the visible layout (negative margin cancels it).
-     10px each side only reached 34px, so it is computed off --tap now. */
-  padding: calc((var(--tap) - 14px) / 2) 0;
-  margin: calc((var(--tap) - 14px) / -2) 0;
+  /* Text is 14px tall; the padding brings the real tap target close to the
+     44px minimum without shifting the visible layout (negative margin cancels it). */
+  padding: 10px 0;
+  margin: -10px 0;
   text-decoration: none;
 }
-/* Cream ground: the darker red. */
 .footer-meta a:hover,
 .footer-meta a:focus-visible,
-.footer-meta a:active { color: var(--red-ink); }
+.footer-meta a:active { color: var(--red); }
 .footer-meta p { margin: 0; }
 
+.footer-powered {
+  margin-top: 30px;
+  padding-top: 22px;
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--line-dark);
+}
+
+.footer-powered .tz-badge--footer { margin-top: 0; }
+
 .reveal {
+  opacity: 1;
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+}
+
+.js-reveals .reveal {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
 }
 
 /* Settled state. The transform is a variable so an element that has its own
@@ -1565,7 +1489,7 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
     background: transparent;
     text-transform: uppercase;
     letter-spacing: 0.12em;
-    font-size: var(--label);
+    font-size: 0.68rem;
   }
   .menu-icon,
   .menu-icon::before {
@@ -1581,22 +1505,12 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   .site-nav {
     position: fixed;
     inset: 0;
-    padding: calc(110px + env(safe-area-inset-top)) calc(var(--page) + env(safe-area-inset-right))
-             calc(44px + env(safe-area-inset-bottom)) calc(var(--page) + env(safe-area-inset-left));
+    padding: 110px var(--page) 44px;
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    /* flex-end while the links fit — the panel is meant to sit down by the
-       thumb — but a landscape phone is only ~375px tall and the four links
-       need ~577px. Pinned to the bottom with no scroller, the overflow went
-       off the *top*: "Our story" ended up above y=0, behind the fixed header,
-       unreachable because nothing could scroll. safe-area-inset keeps the
-       same links clear of the notch and the home indicator. */
     justify-content: flex-end;
     gap: 0;
-    overflow-y: auto;
-    overscroll-behavior: contain;
-    -webkit-overflow-scrolling: touch;
     background: var(--red);
     color: var(--night);
     transform: translateY(-100%);
@@ -1605,26 +1519,10 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   }
   .site-nav.is-open { transform: translateY(0); visibility: visible; }
   .site-nav a {
-    flex: none;
     padding: 18px 0 14px;
     border-bottom: 1px solid currentColor;
     font-size: clamp(2.2rem, 8vw, 4.2rem);
     letter-spacing: -0.04em;
-  }
-
-  /* Short viewport — landscape phones, and portrait once the keyboard is up.
-     Shrink the links and drop the top padding to the header's height so the
-     whole menu fits without scrolling wherever it still can. */
-  @media (max-height: 560px) {
-    .site-nav {
-      padding-top: calc(78px + env(safe-area-inset-top));
-      padding-bottom: calc(20px + env(safe-area-inset-bottom));
-      justify-content: flex-start;
-    }
-    .site-nav a {
-      padding: 11px 0 9px;
-      font-size: clamp(1.5rem, 5.2vh, 2.4rem);
-    }
   }
   .site-nav .nav-cta { border: 0; border-bottom: 1px solid currentColor; }
   .site-nav .nav-cta:hover { background: none; }
@@ -1632,43 +1530,39 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
     min-height: auto;
     padding-top: 68px;
     grid-template-columns: 1fr;
-    grid-template-rows: auto auto auto;
+    grid-template-rows: auto minmax(620px, 82svh) auto;
   }
-  /* Sized by content, not by a floor: the drop sits right under the hero
-     now, and every reserved pixel here pushes the first tee further down. */
-  .hero-copy { min-height: 0; padding-top: 62px; }
+  .hero-copy { min-height: 630px; padding-top: 62px; }
   .hero-title { font-size: clamp(4.4rem, 17vw, 8.4rem); }
-  .hero-image { min-height: 0; aspect-ratio: 5 / 4; }
+  .hero-image { min-height: 620px; }
   .hero-ticker { grid-column: 1; }
   .manifesto-grid,
   .campaign-heading,
   .cities-heading { grid-template-columns: minmax(0, 1fr); }
   .wall-heading { grid-template-columns: minmax(0, 1fr); gap: 28px; padding-bottom: 48px; }
+  .wall-grid { grid-template-columns: repeat(2, 1fr); }
+  /* At two columns the third stack would strand itself in a half-width row, so
+     it spans the full width and re-lays its own frames as a pair instead. */
+  .wall-col:nth-child(3) {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: start;
+  }
   .manifesto-copy { max-width: 600px; }
   .identity-wordmark { min-height: clamp(230px, 39vw, 420px); }
   .campaign-heading,
   .cities-heading { gap: 30px; }
-  /* A swipe strip, bleeding to the screen edges, with the next frame
-     peeking in so the gesture explains itself. */
-  .campaign-grid {
-    display: flex;
-    gap: 12px;
-    margin-inline: calc(var(--page) * -1);
-    padding-inline: var(--page);
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scroll-padding-inline: var(--page);
-    scrollbar-width: none;
-  }
-  .campaign-grid::-webkit-scrollbar { display: none; }
-  .campaign-card { flex: 0 0 min(72vw, 360px); scroll-snap-align: start; }
+  .campaign-grid { grid-template-columns: 1fr 1fr; grid-template-rows: minmax(480px, 76vw) minmax(420px, 68vw); }
+  .campaign-card-wide { grid-column: 2; }
   .typewriter-section { min-height: 720px; }
   .route-question-inner { padding-top: 90px; }
   .typewriter-text { font-size: clamp(4rem, 12.5vw, 7rem); }
   .typewriter-action { grid-template-columns: 1fr; align-items: start; gap: 34px; }
   .typewriter-link { justify-self: start; }
   .cities-layout { grid-template-columns: 1fr; }
-  .city-preview { display: none; }
+  .city-preview { position: relative; top: auto; height: 480px; min-height: 0; max-height: none; }
+  .city-preview-photo { width: 110px; }
   .city-row { grid-template-columns: 38px minmax(100px, 0.4fr) 1fr auto 22px; }
   .pin-cta { grid-template-columns: 1fr; min-height: auto; }
   .pin-mark { position: absolute; right: -10%; width: 48vw; opacity: 0.13; }
@@ -1682,19 +1576,19 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 @media (max-width: 560px) {
   :root { --page: 18px; }
   .brand-logo { width: 112px; }
-  .hero-copy { min-height: 0; padding-top: 44px; padding-bottom: 32px; }
+  .hero-copy { min-height: 580px; padding-top: 44px; padding-bottom: 32px; }
   .hero-title { font-size: clamp(4rem, 19vw, 6.3rem); padding-block: 46px; }
   .hero-title span { white-space: normal; }
   .hero-title span:nth-child(2) { margin-left: 0; font-size: 0.82em; }
   .hero-footer { grid-template-columns: 1fr; align-items: start; }
-  .hero-image { aspect-ratio: 4 / 5; }
+  .hero-image { min-height: 560px; }
   .hero-image figcaption,
   .campaign-card figcaption { inset-inline: 14px; bottom: 14px; }
   .image-stamp { top: 16px; right: 16px; width: 92px; }
   .manifesto,
   .campaign,
   .city-index { padding-top: 58px; }
-  .section-index { font-size: var(--label-sm); }
+  .section-index { font-size: 0.58rem; }
   .manifesto-grid { padding-block: 70px 90px; gap: 50px; }
   .manifesto-title,
   .campaign-heading h2,
@@ -1707,27 +1601,34 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   .wall-body { padding-top: 58px; }
   .wall-heading { padding-block: 70px 40px; }
   .wall-heading h2 { font-size: clamp(2.8rem, 12vw, 4rem); }
-  /* Two columns of frames this narrow leave no room for the coordinates
-     beside the place name; the name is the part that matters. */
-  .wall-frame figcaption i { display: none; }
+  .wall-grid { grid-template-columns: 1fr; }
+  .wall-col { margin-top: 0 !important; }
+  /* align-items must return to stretch here: inherited from the two-column rule
+     above it would shrink each frame to its content, and a lazy image that has
+     not loaded yet has no intrinsic width — the frame would collapse to zero. */
+  .wall-col:nth-child(3) {
+    grid-column: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .campaign-grid { display: flex; flex-direction: column; }
+  .campaign-card { min-height: 116vw; }
+  .campaign-card-wide { min-height: 92vw; }
   .typewriter-section { min-height: 660px; padding-top: 58px; padding-bottom: 72px; }
   .route-question-inner { padding-top: 76px; gap: 64px; }
   .typewriter-text { font-size: clamp(3.15rem, 15vw, 5rem); line-height: 0.82; }
   .tw-word-wrap { min-width: 0; }
   .typewriter-link { width: 100%; max-width: none; }
   .cities-heading { padding-bottom: 70px; }
-  /* minmax(0, 1fr), not 1fr: a bare fr track floors at min-content, so the
-     city name set at 8vw held the whole row open and the grid could not fit
-     the gutter. On a 280px screen that pushed the row 26px past its column
-     and the fill ran off under the clip. This lets the name column give. */
   .city-row {
     min-height: 92px;
-    grid-template-columns: 26px minmax(0, 1fr) auto 20px;
+    grid-template-columns: 26px 1fr auto 20px;
     gap: 10px;
   }
   .city-native { display: none; }
   .city-row strong { font-size: clamp(1.65rem, 8vw, 2.4rem); }
-  .city-status { font-size: 11px; }
+  .city-status { font-size: 0.52rem; }
   .city-row:hover,
   .city-row:focus-visible,
   .city-row.is-active { padding-inline: 10px; }
@@ -1741,7 +1642,9 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
-  .reveal { opacity: 1; transform: none; }
+  .reveal, .js-reveals .reveal { opacity: 1; transform: none; }
+  .hero-title span { transform: none !important; }
+  .hero-image, .hero-kicker, .hero-footer { --reveal-rest: none !important; }
   .scroll-route-pointer { display: none; }
   .scroll-route-path { stroke-dasharray: 1 14; opacity: 0.44; }
   .tw-cursor { animation: none; opacity: 1; }
@@ -1755,4 +1658,23 @@ body.menu-open .menu-toggle:focus-visible { outline-color: var(--night); }
   .wall-frame.is-revealed img { clip-path: none !important; animation: none !important; }
   .wall-frame.is-armed figcaption { opacity: 1; }
   .wall-col { transform: none !important; }
+}
+
+/* Map pins remain links with or without JavaScript. */
+.city-map-link { cursor: pointer; }
+.city-map-link:focus-visible { outline: none; }
+.city-map-link:focus-visible .city-map-pin-ring { opacity: 1; stroke: var(--cream); stroke-width: 4; }
+.city-preview-overlay { right: auto; max-width: calc(100% - 175px); flex-direction: column; align-items: start; gap: 4px; pointer-events: none; }
+.city-preview::after { pointer-events: none; }
+@media (max-width: 560px) {
+  .city-preview { height: 420px; }
+  .city-preview-photo { width: 100px; right: 16px; bottom: 18px; }
+  .city-preview-overlay { left: 18px; max-width: calc(100% - 140px); }
+  .city-preview-overlay strong { font-size: 1.8rem; }
+}
+
+@media (min-width: 821px) and (max-width: 1100px) {
+  .cities-layout { grid-template-columns: 1fr; }
+  .city-preview { position: relative; top: auto; height: 500px; min-height: 0; max-height: none; }
+  .city-preview-photo { width: 140px; }
 }

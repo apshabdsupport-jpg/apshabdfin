@@ -1,6 +1,13 @@
 (() => {
   'use strict';
 
+  document.documentElement.classList.add('js-reveals');
+
+  document.querySelector('.brand[href="#top"]')?.addEventListener('click', (event) => {
+    event.preventDefault();
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'instant' : 'smooth' });
+  });
+
   const header = document.querySelector('.site-header');
   const menuButton = document.querySelector('.menu-toggle');
   const menu = document.querySelector('.site-nav');
@@ -77,7 +84,11 @@
     window.addEventListener('scroll', requestRouteDraw, { passive: true });
     window.addEventListener('resize', requestRouteDraw);
     reducedMotion.addEventListener('change', () => {
-      if (reducedMotion.matches) scrollRoute.classList.add('is-ready');
+      if (reducedMotion.matches) {
+        window.cancelAnimationFrame(routeFrame);
+        routeFrame = 0;
+        scrollRoute.classList.add('is-ready');
+      }
       else drawRouteProgress();
     });
   }
@@ -174,35 +185,7 @@
     sequences.forEach(runSequence);
   }
 
-  // Hero photo drifts slower than the copy beside it. Scroll-driven, so it
-  // behaves the same on touch as on a mouse, and only ever writes a transform.
-  const heroFigure = document.querySelector('.hero-image');
-  const heroPhoto = heroFigure && heroFigure.querySelector('img');
-
-  if (heroFigure && heroPhoto && !prefersReducedMotion.matches) {
-    const maxShift = 30;
-    let parallaxFrame = 0;
-
-    const drawParallax = () => {
-      parallaxFrame = 0;
-      const rect = heroFigure.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > window.innerHeight) return;
-
-      // -1 when the figure is just below the fold, +1 once it has fully passed.
-      const travel = window.innerHeight + rect.height;
-      const progress = ((window.innerHeight - rect.top) / travel) * 2 - 1;
-      const shift = Math.max(-1, Math.min(1, progress)) * maxShift;
-      heroPhoto.style.transform = `translate3d(0, ${shift.toFixed(2)}px, 0) scale(1.12)`;
-    };
-
-    const requestParallax = () => {
-      if (!parallaxFrame) parallaxFrame = window.requestAnimationFrame(drawParallax);
-    };
-
-    drawParallax();
-    window.addEventListener('scroll', requestParallax, { passive: true });
-    window.addEventListener('resize', requestParallax);
-  }
+  // Scroll transforms are coordinated in scroll-motion.js.
 
   // Faux 3D: the pointer is the camera. This only ever writes two numbers, and
   // the stylesheet decides how deep each layer sits off them — which keeps the
@@ -246,74 +229,12 @@
     });
   }
 
-  // The wall: the frames are dealt into balanced columns, the columns drift
-  // past each other on scroll, and each frame wipes in as it arrives. Without
-  // the script the frames sit in a plain grid and every photo stays visible.
+  // The wall: columns drift past each other on scroll, and each frame wipes in
+  // as it arrives. Armed from JS so every photo stays visible without the script.
   const wall = document.querySelector('[data-wall]');
-  const wallFrames = wall ? [...wall.querySelectorAll('[data-wall-item]')] : [];
-  const wallSpeeds = [-0.05, 0.07, -0.09, 0.05];
-  let wallColumns = [];
-
-  // Shortest column first, measured off each photo's own width/height
-  // attributes, so the columns come out level without waiting on a single
-  // image. Re-dealt only when the column count actually changes.
-  const layWall = () => {
-    const width = wall.clientWidth;
-    const count = width >= 1000 ? 4 : width >= 640 ? 3 : 2;
-    if (count === wallColumns.length) return;
-
-    const heights = new Array(count).fill(0);
-    wallColumns = Array.from({ length: count }, (_, index) => {
-      const column = document.createElement('div');
-      column.className = 'wall-col';
-      column.dataset.wallSpeed = String(wallSpeeds[index % wallSpeeds.length]);
-      return column;
-    });
-
-    wallFrames.forEach((frame) => {
-      const img = frame.querySelector('img');
-      const ratio = img
-        ? (Number(img.getAttribute('height')) || 4) / (Number(img.getAttribute('width')) || 3)
-        : 1.33;
-      const shortest = heights.indexOf(Math.min(...heights));
-      wallColumns[shortest].appendChild(frame);
-      heights[shortest] += ratio;
-    });
-
-    wall.replaceChildren(...wallColumns);
-    wall.style.setProperty('--wall-cols', String(count));
-    wall.classList.add('is-laid');
-  };
-
-  if (wall) {
-    layWall();
-    window.addEventListener('resize', layWall);
-  }
 
   if (wall && !prefersReducedMotion.matches) {
-    const frames = wallFrames;
-    let wallFrame = 0;
-
-    const drawWall = () => {
-      wallFrame = 0;
-      const rect = wall.getBoundingClientRect();
-      if (rect.bottom < -200 || rect.top > window.innerHeight + 200) return;
-
-      // 0 as the wall enters the viewport, 1 as it leaves.
-      const progress = (window.innerHeight - rect.top) / (window.innerHeight + rect.height);
-      wallColumns.forEach((column) => {
-        const speed = parseFloat(column.dataset.wallSpeed) || 0;
-        column.style.setProperty('--wall-shift', `${(progress * speed * rect.height).toFixed(2)}px`);
-      });
-    };
-
-    const requestWall = () => {
-      if (!wallFrame) wallFrame = window.requestAnimationFrame(drawWall);
-    };
-
-    drawWall();
-    window.addEventListener('scroll', requestWall, { passive: true });
-    window.addEventListener('resize', requestWall);
+    const frames = [...wall.querySelectorAll('[data-wall-item]')];
 
     if ('IntersectionObserver' in window) {
       frames.forEach((frame) => frame.classList.add('is-armed'));
@@ -323,11 +244,11 @@
           if (!entry.isIntersecting) return;
           // Stagger within whatever batch arrives together, so a column of
           // frames cascades instead of snapping in as one block.
-          const delay = entries.indexOf(entry) * 90;
+          const delay = Math.min(entries.indexOf(entry), 2) * 70;
           window.setTimeout(() => entry.target.classList.add('is-revealed'), delay);
           observer.unobserve(entry.target);
         });
-      }, { rootMargin: '0px 0px -6% 0px', threshold: 0.12 });
+      }, { rootMargin: '180px 0px 180px 0px', threshold: 0.01 });
 
       frames.forEach((frame) => wallObserver.observe(frame));
     }
@@ -342,43 +263,16 @@
   const cityMapSvg = document.querySelector('.city-map-svg');
   const cityMapPins = [...document.querySelectorAll('.city-map-pin')];
 
-  // The four numbers baked into the SVG's own viewBox attribute, read once
-  // rather than hard-coded a second time here - if the map asset is ever
-  // regenerated at a different crop, this stays correct without editing.
   const mapViewBox = cityMapSvg ? cityMapSvg.viewBox.baseVal : null;
-
-  // Mirrors .city-map-svg { transform: translate(--tx,--ty) scale(--map-zoom) }
-  // in styles.css - the two have to move together, since the formula below
-  // solves for the specific translate that makes exactly this scale recentre
-  // the target point.
   const CITY_MAP_ZOOM = 2.85;
 
-  // transform-origin only holds a point FIXED at whatever screen position it
-  // already had before the scale - it cannot bring a point that starts
-  // off-screen into view, no matter how far you zoom. And most points here
-  // do start off-screen: this card is far narrower than the map, so
-  // preserveAspectRatio="xMidYMid slice" already crops most of the map's
-  // width away at rest, before any zoom at all. Naively targeting a city's
-  // rest position left four of the seven cities (Mumbai, Delhi, Kolkata,
-  // Pune) with their pin 30-40% of the card outside the visible edge, scale
-  // or no scale.
-  //
-  // What actually needs solving for is the translate T such that scaling a
-  // point P by k and then shifting by T lands it on the box's centre C:
-  // k*P + T = C, so T = C - k*P. This computes T directly (in px, against
-  // the SVG's own top-left) rather than solving for a transform-origin -
-  // both --tx/--ty then live inside the one `transform` value CSS
-  // transitions, so a fast re-hover interpolates a continuous pan+zoom
-  // instead of transform-origin snapping to the new city with no transition
-  // of its own while the scale is still mid-flight from the last one.
+  // Project the city's SVG coordinates through the map's centered meet fit.
   function targetFor(px, py) {
     if (!mapViewBox || !cityMap) return { tx: 0, ty: 0 };
     const box = cityMap.getBoundingClientRect();
     if (!box.width || !box.height) return { tx: 0, ty: 0 };
 
-    const boxAspect = box.width / box.height;
-    const vbAspect = mapViewBox.width / mapViewBox.height;
-    const scale = boxAspect > vbAspect ? box.width / mapViewBox.width : box.height / mapViewBox.height;
+    const scale = Math.min(box.width / mapViewBox.width, box.height / mapViewBox.height);
     const renderedW = mapViewBox.width * scale;
     const renderedH = mapViewBox.height * scale;
     const offsetX = (box.width - renderedW) / 2;
@@ -455,6 +349,17 @@
     row.addEventListener('focus', () => activateCity(row));
   });
 
+  document.querySelectorAll('.city-map-link').forEach((link) => {
+    link.addEventListener('focus', () => activateCity(cityRows.find((row) => row.dataset.pin === link.dataset.mapCity)));
+  });
+  window.addEventListener('resize', () => {
+    const active = cityRows.find((row) => row.classList.contains('is-active'));
+    if (!active || !cityMap?.dataset.active) return;
+    const target = targetFor(Number(active.dataset.px), Number(active.dataset.py));
+    cityMap.style.setProperty('--tx', `${target.tx}px`);
+    cityMap.style.setProperty('--ty', `${target.ty}px`);
+  });
+
   const reel = document.getElementById('craftReel');
   // The pinned stage, not the section around it: the wall is several screens
   // tall, so a ratio threshold against the section itself could never be met.
@@ -462,6 +367,11 @@
 
   if (reel && reelSection) {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let reelVisible = false;
+    const syncPlayback = () => {
+      if (reelVisible && !reducedMotion.matches) reel.play().catch(() => {});
+      else reel.pause();
+    };
 
     // The clip is decoration, so it stays silent whatever the markup says.
     reel.muted = true;
@@ -471,19 +381,17 @@
     // extra to anyone who never scrolls this far. Wherever it cannot play, the
     // poster stays as a still backdrop — it is scenery, so there is nothing to
     // hand controls for, and the frames on top read the same either way.
-    if (!reducedMotion.matches && 'IntersectionObserver' in window) {
+    if ('IntersectionObserver' in window) {
       const reelObserver = new IntersectionObserver((entries) => {
         entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            reel.play().catch(() => {});
-          } else {
-            reel.pause();
-          }
+          reelVisible = entry.isIntersecting;
+          syncPlayback();
         });
       }, { threshold: 0.25 });
 
       reelObserver.observe(reelSection);
     }
+    reducedMotion.addEventListener('change', syncPlayback);
   }
 
   const wordmark = document.querySelector('.identity-wordmark');
@@ -515,7 +423,6 @@
 
   const typewriterSection = document.querySelector('.typewriter-section');
   const typewriterWord = typewriterSection?.querySelector('.tw-word');
-  const typewriterWrap = typewriterWord?.closest('.tw-word-wrap');
 
   if (typewriterSection && typewriterWord) {
     const words = (typewriterSection.dataset.words || 'location')
@@ -532,23 +439,14 @@
     let typingTimer = 0;
     let hasStarted = false;
 
-    // Language goes on the wrapper as well as the word: the per-script
-    // optical sizing in CSS lives on .tw-word-wrap so the caret scales with
-    // the script too. :lang() inherits, so .tw-word:lang(..) still matches.
-    const setLanguage = (language) => {
-      typewriterWord.lang = language;
-      if (typewriterWrap) typewriterWrap.lang = language;
-    };
-
     const typeNextCharacter = () => {
       if (reducedMotion.matches) {
-        setLanguage(wordLanguages[0] || 'en');
         typewriterWord.textContent = words[0];
         return;
       }
 
       const wordCharacters = characters(words[wordIndex]);
-      setLanguage(wordLanguages[wordIndex] || 'en');
+      typewriterWord.lang = wordLanguages[wordIndex] || 'en';
       characterIndex += erasing ? -1 : 1;
       typewriterWord.textContent = wordCharacters.slice(0, characterIndex).join('');
 
@@ -569,12 +467,11 @@
       if (hasStarted) return;
       hasStarted = true;
       if (reducedMotion.matches) {
-        setLanguage(wordLanguages[0] || 'en');
         typewriterWord.textContent = words[0];
         return;
       }
       typewriterWord.textContent = '';
-      setLanguage(wordLanguages[0] || 'en');
+      typewriterWord.lang = wordLanguages[0];
       typingTimer = window.setTimeout(typeNextCharacter, 480);
     };
 

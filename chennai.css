@@ -72,7 +72,7 @@ body { background: var(--ink); color: var(--bone); font-family: var(--body); ove
 
 /* ─── HERO ── */
 .hero {
-  position: relative; z-index: 2; min-height: 100svh;
+  position: relative; z-index: 2; min-height: 100vh;
   display: flex; flex-direction: column; justify-content: center; align-items: center;
   text-align: center; padding: 130px 20px 70px;
 }

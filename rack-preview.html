@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>APSHABD — On the rail</title>
+  <meta name="description" content="Browse APSHABD neighbourhood T-shirts on the rail. Choose Mumbai, Chennai or Delhi." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Tamil:wght@400;700&family=Noto+Sans+Devanagari:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="drop.css?v=4" />
+  <link rel="stylesheet" href="city-brand.css?v=5" />
+  <link rel="stylesheet" href="garment-rack.css?v=7" />
+  <link rel="stylesheet" href="rack-preview.css?v=2" />
+  <script src="garment-rack.js?v=7" defer></script>
+  <script src="rack-preview.js?v=1" defer></script>
+</head>
+<body class="rack-preview-page">
+  <header class="preview-header">
+    <a href="index.html" aria-label="APSHABD home"><img src="assets/brand/apshabd-wordmark-night.png" alt="" /></a>
+    <span>City wardrobes / 2026</span>
+    <a class="preview-home" href="index.html">Back to the streets ↗</a>
+  </header>
+  <main>
+    <div class="preview-intro">
+      <div><p class="preview-eyebrow">Wear where you're from.</p><h1>Your city.<br />On the rail.</h1></div>
+      <div class="preview-city-picker" role="group" aria-label="Choose city">
+        <button type="button" data-city-choice="mumbai" aria-pressed="true">Mumbai <span>05</span></button>
+        <button type="button" data-city-choice="chennai" aria-pressed="false">Chennai <span>05</span></button>
+        <button type="button" data-city-choice="delhi" aria-pressed="false">Delhi <span>03</span></button>
+      </div>
+    </div>
+    <div id="preview-wardrobe" aria-live="polite"><p class="preview-loading">Hanging the tees…</p></div>
+    <div class="preview-end"><span>Pick a place. Pull it closer.</span><a id="preview-city-link" href="mumbai.html#drop">Open Mumbai collection ↗</a></div>
+  </main>
+</body>
+</html>
